@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeoulPOT</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <script>
+        // 서버에서 전달받은 현재 시간을 전역 변수로 설정
+        window.serverTime = "{{ now_time }}";
+    </script>
+    <script src="{% static 'js/main/main.js' %}"></script>
+    
+    <div class="content">
+        <div class="title"><em>SEOUL WELCOMES YOU</em></div>
+        <div class="subtitle">
+            <span class="main-color">S</span>
+            <span class="sub-color">eoul</span>
+            <span class="main-color">POT</span></div>
+        
+    </div>
+    <div class="seoul-infos">
+        <div class="time"></div>
+        <hr/>
+        <div class="temperature">SEOUL {{temperature}}</div>
+    </div>
+    <div class="language-buttons">
+        <button onclick="location.href='{% url 'district' 'kor' %}'">한국어</button>
+        <button onclick="location.href='{% url 'district' 'eng' %}'">English</button> 
+    </div>
+    
+</body>
+</html>
