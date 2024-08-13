@@ -1,0 +1,103 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif; /* Inter 폰트 적용 */
+    color: white;
+    text-align: center;
+    background-image: url('../../img/main.jpg'); /* 이미지 파일 경로로 교체하세요 */
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+    min-width: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.content {
+    text-align: center;
+    /* background-color: rgba(0, 0, 0, 0.5); 텍스트를 잘 보이게 하는 반투명 배경 */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+.title {
+    font-family: "Inter", sans-serif;
+    font-style: normal;
+    font-size: 4rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 텍스트 음영 추가 */
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 텍스트 음영 추가 */
+}
+
+.subtitle span {
+    font-size: 10rem;
+    font-weight: bold;
+    font-style: italic;
+    margin-bottom: 30px;
+}
+
+.time {
+    font-size: 6rem;
+    margin-top: 20px;
+}
+
+.temperature {
+    font-size: 3rem;
+    margin-top: 10px;
+}
+
+.language-buttons {
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+}
+
+.seoul-infos {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+}
+
+.seoul-infos hr {
+    size : 90px
+}
+
+.language-buttons button {
+    color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.7);
+    font-family: "Inter", sans-serif;
+    border: none;
+    border-radius: 200px;
+    padding: 10px 20px;
+    font-size: 2rem;
+    font-style: italic;
+    font-weight: bold;
+    margin: 0 10px;
+    width : 200px;
+    height : 200px;
+    cursor: pointer;
+}
+
+.language-buttons button:hover {
+    color: #FFFFFF;
+    background-color: rgba(131, 158, 225, 0.7);
+    
+}
+
+.main-color{
+    color: #C0B1FF;
+} 
+
+.sub-color{
+    color : #FFFFFF;
+}
