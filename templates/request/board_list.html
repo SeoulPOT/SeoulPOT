@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>익명 게시판</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>익명 게시판</h1>
+    <a href="{% url 'board_create' %}">새 게시물 작성</a>
+    <ul>
+        {% for request in requests %}
+        <div>
+            <p>{{ request.request_text }}</p>
+            <p>{{ request.request_time }}</p>
+            <p>{{ request.request_ip }}</p>
+            <a href="{% url 'board_delete' request.request_id %}">삭제</a> <!-- 삭제 링크 추가 -->
+        </div>
+        {% endfor %}
+        
+    </ul>
+</body>
+</html>
