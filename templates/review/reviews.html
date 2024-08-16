@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ place.place_name }} - 리뷰 페이지</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-content">
+            <img src="{{ place.img_path }}" alt="{{ place.place_name }}">
+            <h2>{{ place.place_name }}</h2>
+            <div id="map" class="map"></div>
+            <p>{{ place.place_address }}</p>
+            <p>{{ place.place_phone }}</p>
+            <p>{{ place.place_operating_hours }}</p>
+            <p>{{ place.place_entrance_fee }}</p>
+            <p>{{ place.place_keyword_cd }}</p>
+            <p>{{ place.place_category_cd }}</p>
+            <p>{{ place.place_tag_cd }}</p>
+        </div>
+    
+        <div class="right-content">
+            <div class="tags">
+                <span>카테고리</span>
+                <button>카페</button>
+                <button>가족</button>
+                <span>특징</span>
+                <button>분위기</button>
+                <button>맛</button>
+            </div>
+    
+            <div class="sort">
+                <span>정렬 방식</span>
+                <button onclick="window.location.href='?array=latest'">최신순</button>
+                <button onclick="window.location.href='?array=oldest'">오래된순</button>
+            </div>
+    
+            <!-- Reviews Listing -->
+            <div class="cards">
+                {% for review in reviews %}
+                    <div class="card">
+                        <img src="{{ review.review_photo }}" alt="Review Photo">
+                        <div class="card-content">
+                            <h3 class="card-title">리뷰 {{ review.review_id }}</h3>
+                            <p class="card-date">{{ review.review_date }}</p>
+                            <p class="card-description">{{ review.review_text }}</p>
+                            <div class="card-footer">
+                                <span>평점: {{ review.review_sentiment|yesno:"좋아요,싫어요" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+    
+            <div class="pagination">
+                <span class="step-links">
+                    {% if reviews.has_previous %}
+                        <a href="?page=1&array={{ array }}">&laquo; 처음</a>
+                        <a href="?page={{ reviews.previous_page_number }}&array={{ array }}">이전</a>
+                    {% endif %}
+                    <span class="current">
+                        Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}.
+                    </span>
+                    {% if reviews.has_next %}
+                        <a href="?page={{ reviews.next_page_number }}&array={{ array }}">다음</a>
+                        <a href="?page={{ reviews.paginator.num_pages }}&array={{ array }}">마지막 &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script>
+        // Naver Map integration
+        var mapOptions = {
+            center: new naver.maps.LatLng(37.5665, 126.9780), // 서울시청 좌표
+            zoom: 10
+        };
+        
+        var map = new naver.maps.Map('map', mapOptions);
+        
+        var marker = new naver.maps.Marker({
+            position: new naver.maps.LatLng(37.5665, 126.9780), // 마커 위치
+            map: map
+        });
+    </script>
+</body>
+</html>
