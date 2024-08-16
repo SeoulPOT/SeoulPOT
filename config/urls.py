@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('district/', include('district.urls')),
-     path('reviews/<int:place_id>/', views.content_reviews),
+    path('reviews/<int:place_id>/', views.content_reviews),
+    path('board/', include('request_board.urls')),
 ]
