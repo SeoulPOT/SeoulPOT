@@ -2,7 +2,10 @@ from django.shortcuts import render, get_object_or_404
 from .models import Place_tb, Review_tb
 from django.core.paginator import Paginator
 
-def content_reviews(request, place_id):
+def content_reviews(request, place_id, place_category_cd):
+    if place_category_cd == 'PC04': #popup 코드는 지정 필요
+        return render(request, 'popup_reviews.html', {'place_id': place_id})
+    
     array = request.GET.get('array', 'latest')  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get('page', 1)  # 페이지 기본 1page
 
