@@ -80,10 +80,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # MariaDB는 mysql 백엔드를 사용합니다.
+        'NAME': 'SeoulPOT',          # MariaDB 데이터베이스 이름
+        'USER': 'seoulpot',          # 데이터베이스 사용자명
+        'PASSWORD': 'Seoulpot!2',  # 데이터베이스 비밀번호
+        'HOST': 'dkwcdr.iptime.org',                   # 일반적으로 'localhost' 또는 MariaDB 서버의 IP 주소
+        'PORT': '45010',                        # 일반적으로 MariaDB의 기본 포트인 3306을 사용합니다.
     }
 }
+
 
 
 # Password validation
