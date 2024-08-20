@@ -5,60 +5,9 @@
     font-weight: normal;
     font-style: normal;
 }
-
-/* Body */
-body {
-    margin: 0;
-    font-family: 'NeoDunggeunmo';
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #F6F5FE;
-}
-
-button {
-    font-family: 'NeoDunggeunmo';
-    font-weight: 500;
-}
-
-/* Header */
-header {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #F6F5FE;
-    border-bottom: 2px solid #9077CB;
-    position: fixed;
-    top: 0;
-    z-index: 1000;
-    height: 70px;
-}
-
-header #logo {
-    margin: 10px 20px;
-    text-align: left;
-    margin-right: auto;
-}
-
-header button {
-    margin-right: 40px;
-    padding: 10px 20px;
-    font-size: 16px;
-    width: 10%;
-    border: none;
-    background-color: #F6F5FE;
-    color: #9077CB;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-header button:hover {
-    background-color: #fff;
+.highlight {
+    color: #9378C1;
+    font-size: 24px;
 }
 
 /* Main */
@@ -116,6 +65,7 @@ main {
     box-sizing: border-box;
     padding-right:10%;
     padding : 5% 0;
+    overflow: hidden
 }
 
 /* District Info Heading */
@@ -129,6 +79,55 @@ main {
     text-align: center;
     justify-content: center;
 }
+/* District Container */
+#district-info-container {
+    background-color: #D4CBF8;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    min-width : 500;
+    height: auto; 
+    min-height: 500px;
+    box-sizing: border-box;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Center align container */
+}
+
+#district-preparing-container {
+    background-color: #D4CBF8;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    min-width : 500;
+    height: auto; 
+    min-height: 500px;
+    box-sizing: border-box;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Center align container */
+}
+
+
+#none_select-info-container {
+    background-color: #D4CBF8;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    min-width : 500;
+    height: auto; 
+    min-height: 500px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Center align container */
+}
 
 /* District Container */
 #district-container {
@@ -138,12 +137,14 @@ main {
     width: 100%;
     min-width : 500;
     height: auto; 
+    min-height: 500px;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    display: none;
     align-items: center;
     justify-content: center;
     margin: 0 auto; /* Center align container */
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 /* District Content - Default */
@@ -243,7 +244,8 @@ main {
 #space-container {
     width: 100%;
     max-width: calc((200px + 20px) * 4 - 40px); 
-    height: 120px; 
+    height: 75px;
+    /* height: 120px;  */
     padding: 2%;
     border: 1px solid #ddd;
     border-radius: 5px;

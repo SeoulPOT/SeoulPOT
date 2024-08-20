@@ -1,3 +1,6 @@
+let is_selected = false;
+let current_district;
+let current_category;
 document.addEventListener('DOMContentLoaded', function() {
     function updateMap() {
         const width = document.getElementById('map').clientWidth;
@@ -49,20 +52,71 @@ document.addEventListener('DOMContentLoaded', function() {
                         .classed('active', true)
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
     
-                    document.getElementById('district-name').innerText = d.properties.name;
+                    if(!is_selected){
+                        document.getElementById('district-name').innerText = d.properties.name;
+                    }
+
+                   
+                    if(!is_selected){
+                        document.getElementById('none_select-info-container').style.display = 'none';
+                        document.getElementById('district-container').style.display = 'none';
+                        document.getElementById('district-info-container').style.display = 'flex';
+                    }
+                    
+
+            
+                    // 조건을 만족하는 객체가 있으면 출력
+                    var foundItem = districts_list.find(function(item) {
+                        return item.district_name === d.properties.name;
+                    });
+
+                    if (foundItem) {
+                        document.getElementById('selected-district-desc').innerText = foundItem.district_desc;
+                        document.getElementById('selected-district-img').src = foundItem.district_img
+                        
+                    } else {
+                        console.log(`name이 ${d.properties.name} 같은 객체를 찾을 수 없습니다.`);
+                    }
+
                 })
                 .on('mouseout', function(event, d) {
                     const centroid = path.centroid(d);
                     d3.select(this)
                         .classed('active', false)
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
-                    document.getElementById('district-name').innerText = 'ㅤ';
+                    
+
+                    if(!is_selected){
+                        document.getElementById('none_select-info-container').style.display = 'flex';
+                        document.getElementById('district-container').style.display = 'none';
+                        document.getElementById('district-info-container').style.display = 'none';
+                        document.getElementById('district-name').innerText = 'ㅤ';
+                    }
+
+
                 })
                 .on('click', function(event, d) {
                     d3.select(this).classed('clicked', true);
                     setTimeout(() => {
                         d3.select(this).classed('clicked', false);
                     }, 500);
+
+                    document.getElementById('district-name').innerText = d.properties.name;
+                    
+                    is_selected = true;
+                    document.getElementById('none_select-info-container').style.display = 'none';
+                    document.getElementById('district-container').style.display = 'flex';
+                    document.getElementById('district-info-container').style.display = 'none';
+
+                    var foundItem = districts_list.find(function(item) {
+                        return item.district_name === d.properties.name;
+                    });
+
+                    if (foundItem) {
+                        current_district = foundItem.district_id;
+                        fetchData(categories_list[1].code);
+                    }
+
                 });
 
             paths.attr('d', path)
@@ -107,6 +161,11 @@ function createStoreItem(store) {
     const img = document.createElement('img');
     img.src = store.img;
     img.alt = store.place_name;
+    // 이미지 로드에 실패할 경우 대체 이미지 설정
+    img.onerror = function() {
+        this.onerror = null;  // 무한 반복 방지
+        this.src = fallbackImage;  // 대체 이미지 경로
+    };
     
     const details = document.createElement('div');
     details.classList.add('details');
@@ -116,11 +175,11 @@ function createStoreItem(store) {
     name.id = 'place-name';
 
     const tag = document.createElement('p');
-    tag.textContent = `${store.place_tag}`;
+    //tag.textContent = `${store.place_tag}`;
     tag.id = 'place-tag';
 
     const reviews = document.createElement('p');
-    reviews.textContent = `리뷰 ${store.review_num}개`;
+    //reviews.textContent = `리뷰 ${store.review_num}개`;
     reviews.id = 'place-reviews';
     
     details.appendChild(name);
@@ -133,18 +192,70 @@ function createStoreItem(store) {
     return div;
 }
 
-async function loadAndDisplayData() {
-    const csvUrl = window.district_temp_place;
-    const csvText = await fetchCSV(csvUrl);
-    const data = parseCSV(csvText);
+// async function loadAndDisplayData() {
+//     const csvUrl = window.district_temp_place;
+//     const csvText = await fetchCSV(csvUrl);
+//     const data = parseCSV(csvText);
 
-    const spaceBoxes = document.querySelectorAll('#district-space #space-container');
-    spaceBoxes.forEach((box, index) => {
-        if (data[index]) {
-            box.innerHTML = ''; // Clear existing content
-            box.appendChild(createStoreItem(data[index]));
+//     const spaceBoxes = document.querySelectorAll('#district-space #space-container');
+//     spaceBoxes.forEach((box, index) => {
+//         if (data[index]) {
+//             box.innerHTML = ''; // Clear existing content
+//             box.appendChild(createStoreItem(data[index]));
+//         }
+//     });
+// }
+
+//document.addEventListener('DOMContentLoaded', loadAndDisplayData);
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+function fetchData(category) {
+    current_category = category;
+    fetch(`?district=${current_district}&category=${category}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
         }
-    });
+    })
+    .then(response => response.json())
+    .then(data => {
+        DisplayData(data);
+    })
+    .catch(error => console.log(error));
 }
 
-document.addEventListener('DOMContentLoaded', loadAndDisplayData);
+function DisplayData(data) {
+    const spaceBoxes = document.querySelectorAll('#district-space #space-container');
+    if(data.length>0){
+        
+        spaceBoxes.forEach((box, index) => {
+            if (data[index]) {
+                box.innerHTML = ''; // Clear existing content
+                box.appendChild(createStoreItem(data[index]));
+            }
+        });
+    }
+    else{
+        ResetData();
+    }
+}
+
+function ResetData()
+{
+    const spaceBoxes = document.querySelectorAll('#district-space #space-container');
+    
+    spaceBoxes.forEach((box, index) => {
+        console.log(box);
+      
+        box.innerHTML = ''; // Clear existing content
+    });
+
+}
+
+function MoveToPlacePage()
+{
+    window.location.href = place_page_url+`?district=${current_district}&category=${current_category}` ;
+
+    
+}
