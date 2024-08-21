@@ -1,22 +1,8 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/district/district.css' %}">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-</head>
-<body>
-    <header>
-        <div id="logo">
-            <img src="{% static 'img/logo.png' %}" alt="logo">
-        </div>
-        <button id="home">HOME</button>
-        <button id="districts">DISTRICTS</button>
-        <button id="category">CATEGORYIES</button>
-    </header>
-    <!-- -->
+{% extends 'base/base.html' %}
+
+{% block title %}district{% endblock %}
+{% load static %}
+{% block content %}
     <main id="container">
         <section id="map-container">
             <div id="map"></div>
@@ -24,119 +10,80 @@
         <section id = "triangle"></section>
         <section id="district-info">
             <h1 id="district-name">ㅤ</h1>
-            <div id = "district-container">
-                <div id = "default">
-                    <div id="spot">
-                        <img src="{% static '/img/spot.png' %}" alt="spot">
+
+            <div id="none_select-info-container">
+                <img src="{% static 'img/spot.png' %}" alt="spot">
+                <p>마우스를 올려</p>
+                <p>여행하기 좋은</p>
+                <p class="highlight">REAL SEOUL을</p>
+                <p>찾아보세요</p>
+            </div>
+            <div id="district-info-container">
+                <img id="selected-district-img" src="" height="30px" width="30px">
+                <span id="selected-district-desc">설명</span>
+            </div>
+            <div id="district-container">
+                <div id="detail">
+                    <div id="district-category">
+                        {% for category in categories %}
+                        <button id="category" onclick="fetchData('{{category.code}}')">{{category.code_name}}</button>
+                        {% endfor %}
                     </div>
-                    <div id="suggestion">
-                        <p>Click Districts!</p>
-                    </div>
-                </div>
-                <div id = "introduce">
-                    <div id="intro-title">
-                    </div>
-                    <div id="intro-img">
-                        이미지
-                    </div>
-                    <div id="intro-content">
-                        <p>내용</p>
-                    </div>
-                </div>
-                <div id = "detail">
-                    <div id = "district-category">
-                        <button id="category">Restaurants</button>
-                        <button id="category">Cafés</button>
-                        <button id="category">Attractions</button>
-                        <button id="category">Pop-up</button>
-                    </div>
-                    <div id = "district-space">
+                    <div id="district-space">
                         <div id="space-container"></div>
                         <div id="space-container"></div>
                         <div id="space-container"></div>
                         <div id="space-container"></div>
                     </div>
-                    <div id = "more-button">
-                        <button class="readmore-btn">
+                    <div id="more-button">
+                        <button class="readmore-btn" onclick="MoveToPlacePage()">
                             <span class="text"> More Review </span>
                             <span class="book-wrapper">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 126 75"
-                                    class="book"
-                                >
-                                <rect
-                                    stroke-width="3"
-                                    stroke="#fff"
-                                    rx="7.5"
-                                    height="70"
-                                    width="121"
-                                    y="2.5"
-                                    x="2.5"
-                                ></rect>
-                                <line stroke-width="3" stroke="#fff" y2="75" x2="63.5" x1="63.5"></line>
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-width="4"
-                                    stroke="#fff"
-                                    d="M25 20H50"
-                                ></path>
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-width="4"
-                                    stroke="#fff"
-                                    d="M101 20H76"
-                                ></path>
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-width="4"
-                                    stroke="#fff"
-                                    d="M16 30L50 30"
-                                ></path>
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-width="4"
-                                    stroke="#fff"
-                                    d="M110 30L76 30"
-                                ></path>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126 75" class="book">
+                                    <rect stroke-width="3" stroke="#fff" rx="7.5" height="70" width="121" y="2.5" x="2.5"></rect>
+                                    <line stroke-width="3" stroke="#fff" y2="75" x2="63.5" x1="63.5"></line>
+                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M25 20H50"></path>
+                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M101 20H76"></path>
+                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M16 30L50 30"></path>
+                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M110 30L76 30"></path>
                                 </svg>
-                                <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 65 75"
-                                class="book-page"
-                                >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-width="4"
-                                    stroke="#fff"
-                                    d="M40 20H15"
-                                ></path>
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-width="4"
-                                    stroke="#fff"
-                                    d="M49 30L15 30"
-                                ></path>
-                                <path
-                                    stroke-width="3"
-                                    stroke="#fff"
-                                    d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"
-                                ></path>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 65 75" class="book-page">
+                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M40 20H15"></path>
+                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M49 30L15 30"></path>
+                                    <path stroke-width="3" stroke="#fff" d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"></path>
                                 </svg>
                             </span>
                         </button>
                     </div>
                 </div>
-                
             </div>
         </section>
+        
     </main>
+    {% endblock %}
+
+    {% block extra_css %}
+    <!-- 이 페이지에서만 사용하는 CSS -->
     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/district/district.css' %}">
+    {% endblock %}
+
+    {% block extra_js %}
+    <!-- 이 페이지에서만 사용하는 JS -->
     <script>
         window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
         window.district_temp_place = "{% static 'data/district_temp_place_data.csv' %}";
     </script>
+    <!-- JSON 데이터를 안전하게 포함 -->
+    <script>
+        const districts_list = {{district_list|safe}};
+        const categories_list = {{categories|safe}};
+        const place_page_url = "{% url 'de-food-place' %}";
+        const fallbackImage = "{% static 'img/default.png' %}";
+    </script>
     <script src="{% static '\js\district\district.js' %}"></script>
-</body>
-</html>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    {% endblock %}
+ 
+    
+
