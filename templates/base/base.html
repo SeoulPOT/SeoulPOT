@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Site{% endblock %}</title>
+    {% load static %}
+    {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/base/base.css' %}">
+</head>
+<body>
+    <script src="{% static '\js\base\base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+    <header>
+        <div id="logo">
+            <img src="{% static 'img/logo.png' %}" alt="logo">
+        </div>
+        <button id="home" onclick="location.href='{% url 'main' %}'">HOME</button>
+        <button id="districts" onclick="location.href='{% url 'district' 'kor' %}'">DISTRICTS</button>
+        <button id="category" onclick="location.href='{% url 'main' %}'">CATEGORYIES</button>
+    </header>
+
+    {% block content %}
+    <!-- 여기에 개별 페이지의 컨텐트 삽입 -->
+`   {% endblock %}
+    
+</body>
+</html>
