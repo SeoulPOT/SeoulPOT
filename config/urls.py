@@ -24,4 +24,6 @@ urlpatterns = [
     path('district/', include('district.urls')),
     path('reviews/', include('review_tb.urls')),
     path('board/', include('request_board.urls')),
+    path('place/', include('place.urls')),
+    path('review/', include('review.urls')),
 ]

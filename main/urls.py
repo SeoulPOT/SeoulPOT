@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import get_sever_time
 
 urlpatterns = [
-    path('', views.main, name='main'),
+    path('', get_sever_time, name='main')
 ]

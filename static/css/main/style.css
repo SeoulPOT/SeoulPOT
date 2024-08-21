@@ -77,14 +77,14 @@ body, html {
     background-color: rgba(255, 255, 255, 0.7);
     font-family: "Inter", sans-serif;
     border: none;
-    border-radius: 200px;
+    border-radius: 20vh;
     padding: 10px 20px;
     font-size: 2rem;
     font-style: italic;
     font-weight: bold;
     margin: 0 10px;
-    width : 200px;
-    height : 200px;
+    width : 20vh;
+    height : 20vh;
     cursor: pointer;
 }
 
