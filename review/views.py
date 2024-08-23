@@ -48,8 +48,29 @@ def content_reviews(request, place_id, place_category_cd, place_tag_cd):
         tag_name = tag_code.code_name
     except Code_tb.DoesNotExist:
         tag_name = ''
-    
-    #--------------context----------------------------
+
+    # -------------- review daily_tag_cd / with_tag_cd --------------
+    # 각각의 리뷰에서 daily_tag와 with_tag의 code_name을 가져오기
+    for review in page_obj:
+        review.daily_tag_name = ''
+        review.with_tag_name = ''
+
+        if review.review_daily_tag_cd:
+            try:
+                daily_tag = Code_tb.objects.get(code=review.review_daily_tag_cd)
+                review.daily_tag_name = daily_tag.code_name
+            except Code_tb.DoesNotExist:
+                review.daily_tag_name = "Unknown Tag"
+
+        if review.review_with_tag_cd:
+            try:
+                with_tag = Code_tb.objects.get(code=review.review_with_tag_cd)
+                review.with_tag_name = with_tag.code_name
+            except Code_tb.DoesNotExist:
+                review.with_tag_name = "Unknown Tag"
+
+    #---------------------context-------------------------
+
     context = {     
         'place': place,
         'reviews': page_obj,
@@ -61,6 +82,8 @@ def content_reviews(request, place_id, place_category_cd, place_tag_cd):
         'total_pages': paginator.num_pages,
         'parsed_data': parsed_data,
         'review_num': place.place_review_num,
+        'review': review,
+
     }
 
     
