@@ -23,8 +23,6 @@
             <p>{{ place.place_entrance_fee }}</p>
             <p>{{ place.place_place_desc }}</p>
             <p>{{ place.place_place_url }}</p>
-
-
         </div>
     
         <div class="right-content">
@@ -66,6 +64,8 @@
                             <!-- <h3 class="card-title">리뷰 {{ review.review_id }}</h3> -->
                             <p class="card-date">{{ review.review_date }}</p>
                             <p class="card-description">{{ review.review_text }}</p>
+                            <p class="card-daily">데일리 태그: {{ review.daily_tag_name }}</p>
+                            <p class="card-with">위드 태그: {{ review.with_tag_name }}</p>
                         </div>
                     </div>
                 {% endfor %}
