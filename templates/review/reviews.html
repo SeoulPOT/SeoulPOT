@@ -9,47 +9,57 @@
             <img id="place_img" src="{{ place.review_photo }}" alt="{{ place.place_name }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
             <h2 id="place-name">{{ place.place_name }}</h2>
             <div id="map" class="map"></div>
-            <div>
-                <p>{{ place.place_address }}</p>
-                <p>{{ place.place_phone }}</p>
-                <p>{{ place.place_operating_hours }}</p>
-                <p>{{ place.place_entrance_fee }}</p>
-                <p>{{ place.place_keyword_cd }}</p>
-                <p>{{ place.place_category_cd }}</p>
-                <p>{{ place.place_tag_cd }}</p>
-            </div>
+            <p>{{ place.place_address }}</p>
+            <p>{{ place.place_phone }}</p>
+            <p>{{ category_name }}</p>
+            <p>{{ tag_name }}</p>
+            <p>{{ place.place_operating_hours }}</p>
+            <p>{{ place.place_entrance_fee }}</p>
+            <p>{{ place.place_place_desc }}</p>
+            <p>{{ place.place_place_url }}</p>
         </div>
     
         <div class="right-content">
-            <div id="tag_container">
-                <div class="characteristic">
-                    <span>카테고리</span>
-                    <button>카페</button>
-                    <button>가족</button>
-                </div>
-                <div class="tags">
-                    <span>특징</span>
-                    <button>분위기</button>
-                    <button>맛</button>
-                </div>
-                <div class="sort">
-                    <span>정렬 방식</span>
-                    <button onclick="window.location.href='?array=latest'">최신순</button>
-                    <button onclick="window.location.href='?array=oldest'">오래된순</button>
-                </div>
+            <div class="keyword">
+                <span>키워드</span>
+                <button>카페</button>
+                <button>가족</button>
             </div>
+
+            <div class="feature">
+                <span>특징</span>
+                {% for entry in parsed_data %}
+                    <div>
+                        <ul>
+                            {% for key, value in entry.items %}
+                                <li>{{ key }}: {{ value }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+    
+            <div class="sort">
+                <span>정렬 방식</span>
+                <button onclick="window.location.href='?array=latest'">최신순</button>
+                <button onclick="window.location.href='?array=oldest'">오래된순</button>
+            </div>
+            
+            <div class="review_num">
+                <span>리뷰 개수: {{ review_num }}</span>
+            </div>
+
             <!-- Reviews Listing -->
             <div class="cards">
                 {% for review in reviews %}
                     <div class="card">
                         <img src="{{ review.review_photo }}" alt="Review Photo" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
                         <div class="card-content">
-                            <h3 class="card-title">리뷰 {{ review.review_id }}</h3>
+                            <!-- <h3 class="card-title">리뷰 {{ review.review_id }}</h3> -->
                             <p class="card-date">{{ review.review_date }}</p>
                             <p class="card-description">{{ review.review_text }}</p>
-                            <div class="card-footer">
-                                <span>평점: {{ review.review_sentiment|yesno:"좋아요,싫어요" }}</span>
-                            </div>
+                            <p class="card-daily">데일리 태그: {{ review.daily_tag_name }}</p>
+                            <p class="card-with">위드 태그: {{ review.with_tag_name }}</p>
                         </div>
                     </div>
                 {% endfor %}
