@@ -1,4 +1,5 @@
 let is_selected = false;
+let selected_obj;
 let current_district;
 let current_category;
 document.addEventListener('DOMContentLoaded', function() {
@@ -52,12 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         .classed('active', true)
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
     
-                    if(!is_selected){
-                        document.getElementById('district-name').innerText = d.properties.name;
-                    }
-
-                   
-                    if(!is_selected){
+                    if(selected_obj == undefined){
+                        document.getElementById('district-name').innerText = d.properties.name;                    
                         document.getElementById('none_select-info-container').style.display = 'none';
                         document.getElementById('district-container').style.display = 'none';
                         document.getElementById('district-info-container').style.display = 'flex';
@@ -71,8 +68,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
 
                     if (foundItem) {
+                        img_path = `/static/img/${foundItem.district_name}_가로.png`;
+                        console.log('img_path : ', fallbackImage);
                         document.getElementById('selected-district-desc').innerText = foundItem.district_desc;
-                        document.getElementById('selected-district-img').src = foundItem.district_img
+                        document.getElementById('selected-district-img').src = img_path;
                         
                     } else {
                         console.log(`name이 ${d.properties.name} 같은 객체를 찾을 수 없습니다.`);
@@ -86,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
                     
 
-                    if(!is_selected){
+                    if(selected_obj == undefined){
                         document.getElementById('none_select-info-container').style.display = 'flex';
                         document.getElementById('district-container').style.display = 'none';
                         document.getElementById('district-info-container').style.display = 'none';
@@ -96,27 +95,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 })
                 .on('click', function(event, d) {
-                    d3.select(this).classed('clicked', true);
-                    setTimeout(() => {
-                        d3.select(this).classed('clicked', false);
-                    }, 500);
+                    console.log('seleced_distict :', selected_obj);
+                    d3.select(selected_obj).classed('clicked', false);
 
-                    document.getElementById('district-name').innerText = d.properties.name;
-                    
-                    is_selected = true;
-                    document.getElementById('none_select-info-container').style.display = 'none';
-                    document.getElementById('district-container').style.display = 'flex';
-                    document.getElementById('district-info-container').style.display = 'none';
-
-                    var foundItem = districts_list.find(function(item) {
-                        return item.district_name === d.properties.name;
-                    });
-
-                    if (foundItem) {
-                        current_district = foundItem.district_id;
-                        fetchData(categories_list[1].code);
+                    if(selected_obj == this){
+                        selected_obj = undefined;
+                        document.getElementById('none_select-info-container').style.display = 'none';
+                        document.getElementById('district-container').style.display = 'none';
+                        document.getElementById('district-info-container').style.display = 'flex';
                     }
-
+                    else{
+                        selected_obj = this;
+                        is_selected = true;
+                        d3.select(this).classed('clicked', true);
+                        // setTimeout(() => {
+                        //     d3.select(this).classed('clicked', false);
+                        // }, 5);
+    
+                        document.getElementById('district-name').innerText = d.properties.name;
+                        
+                        is_selected = true;
+                        document.getElementById('none_select-info-container').style.display = 'none';
+                        document.getElementById('district-container').style.display = 'flex';
+                        document.getElementById('district-info-container').style.display = 'none';
+    
+                        var foundItem = districts_list.find(function(item) {
+                            return item.district_name === d.properties.name;
+                        });
+    
+                        if (foundItem) {
+                            current_district = foundItem.district_id;
+                            category_code = current_category ? current_category : categories_list[0].code;
+                            
+                            fetchData(category_code);
+                        }
+                    }
                 });
 
             paths.attr('d', path)
@@ -157,9 +170,10 @@ function parseCSV(text) {
 function createStoreItem(store) {
     const div = document.createElement('div');
     div.classList.add('space-box');
-    
+    console.log('store : ', store);
+
     const img = document.createElement('img');
-    img.src = store.img;
+    img.src = store.review_photo;
     img.alt = store.place_name;
     // 이미지 로드에 실패할 경우 대체 이미지 설정
     img.onerror = function() {
@@ -213,14 +227,16 @@ function createStoreItem(store) {
 
 function fetchData(category) {
     current_category = category;
-    fetch(`?district=${current_district}&category=${category}`, {
+
+    fetch(`${current_district}/${current_category}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
     })
     .then(response => response.json())
     .then(data => {
-        DisplayData(data);
+        console.log("data : " , data.data);
+        DisplayData(data.data);
     })
     .catch(error => console.log(error));
 }
@@ -255,7 +271,7 @@ function ResetData()
 
 function MoveToPlacePage()
 {
-    window.location.href = place_page_url+`?district=${current_district}&category=${current_category}` ;
+    window.location.href = place_page_url+`?district_id=${current_district}&place_category_cd=${current_category}` ;
 
     
 }

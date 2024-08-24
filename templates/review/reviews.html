@@ -1,50 +1,48 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ place.place_name }} - 리뷰 페이지</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
-</head>
-<body>
-    <div class="container">
+{% extends 'base/base.html' %}
+
+{% block title %}{{ place.place_name }} - 리뷰 페이지{% endblock %}
+{% load static %}
+{% block content %}
+   
+<div class="container">
         <div class="left-content">
-            <img src="{{ place.img_path }}" alt="{{ place.place_name }}">
-            <h2>{{ place.place_name }}</h2>
+            <img id="place_img" src="{{ place.review_photo }}" alt="{{ place.place_name }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+            <h2 id="place-name">{{ place.place_name }}</h2>
             <div id="map" class="map"></div>
-            <p>{{ place.place_address }}</p>
-            <p>{{ place.place_phone }}</p>
-            <p>{{ place.place_operating_hours }}</p>
-            <p>{{ place.place_entrance_fee }}</p>
-            <p>{{ place.place_keyword_cd }}</p>
-            <p>{{ place.place_category_cd }}</p>
-            <p>{{ place.place_tag_cd }}</p>
+            <div>
+                <p>{{ place.place_address }}</p>
+                <p>{{ place.place_phone }}</p>
+                <p>{{ place.place_operating_hours }}</p>
+                <p>{{ place.place_entrance_fee }}</p>
+                <p>{{ place.place_keyword_cd }}</p>
+                <p>{{ place.place_category_cd }}</p>
+                <p>{{ place.place_tag_cd }}</p>
+            </div>
         </div>
     
         <div class="right-content">
-            <div class="tags">
-                <span>카테고리</span>
-                <button>카페</button>
-                <button>가족</button>
-                <span>특징</span>
-                <button>분위기</button>
-                <button>맛</button>
+            <div id="tag_container">
+                <div class="characteristic">
+                    <span>카테고리</span>
+                    <button>카페</button>
+                    <button>가족</button>
+                </div>
+                <div class="tags">
+                    <span>특징</span>
+                    <button>분위기</button>
+                    <button>맛</button>
+                </div>
+                <div class="sort">
+                    <span>정렬 방식</span>
+                    <button onclick="window.location.href='?array=latest'">최신순</button>
+                    <button onclick="window.location.href='?array=oldest'">오래된순</button>
+                </div>
             </div>
-    
-            <div class="sort">
-                <span>정렬 방식</span>
-                <button onclick="window.location.href='?array=latest'">최신순</button>
-                <button onclick="window.location.href='?array=oldest'">오래된순</button>
-            </div>
-    
             <!-- Reviews Listing -->
             <div class="cards">
                 {% for review in reviews %}
                     <div class="card">
-                        <img src="{{ review.review_photo }}" alt="Review Photo">
+                        <img src="{{ review.review_photo }}" alt="Review Photo" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
                         <div class="card-content">
                             <h3 class="card-title">리뷰 {{ review.review_id }}</h3>
                             <p class="card-date">{{ review.review_date }}</p>
@@ -73,22 +71,24 @@
                 </span>
             </div>
         </div>
-    </div>
+</div>
+{% endblock %}
     
-    
+{% block extra_css %}
+<!-- 이 페이지에서만 사용하는 CSS -->
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/review/style.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'css/review/review.css' %}"> -->
+{% endblock %}
+
+{% block extra_js %}    
     <script>
-        // Naver Map integration
-        var mapOptions = {
-            center: new naver.maps.LatLng(37.5665, 126.9780), // 서울시청 좌표
-            zoom: 10
-        };
-        
-        var map = new naver.maps.Map('map', mapOptions);
-        
-        var marker = new naver.maps.Marker({
-            position: new naver.maps.LatLng(37.5665, 126.9780), // 마커 위치
-            map: map
-        });
+         const place_lat = {{place.place_lat}};
+         const place_lon = {{place.place_lon}};
+         const marker_img = "{% static 'img/marker_img.png' %}";
     </script>
-</body>
-</html>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
+    <script type="text/javascript" src="{% static 'js/review/review.js' %}"></script>
+    
+{% endblock %}
+

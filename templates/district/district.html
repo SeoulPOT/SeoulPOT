@@ -76,10 +76,11 @@
     </script>
     <!-- JSON 데이터를 안전하게 포함 -->
     <script>
-        const districts_list = {{district_list|safe}};
+        const districts_list = {{districts|safe}};
         const categories_list = {{categories|safe}};
         const place_page_url = "{% url 'de-food-place' %}";
         const fallbackImage = "{% static 'img/default.png' %}";
+        const selected_lang  = '{{lang}}';
     </script>
     <script src="{% static '\js\district\district.js' %}"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>

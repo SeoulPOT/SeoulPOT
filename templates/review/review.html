@@ -1,0 +1,77 @@
+{% extends 'base/base.html' %}
+
+{% block title %}spot info{% endblock %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="left-content">
+            <img src="{{shop.img_path}}" alt="shop_image">
+            <h2>{{shop.shop_name}} {{shop_id}}</h2>
+            <p>{{shop.address}}</p>
+            <div id="map" class="map"></div>
+            <p>{{shop.desc}}</p>
+        </div>
+        <div class="right-content">
+            <div class="tags">
+                <span>카테고리</span>
+                <button>#맛집</button>
+                <button>#가족</button>
+                <button>#예약</button>
+            </div>
+            <div class="tags">
+                <span>리뷰 종류</span>
+                <button>#웨이팅</button>
+                <button>#친절</button>
+                <button>#깔끔</button>
+            </div>
+            <div class="sort">
+                <button>감정순</button>
+                <button>최신순</button>
+            </div>
+            <div class="cards">
+
+                {% for review in reviews %}
+                <div class="card">
+                    <img src="https://via.placeholder.com/150" alt="image">
+                    <div class="card-content">
+                        <div>
+                            <h3 class="card-title">제목</h3>
+                            <p class="card-date">2024-07-11</p>
+                        </div>
+                        <p class="card-description">{{review.review_text}}</p>
+                        <div class="card-footer">
+                            <span>16</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Add more cards as needed -->
+            </div>
+        </div>
+    </div>
+ {% endblock %}
+
+
+{% block extra_css %}
+<!-- 이 페이지에서만 사용하는 CSS -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/review/review.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<!-- 이 페이지에서만 사용하는 JS -->
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
+<script>
+    var mapOptions = {
+        center: new naver.maps.LatLng(37.5665, 126.9780), // 서울시청 좌표
+        zoom: 10
+    };
+    var map = new naver.maps.Map('map', mapOptions);
+    var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.5665, 126.9780), // 마커 위치
+        map: map
+    });
+</script>
+<script src="{% static 'js/review/index.js' %}"></script>
+{% endblock %}

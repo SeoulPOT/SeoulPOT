@@ -22,8 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('district/', include('district.urls')),
-    path('reviews/', include('review_tb.urls')),
-    path('board/', include('request_board.urls')),
+    path('reviews/', include('review.urls')),
+    path('board/', include('request.urls')),
     path('place/', include('place.urls')),
     path('review/', include('review.urls')),
 ]

@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Place{% endblock %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="left-panel">
+            <div id="map"></div>
+        </div>
+        <div class="right-panel">
+            <h2>{{district.district_name}}</h2>
+            <div id="place-container">
+                <div class="categories">
+                    {% for category in categories %}
+                        <button id="category" data-category='{{category.code}}'>{{category.code_name}}</button>
+                        {% endfor %}
+                </div>
+                <div class="card-list" id="place-list-container">
+                    {% for place in place_list %}
+                    <button class="card" onclick="location.href='{% url 'review' %}?place_id={{place.place_id}}'">
+                        <img src="{{spot.img}}" alt="건대거리" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+                        <div class="card-content">
+                            <h3>{{place.place_name}}</h3>
+                        </div>
+                        <div class="card-footer">
+                            <span>&hearts; {{spot.likes}}</span>
+                        </div>
+                    </button>
+                    {% endfor %}
+                </div>
+                <div class="card_page_list">
+                    <button>1</button>
+                </div>
+            </div>
+        </div> 
+    </div>
+{% endblock %}
+    {% block extra_css %}
+    <!-- 이 페이지에서만 사용하는 CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/place/place.css' %}">
+    {% endblock %}
+
+
+    {% block extra_js %}
+    <!-- 이 페이지에서만 사용하는 JS -->
+    <script>
+        window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
+        const get_spot_by_category = "{% url 'de-food-place' %}";
+        const review_url = "{% url 'review' %}";
+        var district_obj = {
+            "district_lat": "{{ district.district_lat }}",
+            "district_lon": "{{ district.district_lon }}",
+            "district_name" : "{{district.district_name }}",
+            "district_id" : "{{district.district_id}}",
+            // 필요한 다른 필드들을 여기에 추가
+        };
+        const fallbackImage = "{% static 'img/default1.png' %}";
+        const markerImage = "{% static 'img/manggom0.png' %}";
+        const selected_category = '{{category}}';
+    </script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
+    <script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="{% static 'js/place/map.js' %}"></script>
+    <script src="{% static 'js/place/place.js' %}"></script>    
+    {% endblock %}
+

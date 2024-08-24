@@ -1,18 +1,24 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>새 게시물 작성</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <h1>새 게시물 작성</h1>
-    <form method="post">
-        {% csrf_token %}
-        <textarea name="request_text" rows="5" cols="40"></textarea><br>
-        <button type="submit">작성</button>
-    </form>
-    <a href="{% url 'board_list' %}">뒤로 가기</a>
-</body>
-</html>
+{% extends 'base/base.html' %}
+
+{% block title %}새 게시물 작성{% endblock %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <h1>새 게시물 작성</h1>
+        <form method="post">
+            {% csrf_token %}
+            <textarea name="request_text" rows="5" cols="40"></textarea><br>
+            <button type="submit">작성</button>
+        </form>
+        <a href="{% url 'board_list' %}">뒤로 가기</a>
+    </div>
+{% endblock %}    
+{% block extra_css %}
+<!-- 이 페이지에서만 사용하는 CSS -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/request/style.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<!-- 이 페이지에서만 사용하는 JS -->
+{% endblock %}
