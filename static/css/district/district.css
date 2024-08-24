@@ -447,3 +447,9 @@ main {
         fill: #74B9E1;
     }
 }
+
+#selected-district-img {
+    width: 60%;
+    height: auto;
+
+}

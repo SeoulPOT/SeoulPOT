@@ -1,3 +1,5 @@
+let page_container;
+let review_container;
 document.addEventListener('DOMContentLoaded', function() {
     // Naver Map integration
     var mapOptions = {
@@ -12,4 +14,149 @@ document.addEventListener('DOMContentLoaded', function() {
         map: map,
         icon: marker_img,
     });
+    
+    page_container = document.getElementById('page_container');
+    review_container =  document.getElementById('review_container');
+    console.log('review_container:',review_container);
 });
+
+function toggleFeature() {
+    var moreFeature = document.getElementById('more-feature');
+    var toggleButton = document.getElementById('toggle-button');
+    
+    if (moreFeature.style.display === "none") {
+        moreFeature.style.display = "block";
+        toggleButton.textContent = "v"; // 버튼 텍스트를 "v"로 변경
+    } else {
+        moreFeature.style.display = "none";
+        toggleButton.textContent = "^"; // 버튼 텍스트를 "^"로 변경
+    }
+}
+
+function movePage(page, array) {
+    fetch(`?place_id=${place_id}&page=${page}&array=${array}`, {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"  // 서버가 요청을 AJAX로 인식하게 하는 헤더
+        }
+    })
+    .then(Response => Response.json())
+    .then(data => {
+        console.log("nextReview: ", data);
+        RefreshPage(data.current_page, data.total_pages);
+        SetReviews(data.reviews);   
+    })
+    .catch(error => {
+        console.error('Failed to load review data:', error);
+    });
+}
+
+function RefreshPage(current_page, total_page)
+{
+    console.log('RefreshPage');
+    page_container.innerHTML = '';
+
+    if(current_page != 1){
+        let newButton1 = document.createElement('button');
+        newButton1.className = 'page-button';
+        newButton1.onclick = function() { movePage(1, sort_array) };
+        newButton1.innerHTML = '&laquo; 처음';
+        page_container.appendChild(newButton1);
+
+        let newButton2 = document.createElement('button');
+        newButton2.className = 'page-button';
+        newButton2.onclick = function() { movePage(current_page-1, sort_array) };
+        newButton2.innerHTML = '이전';
+        page_container.appendChild(newButton2);
+    }
+
+    let newSpan = document.createElement('span');
+    newSpan.className = 'current';
+    newSpan.id = 'current_page';
+    newSpan.innerHTML = `Page ${current_page} of ${total_page}. `;
+    page_container.appendChild(newSpan);
+
+    if(current_page != total_page){
+        let newButton1 = document.createElement('button');
+        newButton1.className = 'page-button';
+        newButton1.onclick = function() { movePage(current_page+1, sort_array) };
+        newButton1.innerHTML = '다음';
+        page_container.appendChild(newButton1);
+
+        let newButton2 = document.createElement('button');
+        newButton2.className = 'page-button';
+        newButton2.onclick = function() { movePage(total_page, sort_array) };
+        newButton2.innerHTML = '마지막 &raquo';
+        page_container.appendChild(newButton2);
+    }
+}
+
+function SetReviews(reviews) {
+    // review_container가 배열이나 HTMLCollection이라고 가정
+    review_container.innerHTML = '';
+
+    reviews.forEach(function(review) {
+            // 카드 요소 생성
+            var cardElement = document.createElement('div');
+            cardElement.className = 'card';
+        
+            // 이미지 요소 생성
+            var imgElement = document.createElement('img');
+            imgElement.src = review.review_photo;
+            imgElement.alt = 'Review Photo';
+            imgElement.onerror = function() {
+                this.onerror = null;
+                this.src = '/static/img/default1.png';
+            };
+        
+            // 카드 콘텐츠 요소 생성
+            var cardContentElement = document.createElement('div');
+            cardContentElement.className = 'card-content';
+        
+            // 날짜 요소 생성
+            var dateElement = document.createElement('p');
+            dateElement.className = 'card-date';
+            dateElement.textContent = review.review_date;
+        
+            // 데일리 태그 요소 생성 (존재하는 경우)
+            if (review.daily_tag_name) {
+                var dailyTagElement = document.createElement('p');
+                dailyTagElement.className = 'card-daily';
+                dailyTagElement.textContent = '데일리 태그: ' + review.daily_tag_name;
+                cardContentElement.appendChild(dailyTagElement);
+            }
+        
+            // 위드 태그 요소 생성 (존재하는 경우)
+            if (review.with_tag_name) {
+                var withTagElement = document.createElement('p');
+                withTagElement.className = 'card-with';
+                withTagElement.textContent = '위드 태그: ' + review.with_tag_name;
+                cardContentElement.appendChild(withTagElement);
+            }
+        
+            // 리뷰 텍스트 요소 생성
+            var descriptionElement = document.createElement('p');
+            descriptionElement.className = 'card-description';
+            descriptionElement.textContent = review.review_text;
+        
+            // 각 요소를 카드 콘텐츠에 추가
+            cardContentElement.appendChild(dateElement);
+            cardContentElement.appendChild(descriptionElement);
+        
+            // 이미지와 카드 콘텐츠를 카드에 추가
+            cardElement.appendChild(imgElement);
+            cardElement.appendChild(cardContentElement);
+        
+            
+            // 카드 요소를 리뷰 컨테이너에 추가
+            review_container.appendChild(cardElement);
+        
+    });
+}
+
+function setSortOption(array) {
+    console.log(array);
+    console.log(sort_array);
+    sort_array = array;
+    movePage(1, array);
+}

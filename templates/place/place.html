@@ -17,7 +17,7 @@
                 </div>
                 <div class="card-list" id="place-list-container">
                     {% for place in place_list %}
-                    <button class="card" onclick="location.href='{% url 'review' %}?place_id={{place.place_id}}'">
+                    <button class="card" onclick="location.href='{% url 'project-content_reviews' %}?place_id={{place.place_id}}'">
                         <img src="{{spot.img}}" alt="건대거리" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
                         <div class="card-content">
                             <h3>{{place.place_name}}</h3>
@@ -28,8 +28,20 @@
                     </button>
                     {% endfor %}
                 </div>
-                <div class="card_page_list">
-                    <button>1</button>
+                <div class="pagination">
+                    <span id="page_container" class="step-links" >
+                        {% if current_page != 1 %}
+                            <button class="page-button" onclick="movePage(1, '{{ array }}')">&laquo; 처음</button>
+                            <button class="page-button" onclick="movePage({{ current_page }}-1, '{{ array }}')">이전</button>
+                        {% endif %}
+                        <span class="current" id="current_page">
+                            Page {{ current_page }} of {{ total_pages }}.
+                        </span>
+                        {% if current_page != total_pages %}
+                            <button class="page-button" onclick="movePage({{ current_page}}+1, '{{ array }}')">다음</button>
+                            <button class="page-button" onclick="movePage({{ total_pages }}, '{{ array }}')">마지막 &raquo;</button>
+                        {% endif %}
+                    </span>
                 </div>
             </div>
         </div> 
@@ -47,7 +59,7 @@
     <script>
         window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
         const get_spot_by_category = "{% url 'de-food-place' %}";
-        const review_url = "{% url 'review' %}";
+        const review_url = "{% url 'project-content_reviews' %}";
         var district_obj = {
             "district_lat": "{{ district.district_lat }}",
             "district_lon": "{{ district.district_lon }}",
@@ -55,8 +67,10 @@
             "district_id" : "{{district.district_id}}",
             // 필요한 다른 필드들을 여기에 추가
         };
+        const current_page = {{current_page}};
+        const total_pages = {{total_pages}};
         const fallbackImage = "{% static 'img/default1.png' %}";
-        const markerImage = "{% static 'img/manggom0.png' %}";
+        const markerImage = "{% static 'img/marker_img.png' %}";
         const selected_category = '{{category}}';
     </script>
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>

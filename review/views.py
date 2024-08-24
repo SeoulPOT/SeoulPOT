@@ -1,12 +1,14 @@
 from django.shortcuts import render, get_object_or_404
-from main.models import PlaceTb, ReviewTb
+from main.models import PlaceTb, ReviewTb, CodeTb
 from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef
+from django.http import JsonResponse
 import json
 
-def content_reviews(request, place_id, place_category_cd, place_tag_cd): 
+def content_reviews(request): 
     place_id = request.GET.get('place_id')
     place_category_cd = request.GET.get('place_category_cd')
+    
 
     if place_category_cd == 'pc03': #popup 코드
         return render(request, 'popup_reviews.html', {'place_id': place_id})
@@ -33,16 +35,22 @@ def content_reviews(request, place_id, place_category_cd, place_tag_cd):
     if array == 'oldest':
         reviews = reviews.order_by('review_date')
     
-    paginator = Paginator(reviews, 4)  # 리뷰를 6개씩 나눠서 페이지를 나눈다
+    paginator = Paginator(reviews, 6)  # 리뷰를 6개씩 나눠서 페이지를 나눈다
     page_obj = paginator.get_page(page)  # 페이지 번호에 해당하는 리뷰 객체 가져오기
-
+    
+    review_field_names = [field.name for field in ReviewTb._meta.fields]
+    serialized_reviews = list(page_obj.object_list.values(*review_field_names))
     #------------------place_feature--------------------
-    raw_feature = place.place_feature
     features = {}
+    raw_feature = place.place_feature
+    
     if raw_feature:
+        print(f'raw_feature: ${raw_feature}');
         for item in raw_feature.split(","):
             key, value = item.replace("'", "").split(" : ")
             features[key.strip()] = int(value.strip())
+    else:
+        print('raw_feature none')
     
     parsed_data = [features]
 
@@ -50,16 +58,16 @@ def content_reviews(request, place_id, place_category_cd, place_tag_cd):
 
     # place_category_cd와 일치하는 code_name 가져오기
     try:
-        category_code = Code_tb.objects.get(code=place_category_cd)
+        category_code = CodeTb.objects.get(code=place_category_cd)
         category_name = category_code.code_name
-    except Code_tb.DoesNotExist:
+    except CodeTb.DoesNotExist:
         category_name = ''
 
     # place_tag_cd와 일치하는 code_name 가져오기
     try:
-        tag_code = Code_tb.objects.get(code=place_tag_cd)
+        tag_code = CodeTb.objects.get(code=place.place_tag_cd)
         tag_name = tag_code.code_name
-    except Code_tb.DoesNotExist:
+    except CodeTb.DoesNotExist:
         tag_name = ''
 
     # -------------- review daily_tag_cd / with_tag_cd --------------
@@ -70,16 +78,16 @@ def content_reviews(request, place_id, place_category_cd, place_tag_cd):
 
         if review.review_daily_tag_cd:
             try:
-                daily_tag = Code_tb.objects.get(code=review.review_daily_tag_cd)
+                daily_tag = CodeTb.objects.get(code=review.review_daily_tag_cd)
                 review.daily_tag_name = daily_tag.code_name
-            except Code_tb.DoesNotExist:
+            except CodeTb.DoesNotExist:
                 review.daily_tag_name = "Unknown Tag"
 
         if review.review_with_tag_cd:
             try:
-                with_tag = Code_tb.objects.get(code=review.review_with_tag_cd)
+                with_tag = CodeTb.objects.get(code=review.review_with_tag_cd)
                 review.with_tag_name = with_tag.code_name
-            except Code_tb.DoesNotExist:
+            except CodeTb.DoesNotExist:
                 review.with_tag_name = "Unknown Tag"
 
     #---------------------context-------------------------
@@ -99,10 +107,14 @@ def content_reviews(request, place_id, place_category_cd, place_tag_cd):
 
     }
 
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        context = {
+            'array': array,
+            'reviews': serialized_reviews,
+            'current_page': page_obj.number,
+            'total_pages': paginator.num_pages,
+        }
+        return JsonResponse(context, safe=False)
+
     
     return render(request, 'review/reviews.html', context)
-
-
-
-
-

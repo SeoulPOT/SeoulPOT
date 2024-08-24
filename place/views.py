@@ -61,17 +61,22 @@ def category(request):
         field_names.append('review_photo')
         serialized_places = list(page_obj.object_list.values(*field_names))
     
-        print(field_names)
-        return JsonResponse({
-            'place_list': serialized_places
-        }, safe=False)
+        data = {
+            'place_list': serialized_places,
+            'current_page' : page,
+            'total_pages' : paginator.num_pages,
+
+        }
+        return JsonResponse(data, safe=False)
 
     # Render the HTML template with context
     context = {
         'district': district,
         'place_list': list(page_obj),
         'categories': list(CodeTb.objects.filter(parent_code='PC').values()),
-        'category' : place_category_cd
+        'category' : place_category_cd,
+        'current_page' : page,
+        'total_pages' : paginator.num_pages,
     }
     return render(request, 'place/place.html', context)
 

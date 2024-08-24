@@ -112,13 +112,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function addMarker(lat, lon){
  // 마커를 생성하고 지도에 추가
-    console.log("lat:", lat);
-    console.log("lon:", lon);
     var marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.5665, 126.9780), // 마커의 위치 (서울)
+        position: new naver.maps.LatLng(lat, lon), // 마커의 위치 (서울)
         map: map, // 마커를 추가할 지도 객체
         icon: markerImage,
     });
+    return marker;
+}
 
-  
+function clearMarkers(markers){
+    console.log('markers : ', markers);
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    
+    // 배열 비우기 (선택 사항)
+    markers = [];
 }

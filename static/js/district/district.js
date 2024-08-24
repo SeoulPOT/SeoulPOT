@@ -68,10 +68,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
 
                     if (foundItem) {
-                        img_path = `/static/img/${foundItem.district_name}_가로.png`;
+                        img_path = staticPath+`/${foundItem.district_name}_가로.png`;
                         console.log('img_path : ', fallbackImage);
+                        console.log('img_path : ', img_path);
                         document.getElementById('selected-district-desc').innerText = foundItem.district_desc;
                         document.getElementById('selected-district-img').src = img_path;
+                        document.getElementById('selected-district-img').onerror = function() {
+                            this.onerror = null;
+                            this.src = '/static/img/default1.png';
+                        };
                         
                     } else {
                         console.log(`name이 ${d.properties.name} 같은 객체를 찾을 수 없습니다.`);
