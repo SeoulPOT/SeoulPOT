@@ -16,47 +16,48 @@ body {
 
 .container {
     display: flex;
-    background-color: #ffffff;
-    /* box-shadow: 0 0 15px rgba(0,0,0,0.1); */
     border-radius: 15px;
     overflow: hidden;
     width: 90%;
-    height: 100%;
     margin-top: 70px;
+    align-items: center;
 }
 
 .left-content {
     width: 20%;
     min-width: 300px;
-    background-color: white;
+    height: 100%;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
     margin: 10px;
-     /* flex-grow: 1; */
     flex-grow: 1;
-    /* border-right: 1px solid #ddd; */
 }
+
 
 .right-content {
     width: 50%;
     min-width: 300px;
-    background-color: white;
+    height : 90%;
     padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     margin: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-/* .left-content, .right-content {
-    background: white;
+
+#left-box{
+    height : 100%;
+    background-color: white;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin: 10px;
-} */
+    padding: 20px;
+}
+
+#right-box{
+    width: 100%;
+    height : 100%;
+}
 
 .left-content img {
     width: 100%;
@@ -69,28 +70,30 @@ body {
     flex-direction: column;
 }
 
-#tag_container
-{
+#tag_container {
     width: 100%;
-    margin: 0px 10px;
+    padding: 0 10px; 
+    box-sizing: border-box; 
 }
 
 #tag_container .tags {
     margin-bottom: 0px;
+    text-align: left;
 }
 
 #tag_container .characteristic {
     margin-bottom: 15px;
+    text-align: left; 
 }
 
 #tag_container .sort {
     margin-bottom: 10px;
-    width: 100%; /* 전체 너비를 차지하도록 설정 */
-    text-align: right; /* 텍스트와 버튼을 오른쪽 정렬 */
+    width: 100%; 
+    text-align: right; 
 }
 
+
 .tags span, .sort span, .characteristic span{
-    margin-right: 10px;
     color: gray;
     font-size: 0.9em;
 }
@@ -99,7 +102,6 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0px;
-    overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
@@ -109,50 +111,63 @@ body {
     flex-direction: row;
     background: white;
     padding: 10px 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start; /* 아이템들을 상단에 정렬 */
     gap: 15px;
     margin: 10px;
+    transition: transform 0.2s ease-in-out; /* 호버 시 확대 효과 */
+}
+
+.card:hover {
+    transform: scale(1.03); /* 살짝 확대 */
 }
 
 .card img {
     width: 25%;
     height: auto; /* 높이는 자동으로 설정 */
     aspect-ratio: 1 / 1;
-    border-radius: 10px;
-}
+    border-radius: 10px;}
 
 .card-content {
-    padding: 10px 0;
+    flex: 1; /* 내용이 나머지 공간을 채우도록 */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .card-title {
     font-size: 1.2em;
-    margin-bottom: 10px;
+    margin: 5px 0px ;
 }
 
-.card-date {
+.card-date,
+.card-daily,
+.card-with {
     font-size: 0.8em;
     color: gray;
-    margin-bottom: 10px;
+    margin: 5px 0px;
 }
 
 .card-description {
     font-size: 0.9em;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    line-height: 1.4;
 }
 
 .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: auto; /* 푸터가 내용의 하단에 위치하도록 */
 }
+
 
 .map {
     width: 100%;
-    height: 200px;
+    height: 30%;
 }
 
 #place-name {
@@ -161,34 +176,75 @@ body {
 }
 
 
+.feature-container {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
 
+.feature-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+}
 
 .feature {
+    flex: 1; 
+    padding-right: 10px;
     display: flex;
-    align-items: center;
+}
+
+.feature-title {
+    font-size: 1.2em;
 }
 
 .first-item {
-    margin-left: 10px;
-    font-weight: bold;
-}
-
-#toggle-button {
-    margin-left: 10px;
-    background-color: #f5f5f5;
-    border: none;
-    cursor: pointer;
-    padding: 5px 10px;
-    font-size: 16px;
+    padding-top: 4px;
 }
 
 #more-feature {
+    display: none; 
     margin-top: 10px;
 }
+
+.additional-item {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+#toggle-button {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#toggle-button:hover {
+    background-color: #e0e0e0;
+}
+
+#toggle-button:focus {
+    outline: none; /* Remove default focus outline */
+}
+
 
 .card-daily, .card-with {
     font-size: 0.7em;
 }
+
+#review_container {
+    width: 100%;
+    height: 80%;
+    overflow-y: auto;
+}
+
 
 #place-container {
     background: #D4CBF8;
@@ -209,23 +265,22 @@ body {
 .pagination {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 20px;
     gap: 10px;
-    height: 6vh;
+    height: 10%;
     width: 100%;
+    align-items: center;
 }
 
 .page-button {
     font-size: 25px;
-    color: #ffffff;
-    background-color: #D4CBF8;
+    color: #d3bafb;
+    background-color: #F6F5FE;
     border: 0px;
 }
 .page-button.active {
     font-size: 25px;
     color: #7a59ae;
     font-weight: 100;
-    /* background-color: #6a4d9a; */
     border: 0px;
 }
 
@@ -234,3 +289,4 @@ body {
     transition: color 0.4s ease;
     
 }
+

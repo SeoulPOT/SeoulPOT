@@ -29,10 +29,10 @@ function toggleFeature() {
     
     if (moreFeature.style.display === "none") {
         moreFeature.style.display = "block";
-        toggleButton.textContent = "v"; // 버튼 텍스트를 "v"로 변경
+        toggleButton.textContent = "-"; // 버튼 텍스트를 "v"로 변경
     } else {
         moreFeature.style.display = "none";
-        toggleButton.textContent = "^"; // 버튼 텍스트를 "^"로 변경
+        toggleButton.textContent = "+"; // 버튼 텍스트를 "^"로 변경
     }
 }
 

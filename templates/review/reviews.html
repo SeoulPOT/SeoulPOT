@@ -5,84 +5,83 @@
 {% block content %}
 
 <div class="container">
-        <div class="left-content">
+    <div class="left-content">
+        <div id="left-box">
             <img id="place_img" src="{{ place.review_photo }}" alt="{{ place.place_name }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
             <h2 id="place-name">{{ place.place_name }}</h2>
+            <p>📝 리뷰 {{ review_num }}개</p>
+            <p>{{ category_name }}</p>
+            <p>{{ tag_name }}</p>
+            <p>⏰ {{ place.place_operating_hours }}</p>
+            <p>📞 {{ place.place_phone }}</p>
+            <p>{{ place.place_entrance_fee }}</p>
+            <p>{{ place.place_place_desc }}</p>
             <div id="map" class="map"></div>
-            <div>
-                <p>{{ place.place_address }}</p>
-                <p>{{ place.place_phone }}</p>
-                <p>{{ category_name }}</p>
-                <p>{{ tag_name }}</p>
-                <p>{{ place.place_operating_hours }}</p>
-                <p>{{ place.place_entrance_fee }}</p>
-                <p>{{ place.place_place_desc }}</p>
-                <p>{{ place.place_place_url }}</p>
-            </div>
+            <address>
+                <p>🗺️ {{ place.place_address }}</p>
+            </address>
+            <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
         </div>
-    
-        <div class="right-content">
+    </div>
+
+    <div class="right-content">
+        <div id="right-box">
             <div id="tag_container">
                 <div class="keyword">
-                    <span>키워드</span>
-                    <button>카페</button>
-                    <button>가족</button>
+                    <span>🔑 키워드 : </span>
+                    <button># 카페</button>
+                    <button># 가족</button>
+                </div>
+                <div class="feature-box">
+                    <div class="feature">
+                        <span>📢 특징 :</span>
+                        {% if parsed_data %}
+                            <span class="first-item">
+                                {% for key, value in parsed_data.0.items %}
+                                    {% if forloop.first %}
+                                        {{ key }}: {{ value }}
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                            <div id="more-feature" style="display: none;">
+                                {% for key, value in parsed_data.0.items %}
+                                    {% if not forloop.first %}
+                                        <span>{{ key }}: {{ value }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- <button id="toggle-button" onclick="toggleFeature()">+</button> -->
                 </div>
 
-                <div class="feature">
-                    <span>특징:</span>
-                    {% if parsed_data %}
-                        <span class="first-item">
-                            {% for key, value in parsed_data.0.items %}
-                                {% if forloop.first %}
-                                    {{ key }}: {{ value }}
-                                {% endif %}
-                            {% endfor %}
-                        </span>
-                        <button id="toggle-button" onclick="toggleFeature()">^</button>
-                        <div id="more-feature" style="display: none;">
-                            {% for key, value in parsed_data.0.items %}
-                                {% if not forloop.first %}
-                                    <span>{{ key }}: {{ value }}</span>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-        
                 <div class="sort">
                     <span>정렬 방식</span>
                     <button onclick="setSortOption('latest')">최신순</button>
                     <button onclick="setSortOption('oldest')">오래된순</button>
-                    <span>리뷰 개수: {{ review_num }}</span>
-                </div>
-                
-                <div class="review_num">
-                    
                 </div>
             </div>
-            <!-- Reviews Listing -->
-            <div id="review_container" class="cards" >
+
+            <div id="review_container" class="cards">
                 {% for review in reviews %}
                     <div class="card">
                         <img src="{{ review.review_photo }}" alt="Review Photo" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
                         <div class="card-content">
-                            <!-- <h3 class="card-title">리뷰 {{ review.review_id }}</h3> -->
                             <p class="card-date">{{ review.review_date }}</p>
-                            {% if review.daily_tag_name  %}
-                                <p class="card-daily">데일리 태그: {{ review.daily_tag_name }}</p>
+                            {% if review.daily_tag_name %}
+                                <p class="card-daily">방문 목적: {{ review.daily_tag_name }}</p>
                             {% endif %}
-                            {% if review.with_tag_name  %}
-                                <p class="card-with">위드 태그: {{ review.with_tag_name }}</p>
+                            {% if review.with_tag_name %}
+                                <p class="card-with">함께 방문: {{ review.with_tag_name }}</p>
                             {% endif %}
                             <p class="card-description">{{ review.review_text }}</p>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-    
+
             <div class="pagination">
-                <span id="page_container" class="step-links" >
+                <span id="page_container" class="step-links">
                     {% if reviews.has_previous %}
                         <button class="page-button" onclick="movePage(1, '{{ array }}')">&laquo; 처음</button>
                         <button class="page-button" onclick="movePage({{ reviews.previous_page_number }}, '{{ array }}')">이전</button>
@@ -97,28 +96,25 @@
                 </span>
             </div>
         </div>
+    </div>
 </div>
 {% endblock %}
-    
+
 {% block extra_css %}
 <!-- 이 페이지에서만 사용하는 CSS -->
-{% load static %}
-    <link rel="stylesheet" href="{% static 'css/review/style.css' %}">
-    <!-- <link rel="stylesheet" href="{% static 'css/review/review.css' %}"> -->
+<link rel="stylesheet" href="{% static 'css/review/style.css' %}">
 {% endblock %}
 
-{% block extra_js %}    
-    <script>
-        const place_lat = {{place.place_lat}};
-        const place_lon = {{place.place_lon}};
-        const place_id = {{place.place_id}};
-        let sort_array = '{{array}}';
-        const marker_img = "{% static 'img/marker_img.png' %}";
-        const current_page = {{current_page}};
-        const total_pages = {{total_pages}};
-    </script>
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
-    <script type="text/javascript" src="{% static 'js/review/review.js' %}"></script>
-    
+{% block extra_js %}
+<script>
+    const place_lat = {{place.place_lat}};
+    const place_lon = {{place.place_lon}};
+    const place_id = {{place.place_id}};
+    let sort_array = '{{array}}';
+    const marker_img = "{% static 'img/marker_img.png' %}";
+    const current_page = {{current_page}};
+    const total_pages = {{total_pages}};
+</script>
+<script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
+<script src="{% static 'js/review/review.js' %}"></script>
 {% endblock %}
-
