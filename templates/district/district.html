@@ -26,7 +26,7 @@
                 <div id="detail">
                     <div id="district-category">
                         {% for category in categories %}
-                        <button id="category" onclick="fetchData('{{category.code}}')">{{category.code_name}}</button>
+                        <button id="category" data-value="{{category.code}}" onclick="fetchData('{{category.code}}')">{{category.code_name}}</button>
                         {% endfor %}
                     </div>
                     <div id="district-space">

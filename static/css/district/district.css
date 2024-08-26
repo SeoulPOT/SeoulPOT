@@ -231,6 +231,11 @@ main {
     color: #fff;
 }
 
+#district-category button.active {
+    background-color: #6a4d9a;
+    color: #fff;
+}
+
 /* District Space */
 #district-space {
     display: flex;

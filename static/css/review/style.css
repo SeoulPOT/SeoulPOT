@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'PTBandocheB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/PTBandocheB.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -91,7 +98,7 @@ body {
 .cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 0px;
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -153,9 +160,8 @@ body {
     margin-bottom: 10px;
 }
 
-.pagination {
-    margin-top: 10px;
-}
+
+
 
 .feature {
     display: flex;
@@ -184,18 +190,47 @@ body {
     font-size: 0.7em;
 }
 
+#place-container {
+    background: #D4CBF8;
+    padding: 20px;
+    border-radius: 20px;
+    width: 90%;
+    height: 90%;
+    overflow-y: hidden;
+
+}
+
+#page {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    gap: 10px;
+    height: 6vh;
+    width: 100%;
+}
+
 .page-button {
-    background: none; /* 기본 버튼 배경 제거 */
-    border: none; /* 기본 버튼 테두리 제거 */
-    color: blue; /* 링크와 같은 색상 적용 */
-    text-decoration: underline; /* 링크 스타일의 밑줄 추가 */
-    cursor: pointer; /* 클릭 가능한 커서로 변경 */
-    padding: 0; /* 패딩 제거 */
-    font-size: 16px; /* 텍스트 크기 조정 */
-    font-family: inherit; /* 부모 요소의 폰트 상속 */
-    margin: 0px 5px;
+    font-size: 25px;
+    color: #ffffff;
+    background-color: #D4CBF8;
+    border: 0px;
+}
+.page-button.active {
+    font-size: 25px;
+    color: #7a59ae;
+    font-weight: 100;
+    /* background-color: #6a4d9a; */
+    border: 0px;
 }
 
 .page-button:hover {
-    color: darkblue; /* 마우스 오버 시 색상 변경 */
+    color: #6a4d9a;
+    transition: color 0.4s ease;
+    
 }

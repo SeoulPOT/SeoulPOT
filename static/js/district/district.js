@@ -91,9 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     
 
                     if(selected_obj == undefined){
-                        document.getElementById('none_select-info-container').style.display = 'flex';
+                        document.getElementById('none_select-info-container').style.display = 'none'; // flex
                         document.getElementById('district-container').style.display = 'none';
-                        document.getElementById('district-info-container').style.display = 'none';
+                        document.getElementById('district-info-container').style.display = 'flex'; // none
                         document.getElementById('district-name').innerText = 'ㅤ';
                     }
 
@@ -211,27 +211,22 @@ function createStoreItem(store) {
     return div;
 }
 
-// async function loadAndDisplayData() {
-//     const csvUrl = window.district_temp_place;
-//     const csvText = await fetchCSV(csvUrl);
-//     const data = parseCSV(csvText);
-
-//     const spaceBoxes = document.querySelectorAll('#district-space #space-container');
-//     spaceBoxes.forEach((box, index) => {
-//         if (data[index]) {
-//             box.innerHTML = ''; // Clear existing content
-//             box.appendChild(createStoreItem(data[index]));
-//         }
-//     });
-// }
-
-//document.addEventListener('DOMContentLoaded', loadAndDisplayData);
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 
 function fetchData(category) {
     current_category = category;
+
+    category_container = document.querySelectorAll('#district-category > button');
+    category_container.forEach(btn => { 
+        console.log('btn : ' , btn);
+        console.log('data-value:', btn.getAttribute('data-value'));
+        if(btn.getAttribute('data-value') == current_category )
+            btn.classList.add('active'); 
+        else
+            btn.classList.remove('active');
+    });
+            
 
     fetch(`${current_district}/${current_category}`, {
         headers: {

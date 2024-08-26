@@ -12,9 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //Init
     cardList.innerHTML = '';
+    
     clearMarkers(markers);
-    loadMoreObjects();
-    // RefreshPage(current_page, total_pages);
+    loadMoreObjects(1);
+    SetPagination(current_page, total_pages);
+    SetCategoryActive(current_category);
 
     categories.forEach(button => {
         button.addEventListener('click', function() {
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
             //     .then(data => {
             //         console.log("data :", data);
             //         cardList.innerHTML = '';
-            //         RefreshPage(data.current_page, data.total_pages);
+            //         SetPagination(data.current_page, data.total_pages);
 
             //         newShops = data.place_list;
 
@@ -110,7 +112,7 @@ function loadMoreObjects(page) {
     })
     .then(data => {
         console.log(data);
-        RefreshPage(data.current_page, data.total_pages);
+        SetPagination(data.current_page, data.total_pages);
         if (data['place_list'].length > 0) {
             const buttonList = document.querySelector('.card-list');
             const currentPage = page;
@@ -171,41 +173,57 @@ function loadMoreObjects(page) {
     });
 }
 
-function RefreshPage(current_page, total_page)
+function SetPagination(current_page, total_page)
 {
+    console.log("current_page", current_page);
     page_container.innerHTML = '';
 
-    if(current_page != 1){
+    current_page -= 1;
+    page_group_index = Math.floor(current_page / 5);
+    page_group_page_index = current_page % 5 ; 
+    total_group_index = Math.floor(total_page / 5);
+    total_group_page_index = total_page % 5 ; 
+
+    if(page_group_index != 0){
         let newButton1 = document.createElement('button');
         newButton1.className = 'page-button';
-        newButton1.onclick = function() { movePage(1) };
-        newButton1.innerHTML = '&laquo; 처음';
+        newButton1.onclick = function() { movePage((page_group_index-1)*5+1) };
+        newButton1.innerHTML = '&laquo; 이전';
         page_container.appendChild(newButton1);
 
-        let newButton2 = document.createElement('button');
-        newButton2.className = 'page-button';
-        newButton2.onclick = function() { movePage(current_page-1) };
-        newButton2.innerHTML = '이전';
-        page_container.appendChild(newButton2);
+        // let newButton2 = document.createElement('button');
+        // newButton2.className = 'page-button';
+        // newButton2.onclick = function() { movePage(current_page-1) };
+        // newButton2.innerHTML = '이전';
+        // page_container.appendChild(newButton2);
     }
 
-    let newSpan = document.createElement('span');
-    newSpan.className = 'current';
-    newSpan.id = 'current_page';
-    newSpan.innerHTML = `Page ${current_page} of ${total_page}. `;
-    page_container.appendChild(newSpan);
-
-    if(current_page != total_page){
+    for (let i = 1; i <= 5 && ((page_group_index)*5+i) <= total_page; i++) {
         let newButton1 = document.createElement('button');
         newButton1.className = 'page-button';
-        newButton1.onclick = function() { movePage(current_page+1) };
-        newButton1.innerHTML = '다음';
+        newButton1.onclick = function() { movePage((page_group_index)*5+i) };
+        newButton1.innerHTML = `${(page_group_index)*5+i}`;
+        
+        console.log(`${current_page} ${i-1} ${page_group_page_index}`);
+        if( i-1 == page_group_page_index ){
+            newButton1.classList.add('active');
+        }
+        
         page_container.appendChild(newButton1);
+        
+    }
+
+    if(page_group_index != total_group_index){
+        // let newButton1 = document.createElement('button');
+        // newButton1.className = 'page-button';
+        // newButton1.onclick = function() { movePage(current_page+1) };
+        // newButton1.innerHTML = '다음';
+        // page_container.appendChild(newButton1);
 
         let newButton2 = document.createElement('button');
         newButton2.className = 'page-button';
-        newButton2.onclick = function() { movePage(total_page) };
-        newButton2.innerHTML = '마지막 &raquo';
+        newButton2.onclick = function() { movePage((page_group_index+1)*5+1) };
+        newButton2.innerHTML = '다음 &raquo';
         page_container.appendChild(newButton2);
     }
 }
@@ -214,4 +232,13 @@ function movePage(page) {
     clearMarkers(markers);
     cardList.innerHTML = '';
     loadMoreObjects(page);
+}
+
+function SetCategoryActive(category, category_container){
+    // category_container.forEach(btn => { 
+    //     if(btn.getAttribute('data-value') == category )
+    //         btn.classList.add('active'); 
+    //     else
+    //         btn.classList.remove('active');
+    // });
 }

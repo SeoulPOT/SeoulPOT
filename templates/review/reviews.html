@@ -109,11 +109,13 @@
 
 {% block extra_js %}    
     <script>
-         const place_lat = {{place.place_lat}};
-         const place_lon = {{place.place_lon}};
-         const place_id = {{place.place_id}};
-         let sort_array = '{{array}}';
-         const marker_img = "{% static 'img/marker_img.png' %}";
+        const place_lat = {{place.place_lat}};
+        const place_lon = {{place.place_lon}};
+        const place_id = {{place.place_id}};
+        let sort_array = '{{array}}';
+        const marker_img = "{% static 'img/marker_img.png' %}";
+        const current_page = {{current_page}};
+        const total_pages = {{total_pages}};
     </script>
     <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
     <script type="text/javascript" src="{% static 'js/review/review.js' %}"></script>
