@@ -144,7 +144,7 @@ function loadMoreObjects(page) {
                 
                 const category = document.createElement('div');
                 category.className = 'card-category';
-                category.innerHTML = `${place.place_category_cd}}`;
+                category.innerHTML = `${place.place_category_cd}`;
 
 
                 // 푸터 생성
@@ -153,13 +153,11 @@ function loadMoreObjects(page) {
                 footer.innerHTML = `📝 리뷰 ${place.place_review_num}개`;
 
             
-                // 카드 내용에 제목과 푸터 추가
                 cardContent.appendChild(title);
                 cardContent.appendChild(category);
                 cardContent.appendChild(footer);
 
             
-                // 버튼에 카드 추가
                 button.appendChild(card_img);
                 button.appendChild(cardContent);
 
