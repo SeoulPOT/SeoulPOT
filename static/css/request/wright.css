@@ -1,0 +1,55 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+.container {
+    width: 80%;
+    max-width: 800px;
+    background: #F6F5FE;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+h1 {
+    text-align: center;
+    color: #333;
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
+label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #555;
+}
+input[type="text"], textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+textarea {
+    resize: vertical;
+    max-height: 300px;
+    min-height: 300px;
+}
+button {
+    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    background-color: #9077CB;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #6a4d9a;
+}

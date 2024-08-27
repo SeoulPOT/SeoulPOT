@@ -11,9 +11,9 @@ def board_create(request):
     if request.method == "POST":
         request_text = request.POST.get('request_text')
         request_ip = get_client_ip(request)
-        new_request = Request(request_text=request_text, request_ip=request_ip, request_time=timezone.now())
+        new_request = RequestTb(request_text=request_text, request_ip=request_ip, request_time=timezone.now())
         new_request.save()
-        return redirect('board_list')
+        return redirect('main')
     return render(request, 'request/board_create.html')
 
 def get_client_ip(request):
