@@ -41,13 +41,18 @@ def category(request):
         .values('review_photo')[:1]
     )
 
+    catagoty_tag_subquery = CodeTb.objects.filter(
+                code=OuterRef('place_tag_cd'),
+                parent_code='pt',
+            ).values('code_name')[:1]
 
     # Filter places based on district and category, annotate with the first photo
     places = PlaceTb.objects.filter(
         district_id=district_id,
         place_category_cd=place_category_cd
     ).annotate(
-        review_photo=Subquery(photo_subquery)
+        review_photo=Subquery(photo_subquery),
+        place_tag_name =  Subquery(catagoty_tag_subquery)
     ).order_by('-place_review_num')
 
     # Paginate the results
@@ -63,7 +68,7 @@ def category(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         print('XMLHttpRequest')
         field_names = [field.name for field in PlaceTb._meta.fields]
-        field_names.append('review_photo')
+        field_names.extend(['review_photo','place_tag_name'])
         serialized_places = list(page_obj.object_list.values(*field_names))
     
         data = {
@@ -78,7 +83,7 @@ def category(request):
     context = {
         'district': district,
         'place_list': list(page_obj),
-        'categories': list(CodeTb.objects.filter(parent_code='PC').values()),
+        'categories': list(CodeTb.objects.filter(parent_code='PC').exclude(code='PC03').values()),
         'category' : place_category_cd,
         'current_page' : page,
         'total_pages' : paginator.num_pages,

@@ -195,7 +195,7 @@ function createStoreItem(store) {
 
     const tag = document.createElement('p');
     
-    tag.textContent = `${store.place_category_cd}`;
+    tag.textContent = `${store.place_tag_name}`;
     tag.id = 'place-tag';
 
     const reviews = document.createElement('p');

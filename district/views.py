@@ -26,7 +26,7 @@ def get_districts(request, lang):
                 }
                 for district in districts
             ],
-            "categories" : list(CodeTb.objects.filter(parent_code='PC').values()),
+            "categories" : list(CodeTb.objects.filter(parent_code='PC').exclude(code='PC03').values()),
             "lang" : lang,
         }
         return response_data 
@@ -68,6 +68,10 @@ def choose_district(district_id, place_category_cd):
         .values('review_photo')[:1]
     )
 
+    catagoty_tag_subquery = CodeTb.objects.filter(
+            code=OuterRef('place_tag_cd'),
+            parent_code='pt',
+        ).values('code_name')[:1]
 
     # for category in categories:
     #     # 각 카테고리에 대해 리뷰 수가 많은 상위 4개 장소를 가져옴
@@ -98,7 +102,9 @@ def choose_district(district_id, place_category_cd):
 
     top_places = (PlaceTb.objects
                       .filter(district_id=district_id, place_category_cd=place_category_cd)
-                      .annotate(review_photo=Subquery(photo_subquery))  # 리뷰 사진 가져오기
+                      .annotate(review_photo=Subquery(photo_subquery),  # 리뷰 사진 가져오기
+                                place_tag_name =  Subquery(catagoty_tag_subquery)
+                                ) 
                       .order_by('-place_review_num')[:4])  # place_review_num을 기준으로 정렬
 
     for place in top_places:
@@ -109,6 +115,7 @@ def choose_district(district_id, place_category_cd):
                 "place_review_num": place.place_review_num,  
                 "review_photo": place.review_photo if place.review_photo else "",
                 "place_id" : place.place_id,
+                'place_tag_name' : place.place_tag_name,
             })
 
     return data #리스트 형식으로 프론트와 상의 필요 + 대시보드 바뀌는 거 render 다시 해줘야하는지

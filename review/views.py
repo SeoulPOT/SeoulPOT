@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from main.models import PlaceTb, ReviewTb, CodeTb
 from django.core.paginator import Paginator
-from django.db.models import Subquery, OuterRef
+from django.db.models import Subquery, OuterRef, Value
 from django.http import JsonResponse
 import json
 
@@ -10,8 +10,8 @@ def content_reviews(request):
     place_category_cd = request.GET.get('place_category_cd')
     
 
-    if place_category_cd == 'pc03': #popup 코드
-        return render(request, 'popup_reviews.html', {'place_id': place_id})
+    # if place_category_cd == 'pc03': #popup 코드
+    #     return render(request, 'popup_reviews.html', {'place_id': place_id})
     
     array = request.GET.get('array', 'latest')  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get('page', 1)  # 페이지 기본 1page
@@ -29,8 +29,24 @@ def content_reviews(request):
 
     
     # place = get_object_or_404(PlaceTb, pk=place_id)  # 콘텐츠 가져오기, 없으면 404
+    daily_tag_subquery = CodeTb.objects.filter(
+        parent_code='rd',
+        code=OuterRef('review_daily_tag_cd')
+    ).values('code_name')[:1]
 
-    reviews = ReviewTb.objects.filter(place_id=place_id).order_by('-review_date')
+
+    with_tag_subquery = CodeTb.objects.filter(
+            code=OuterRef('review_with_tag_cd'),
+            parent_code='rw',
+        ).values('code_name')[:1]
+
+
+    reviews = ( ReviewTb.objects
+                .filter(place_id=place_id)
+                .annotate(daily_tag_name = Subquery(daily_tag_subquery),
+                          with_tag_name = Subquery(with_tag_subquery)
+                          ) 
+                .order_by('-review_date'))
 
     if array == 'oldest':
         reviews = reviews.order_by('review_date')
@@ -39,7 +55,10 @@ def content_reviews(request):
     page_obj = paginator.get_page(page)  # 페이지 번호에 해당하는 리뷰 객체 가져오기
     
     review_field_names = [field.name for field in ReviewTb._meta.fields]
+    review_field_names.extend(['daily_tag_name','with_tag_name'])
+
     serialized_reviews = list(page_obj.object_list.values(*review_field_names))
+    
     #------------------place_feature--------------------
     features = {}
     raw_feature = place.place_feature
@@ -91,7 +110,7 @@ def content_reviews(request):
                 review.with_tag_name = "Unknown Tag"
 
     #---------------------context-------------------------
-
+    
     context = {     
         'place': place,
         'reviews': page_obj,

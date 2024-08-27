@@ -134,8 +134,10 @@ function SetReviews(reviews) {
             // 날짜 요소 생성
             var dateElement = document.createElement('p');
             dateElement.className = 'card-date';
-            dateElement.textContent = review.review_date;
-        
+            dateElement.textContent = formatDate(review.review_date);
+            cardContentElement.appendChild(dateElement);
+            
+            console.log(review);
             // 데일리 태그 요소 생성 (존재하는 경우)
             if (review.daily_tag_name) {
                 var dailyTagElement = document.createElement('p');
@@ -158,7 +160,7 @@ function SetReviews(reviews) {
             descriptionElement.textContent = review.review_text;
         
             // 각 요소를 카드 콘텐츠에 추가
-            cardContentElement.appendChild(dateElement);
+            
             cardContentElement.appendChild(descriptionElement);
         
             // 이미지와 카드 콘텐츠를 카드에 추가
@@ -177,4 +179,11 @@ function setSortOption(array) {
     console.log(sort_array);
     sort_array = array;
     movePage(1, array);
+}
+
+//데이트 양식 변경 함수
+function formatDate(inputDate) {
+    const date = new Date(inputDate);  // "2024-04-19" 형식의 문자열을 Date 객체로 변환
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    return date.toLocaleDateString('en-US', options).replace(',', '').replace(/(\d{1,2}) /, '$1.');
 }

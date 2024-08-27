@@ -144,7 +144,7 @@ function loadMoreObjects(page) {
                 
                 const category = document.createElement('div');
                 category.className = 'card-category';
-                category.innerHTML = `${place.place_category_cd}}`;
+                category.innerHTML = `${place.place_tag_name}`;
 
 
                 // 푸터 생성
