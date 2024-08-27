@@ -9,12 +9,24 @@
         <div id="left-box">
             <img id="place_img" src="{{ place.review_photo }}" alt="{{ place.place_name }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
             <h2 id="place-name">{{ place.place_name }}</h2>
-            <p>📝 리뷰 {{ review_num }}개</p>
-            <p>{{ category_name }}</p>
-            <p>{{ tag_name }}</p>
-            <p>⏰ {{ place.place_operating_hours }}</p>
-            <p>📞 {{ place.place_phone }}</p>
-            <p>{{ place.place_entrance_fee }}</p>
+            {% if review_num %}
+                <p>📝 리뷰 {{ review_num }}개</p>
+            {% endif %}
+            {% if category_name %}
+                <p>{{ category_name }}</p>
+            {% endif %}
+            {% if tag_name %}
+                <p>🧩 {{ tag_name }}</p>
+            {% endif %}
+            {% if place.place_operating_hours %}
+                <p>⏰ {{ place.place_operating_hours }}</p>
+            {% endif %}
+            {% if place.place_phone %}
+                <p>📞 {{ place.place_phone }}</p>
+            {% endif %}
+            {% if place.place_entrance_fee %}
+                <p>🪙 {{ place.place_entrance_fee }}</p>
+            {% endif %}
             <p>{{ place.place_place_desc }}</p>
             <div id="map" class="map"></div>
             <address>
