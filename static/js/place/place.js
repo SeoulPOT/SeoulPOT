@@ -141,14 +141,21 @@ function loadMoreObjects(page) {
                 // 제목 생성
                 const title = document.createElement('h3');
                 title.innerHTML = `${place.place_name}`;
+                
+                const category = document.createElement('div');
+                category.className = 'card-category';
+                category.innerHTML = `${place.place_category_cd}}`;
+
 
                 // 푸터 생성
                 const footer = document.createElement('div');
                 footer.className = 'card-footer';
+                footer.innerHTML = `📝 리뷰 ${place.place_review_num}개`;
 
             
                 // 카드 내용에 제목과 푸터 추가
                 cardContent.appendChild(title);
+                cardContent.appendChild(category);
                 cardContent.appendChild(footer);
 
             

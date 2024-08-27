@@ -115,6 +115,12 @@ button.card:hover {
     color: gray;
     text-align: right;
 }
+
+.card-category {
+    font-size: 0.8em;
+    color: gray;
+    text-align: right;
+}
 .details-button {
     text-align: center;
     margin-top: 20px;
