@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     clearMarkers(markers);
     loadMoreObjects(1);
     SetPagination(current_page, total_pages);
-    SetCategoryActive(current_category);
+    SetCategoryActive(current_category, categories);
 
     categories.forEach(button => {
         button.addEventListener('click', function() {
@@ -235,10 +235,13 @@ function movePage(page) {
 }
 
 function SetCategoryActive(category, category_container){
-    // category_container.forEach(btn => { 
-    //     if(btn.getAttribute('data-value') == category )
-    //         btn.classList.add('active'); 
-    //     else
-    //         btn.classList.remove('active');
-    // });
+    console.log("category_container:",category_container);
+    
+    category_container.forEach(btn => { 
+        console.log("data-value:",btn.getAttribute('data-category'));
+        if(btn.getAttribute('data-category') == category )
+            btn.classList.add('active'); 
+        else
+            btn.classList.remove('active');
+    });
 }

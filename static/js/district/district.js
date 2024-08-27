@@ -91,9 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     
 
                     if(selected_obj == undefined){
-                        document.getElementById('none_select-info-container').style.display = 'none'; // flex
+                        document.getElementById('none_select-info-container').style.display = 'flex'; // flex
                         document.getElementById('district-container').style.display = 'none';
-                        document.getElementById('district-info-container').style.display = 'flex'; // none
+                        document.getElementById('district-info-container').style.display = 'none'; // none
                         document.getElementById('district-name').innerText = 'ㅤ';
                     }
 
@@ -207,6 +207,10 @@ function createStoreItem(store) {
     
     div.appendChild(img);
     div.appendChild(details);
+
+    div.onclick = function() {
+        window.location.href = `/review?place_id=${store.place_id}`;
+    };
     
     return div;
 }

@@ -95,7 +95,8 @@ def choose_district(district_id, place_category_cd):
                 "place_name": place.place_name,
                 "place_tag_cd": place.place_tag_cd,
                 "place_review_num": place.place_review_num,  
-                "review_photo": place.review_photo if place.review_photo else ""
+                "review_photo": place.review_photo if place.review_photo else "",
+                "place_id" : place.place_id,
             })
 
     return data #리스트 형식으로 프론트와 상의 필요 + 대시보드 바뀌는 거 render 다시 해줘야하는지

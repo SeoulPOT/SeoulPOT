@@ -73,12 +73,13 @@ main {
     /* 초기 default일 때 안보이도록 조절 필요 */
     /* display: none !important; */
     margin: 5px 0px;
-    height: 1.8em;
-    font-size: 1.8em;
+    height: 5vh;
+    font-size: 5vh;
     color: #9077CB;
     text-align: center;
     justify-content: center;
 }
+
 /* District Container */
 #district-info-container {
     background-color: #D4CBF8;
@@ -86,7 +87,7 @@ main {
     padding: 20px;
     width: 100%;
     min-width : 500;
-    height: auto; 
+    height: 100%; 
     min-height: 500px;
     box-sizing: border-box;
     display: none;
@@ -119,7 +120,7 @@ main {
     padding: 20px;
     width: 100%;
     min-width : 500;
-    height: auto; 
+    height: 100%; 
     min-height: 500px;
     box-sizing: border-box;
     display: flex;
@@ -136,7 +137,7 @@ main {
     padding: 20px;
     width: 100%;
     min-width : 500;
-    height: auto; 
+    height: 100%; 
     min-height: 500px;
     box-sizing: border-box;
     display: none;
@@ -146,6 +147,8 @@ main {
     flex-direction: column;
     justify-content: flex-start;
 }
+
+
 
 /* District Content - Default */
 #default{
@@ -193,6 +196,7 @@ main {
 #detail{
     /* display: none !important; */
     display : block;
+    width: 100%;
 }
 
 /* District Category */
@@ -227,7 +231,7 @@ main {
 
 
 #district-category button:hover {
-    background-color: #74B9E1;
+    background-color: rgba(144, 119, 203, 0.5);
     color: #fff;
 }
 
@@ -253,12 +257,18 @@ main {
     height: 75px;
     /* height: 120px;  */
     padding: 2%;
-    border: 1px solid #ddd;
+    border: 1px solid #300034;
     border-radius: 5px;
     background-color: #fff;
     color: #9077CB;
     box-sizing: border-box;
     overflow-y: auto;
+}
+
+#space-container:hover {
+    cursor: pointer; /* 클릭 마우스 모양으로 변경 */
+    background-color: rgba(144, 119, 203, 0.5);
+    color: white;
 }
 
 .space-box {
@@ -359,7 +369,7 @@ main {
 
 }
 .readmore-btn:hover {
-    background-color: #74B9E1;
+    background-color: rgba(144, 119, 203, 0.5);;
 }
 
 .readmore-btn:hover .text {
@@ -435,7 +445,7 @@ main {
 }
 
 .district:active {
-    fill: #74B9E1;
+    fill: rgba(144, 119, 203, 0.5);;
     filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.4)); 
     transform: scale(1.1);
 }
@@ -449,7 +459,7 @@ main {
         fill: #D4CBF8;
     }
     100% {
-        fill: #74B9E1;
+        fill: rgba(144, 119, 203, 0.5);;
     }
 }
 
@@ -457,4 +467,10 @@ main {
     width: 60%;
     height: auto;
 
+}
+
+#selected-district-desc_container {
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }

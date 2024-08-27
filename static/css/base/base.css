@@ -44,6 +44,11 @@ header #logo {
     margin-right: auto;
 }
 
+
+header #logo:hover {
+    cursor: pointer; /* 클릭 마우스 모양으로 변경 */
+}
+
 header button {
     margin-right: 40px;
     padding: 10px 20px;

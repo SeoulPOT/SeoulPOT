@@ -42,15 +42,17 @@
 .categories button {
     flex: 1;
     min-width: 90px;
-    max-width: 200px;
+    /* max-width: 200px; */
     padding: 10px 20px;
     height: auto;
-    font-size: 14px;
+    /* font-size: 14px; */
+    font-size: 1vh;
     text-align: center;
     border: none;
     background-color: #fff;
     color: #9077CB;
-    border-radius: 30px;
+    /* border-radius: 30px; */
+    border-radius: 2vh;
     cursor: pointer;
     box-sizing: border-box;
     transition: background-color 0.4s ease;
@@ -58,7 +60,7 @@
     white-space: nowrap;
 }
 .categories button:hover {
-    background-color: #74B9E1;
+    background-color: rgba(144, 119, 203, 0.5);;
     color: #fff;
 }
 .categories button.active {
@@ -69,18 +71,20 @@
     flex-grow: 1;
     overflow-y: auto;
     height: 85%;
+    margin-top: 15px;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 button.card:hover {
-    background-color: rgba(131, 158, 225, 0.7);
+    background-color: rgba(144, 119, 203, 0.5);
 }
 .card {
     display: flex;
     align-items: center;
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    /* box-shadow: 0 0 10px rgba(0,0,0,0.1); */
+    border: 1px solid #300034;
     margin-bottom: 10px;
     padding: 10px;
     width: 100%;
@@ -132,6 +136,16 @@ button.card:hover {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+}
+.right-panel h1 {
+    /* 초기 default일 때 안보이도록 조절 필요 */
+    /* display: none !important; */
+    margin: 5px 0px;
+    height: 5vh;
+    font-size: 5vh;
+    color: #9077CB;
+    text-align: center;
+    justify-content: center;
 }
 
 #map {
