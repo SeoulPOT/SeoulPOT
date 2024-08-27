@@ -248,6 +248,7 @@ function fetchData(category) {
 
 function DisplayData(data) {
     const spaceBoxes = document.querySelectorAll('#district-space #space-container');
+    ResetData();
     if(data.length>0){
         
         spaceBoxes.forEach((box, index) => {
