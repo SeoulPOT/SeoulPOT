@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
 
                     if (foundItem) {
-                        img_path = staticPath+`/${foundItem.district_name}_가로.png`;
+                        img_path = staticPath+`/${foundItem.district_name}.png`;
                         console.log('img_path : ', fallbackImage);
                         console.log('img_path : ', img_path);
                         document.getElementById('selected-district-desc').innerText = foundItem.district_desc;
@@ -194,11 +194,12 @@ function createStoreItem(store) {
     name.id = 'place-name';
 
     const tag = document.createElement('p');
-    //tag.textContent = `${store.place_tag}`;
+    
+    tag.textContent = `${store.place_category_cd}`;
     tag.id = 'place-tag';
 
     const reviews = document.createElement('p');
-    //reviews.textContent = `리뷰 ${store.review_num}개`;
+    reviews.textContent = `리뷰 ${store.place_review_num}개`;
     reviews.id = 'place-reviews';
     
     details.appendChild(name);

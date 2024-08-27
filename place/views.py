@@ -4,6 +4,7 @@ from main.models import DistrictTb, CodeTb, PlaceTb, ReviewTb
 from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef
 from django.db.models.functions import Coalesce
+from django.db.models import Count, Min, Case, When, Q, CharField, Value
 
 
 # Create your views here.
@@ -31,19 +32,23 @@ def category(request):
     except DistrictTb.DoesNotExist:
         district = None
 
-    # Subquery to get the first review photo for each place
-    photo_subquery = ReviewTb.objects.filter(
-        place_id=OuterRef('place_id'),
-        review_photo__gt=''  # Django ORM에서 빈 문자열이 아닌 값 필터링
-    ).values('review_photo')[:1]  # 첫 번째 리뷰 사진만 가져옴
+   # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
+    photo_subquery = (
+        ReviewTb.objects
+        .filter(place_id=OuterRef('place_id'))
+        .exclude(review_photo='')
+        .order_by('review_date')
+        .values('review_photo')[:1]
+    )
+
 
     # Filter places based on district and category, annotate with the first photo
     places = PlaceTb.objects.filter(
         district_id=district_id,
         place_category_cd=place_category_cd
     ).annotate(
-    review_photo=Subquery(photo_subquery)
-)
+        review_photo=Subquery(photo_subquery)
+    ).order_by('-place_review_num')
 
     # Paginate the results
     paginator = Paginator(places, 12)

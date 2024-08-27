@@ -52,10 +52,22 @@ def choose_district(district_id, place_category_cd):
     data = []
 
     # Review에서 사진을 가져오는 서브쿼리 작성
-    photo_subquery = ReviewTb.objects.filter(
-        place_id=OuterRef('place_id'),
-        review_photo__gt=''
-    ).values('review_photo')[:1]
+    # photo_subquery = ReviewTb.objects.filter(
+    #     place_id=OuterRef('place_id'),
+    #     review_photo__gt=''
+    # )
+    # .order_by('review_date')
+    # .values('review_photo')[:1]
+
+       # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
+    photo_subquery = (
+        ReviewTb.objects
+        .filter(place_id=OuterRef('place_id'))
+        .exclude(review_photo='')
+        .order_by('review_date')
+        .values('review_photo')[:1]
+    )
+
 
     # for category in categories:
     #     # 각 카테고리에 대해 리뷰 수가 많은 상위 4개 장소를 가져옴
