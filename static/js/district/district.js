@@ -180,10 +180,10 @@ function createStoreItem(store) {
     const img = document.createElement('img');
     img.src = store.review_photo;
     img.alt = store.place_name;
-    // 이미지 로드에 실패할 경우 대체 이미지 설정
+
     img.onerror = function() {
-        this.onerror = null;  // 무한 반복 방지
-        this.src = fallbackImage;  // 대체 이미지 경로
+        this.onerror = null;
+        this.src = fallbackImage;
     };
     
     const details = document.createElement('div');
