@@ -190,7 +190,7 @@ function createStoreItem(store) {
     details.classList.add('details');
     
     const name = document.createElement('h3');
-    name.textContent = store.place_name;
+    name.textContent = `${store.place_name}`;
     name.id = 'place-name';
 
     const tag = document.createElement('p');
@@ -199,7 +199,7 @@ function createStoreItem(store) {
     tag.id = 'place-tag';
 
     const reviews = document.createElement('p');
-    reviews.textContent = `리뷰 ${store.place_review_num}개`;
+    reviews.textContent = `📝 리뷰 ${store.place_review_num}개`;
     reviews.id = 'place-reviews';
     
     details.appendChild(name);
@@ -278,6 +278,4 @@ function ResetData()
 function MoveToPlacePage()
 {
     window.location.href = place_page_url+`?district_id=${current_district}&place_category_cd=${current_category}` ;
-
-    
 }
