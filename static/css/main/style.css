@@ -4,9 +4,8 @@ body, html {
     font-family: 'Inter', sans-serif; /* Inter 폰트 적용 */
     color: white;
     text-align: center;
-    background-image: url('../../img/main.jpg'); /* 이미지 파일 경로로 교체하세요 */
-    background-size: cover;
-    background-position: center;
+     
+ 
     height: 100%;
     width: 100%;
     min-width: 1000px;
@@ -14,6 +13,9 @@ body, html {
     align-items: center;
     justify-content: center;
     position: relative;
+    background: linear-gradient(rgb(255 149 149 / 50%), rgb(28 44 208 / 50%)), url(../../img/main.jpg);
+    background-size: cover;
+    background-position: center;
 }
 
 .content {
