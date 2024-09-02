@@ -26,4 +26,5 @@ urlpatterns = [
     path('board/', include('request.urls')),
     path('place/', include('place.urls')),
     path('review/', include('review.urls')),
+    path('category/', include('category.urls')),
 ]
