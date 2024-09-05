@@ -110,14 +110,64 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
-function addMarker(lat, lon){
- // 마커를 생성하고 지도에 추가
+function addMarker(lat, lon, place_name, place_desc){
+    var infoDiv = document.getElementById('info');
+    
+    // 마커를 생성하고 지도에 추가
     var marker = new naver.maps.Marker({
         position: new naver.maps.LatLng(lat, lon), // 마커의 위치 (서울)
         map: map, // 마커를 추가할 지도 객체
         icon: markerImage,
+        
     });
+    let infowindow = createInfoWindow( place_name, place_desc);
+    
+    naver.maps.Event.addListener(marker, "mouseover", function(e) {
+         infowindow.open(map, marker);        
+    });
+
+    // 마우스 아웃 시 infoDiv 숨기기
+    naver.maps.Event.addListener(marker, 'mouseout', function() {
+        infowindow.close();
+    });
+
+    naver.maps.Event.addListener(marker, "click", function() {
+        // 현재 아이콘이 기본 아이콘인지 확인하고, 클릭된 아이콘으로 변경
+        // if (marker.icon === markerImage) {
+        //     marker.setIcon(clicked_markerImage);
+        // } else {
+        //     marker.setIcon(markerImage);
+        // }
+    });
+
     return marker;
+}
+
+function createInfoWindow(place_name, place_desc)
+{
+    // 핀 요소
+    var infoWindowElement = `
+        <<div class="custom-infowindow">
+                <h3>${place_name}</h3>
+                <p>${place_desc}</p>
+            </div>
+        `;
+
+    var infowindow = new naver.maps.InfoWindow({
+        content: infoWindowElement,
+    
+        
+        borderWidth: 0,
+        disableAnchor: false,
+        backgroundColor: 'white',
+        anchorSize: new naver.maps.Size(20, 2), // 앵커 크기를 작게 설정
+        anchorSkew: true,
+        anchorColor: "white",
+    
+    
+        pixelOffset: new naver.maps.Point(0, -10),
+    });
+    return infowindow;   
 }
 
 function clearMarkers(markers){

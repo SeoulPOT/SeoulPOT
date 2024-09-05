@@ -10,12 +10,18 @@ document.addEventListener('DOMContentLoaded', function() {
     cardList = document.querySelector('.card-list');
     page_container = document.getElementById('page_container');
 
-    //Init
+    //Init cardList
     cardList.innerHTML = '';
     
     clearMarkers(markers);
+
+    //가게 리스트 호출
     loadMoreObjects(1);
+
+    //페이지 버튼 구현
     SetPagination(current_page, total_pages);
+
+    //카테고리 버튼 구현
     SetCategoryActive(current_category, categories);
 
     categories.forEach(button => {
@@ -29,48 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
             cardList.innerHTML = '';
             clearMarkers(markers);
             loadMoreObjects();
-
-
-            // console.log('current_category: ',current_category);
-            // fetch(`${get_spot_by_category}?district_id=${current_dsitrict}&place_category_cd=${current_category}&page=${page}`, {
-            //         method: "GET",
-            //         headers: {
-            //             "X-Requested-With": "XMLHttpRequest"  // 서버가 요청을 AJAX로 인식하게 하는 헤더
-            //         }
-            //     })
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         console.log("data :", data);
-            //         cardList.innerHTML = '';
-            //         SetPagination(data.current_page, data.total_pages);
-
-            //         newShops = data.place_list;
-
-            //         newShops.place_list.forEach(shop => {
-            //             markers.push(addMarker(shop.place_lat, shop.place_lon));
-            //             let newButton = document.createElement('button');
-            //             newButton.className = 'card';
-            //             newButton.onclick = function() {
-            //                 location.href = `${review_url}?place_id=${shop.place_id}`;
-            //             };
-
-            //             console.log('place img : ', shop.review_photo);
-            //             newButton.innerHTML = `
-            //                 <img src="${shop.review_photo}" alt="${shop.name}" onerror="this.onerror=null; this.src='${fallbackImage}';"  >
-            //                 <div class="card-content">
-            //                     <h3>${shop.place_name}</h3>
-            //                 </div>
-            //                 <div class="card-footer">
-            //                     <span>&hearts; ${shop.likes}</span>
-            //                 </div>
-            //             `;
-
-            //             cardList.appendChild(newButton);
-            //         });
-            //     })
-            //     .catch(error => {
-            //         console.error('Failed to load category data:', error);
-            //     });
         });
     });
 });
@@ -117,7 +81,7 @@ function loadMoreObjects(page) {
             const buttonList = document.querySelector('.card-list');
             const currentPage = page;
             data['place_list'].forEach(function(place, index) {
-                markers.push(addMarker(place.place_lat, place.place_lon));
+                markers.push(addMarker(place.place_lat, place.place_lon, place.place_name, place.place_desc));
 
                 const button = document.createElement('button');
                 button.className = 'card';
