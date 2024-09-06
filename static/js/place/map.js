@@ -110,17 +110,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
-function addMarker(lat, lon, place_name, place_desc){
+function addMarker(place){
     var infoDiv = document.getElementById('info');
-    
     // 마커를 생성하고 지도에 추가
     var marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(lat, lon), // 마커의 위치 (서울)
+        position: new naver.maps.LatLng(place.place_lat, place.place_lon), // 마커의 위치 (서울)
         map: map, // 마커를 추가할 지도 객체
         icon: markerImage,
         
     });
-    let infowindow = createInfoWindow( place_name, place_desc);
+
+    let infowindow = createInfoWindow( place.place_name, place.place_desc);
     
     naver.maps.Event.addListener(marker, "mouseover", function(e) {
          infowindow.open(map, marker);        
@@ -138,6 +138,7 @@ function addMarker(lat, lon, place_name, place_desc){
         // } else {
         //     marker.setIcon(markerImage);
         // }
+        window.location.href = review_url+`?place_id=${place.place_id}` ;
     });
 
     return marker;

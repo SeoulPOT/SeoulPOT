@@ -81,7 +81,7 @@ function loadMoreObjects(page) {
             const buttonList = document.querySelector('.card-list');
             const currentPage = page;
             data['place_list'].forEach(function(place, index) {
-                markers.push(addMarker(place.place_lat, place.place_lon, place.place_name, place.place_desc));
+                markers.push(addMarker(place));
 
                 const button = document.createElement('button');
                 button.className = 'card';
