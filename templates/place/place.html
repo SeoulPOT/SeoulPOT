@@ -13,18 +13,22 @@
                 <div class="categories">
                     {% for category in categories %}
                         <button id="category" data-category='{{category.code}}'>{{category.code_name}}</button>
-                        {% endfor %}
+                    {% endfor %}
+                    <button id="category" data-category='bookmark'>
+                        <img src="{% static 'img/check.png' %}" width="25px" height="25px" alt="좋아요">
+                    </button>
                 </div>
                 <div class="card-list" id="place-list-container">
                     {% for place in place_list %}
                     <button class="card" onclick="location.href='{% url 'project-content_reviews' %}?place_id={{place.place_id}}'">
-                        <img src="{{spot.img}}" alt="건대거리" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+                        <img src="{{spot.img}}" alt="건대거리" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}'">
                         <div class="card-content">
                             <h3>{{place.place_name}}</h3>
                         </div>
                         <div class="card-footer">
                             <span>&hearts; {{spot.likes}}</span>
                         </div>
+                        <img src="{% static 'img/check.png' %}" width="25px" height="25px" alt="좋아요">
                     </button>
                     {% endfor %}
                 </div>
@@ -72,6 +76,8 @@
         const fallbackImage = "{% static 'img/default1.png' %}";
         const markerImage = "{% static 'img/marker_img.png' %}";
         const clicked_markerImage = "{% static 'img/marker2_img.png' %}";
+        const bookmark_img = "{% static 'img/check.png' %}";
+        const bookmark_not_check_img = "{% static 'img/notcheck.png' %}";
         const selected_category = '{{category}}';
     </script>
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
