@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'district',
     'place',
     'review',
-    'request',
-    'category'
+    'request'
 ]
 
 MIDDLEWARE = [
