@@ -123,7 +123,7 @@ function addMarker(place){
     let infowindow = createInfoWindow( place.place_name, place.place_desc);
     
     naver.maps.Event.addListener(marker, "mouseover", function(e) {
-         infowindow.open(map, marker);        
+        infowindow.open(map, marker);        
     });
 
     // 마우스 아웃 시 infoDiv 숨기기
@@ -142,6 +142,14 @@ function addMarker(place){
     });
 
     return marker;
+}
+
+function changeMarker(marker, is_bookmarked){
+    if(is_bookmarked){
+        marker.setIcon(clicked_markerImage);
+    }else{
+        marker.setIcon(markerImage);
+    }
 }
 
 function createInfoWindow(place_name, place_desc)
@@ -171,12 +179,28 @@ function createInfoWindow(place_name, place_desc)
     return infowindow;   
 }
 
-function clearMarkers(markers){
+function clearMarkers(markers) {
     console.log('markers : ', markers);
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-    
-    // 배열 비우기 (선택 사항)
-    markers = [];
+    console.log('bookmark_markers : ', bookmark_markers);
+
+    // bookmark_markers에 있는 마커의 ID를 Set으로 만듭니다.
+    const bookmarkedMarkerIds = new Set(bookmark_markers.map(m => m._nmarker_id));
+    console.log('bookmarkedMarkerIds : ', bookmarkedMarkerIds);
+    // 북마크되지 않은 마커만 삭제합니다.
+    const remainingMarkers = markers.filter(marker => {
+        if (!bookmarkedMarkerIds.has(marker._nmarker_id)) {
+            marker.setMap(null);
+            return false;
+        }
+        return true;
+    });
+
+    console.log('Remaining markers : ', remainingMarkers);
+
+    // markers 배열을 업데이트합니다.
+    return remainingMarkers;
+}
+
+function clearMarker(marker) {
+    marker.setMap(null);
 }
