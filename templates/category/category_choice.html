@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Selection</title>
+</head>
+<body>
+    <h1>카테고리 선택화면입니다</h1>
+    <div class="choice">
+        <span>카테고리 선택</span>
+        {% for category in categories %}
+        <button onclick="setCategoryAndRedirect('{{ category.code }}')">
+            {{ category.code_name }}
+        </button>
+        {% endfor %}
+    </div>
+
+    <script>
+        function setCategoryAndRedirect(category_cd) {
+            var lang = "{{ lang }}";
+            var url = `/category/${lang}/${category_cd}/`;  // category_cd를 포함한 URL로 리다이렉트
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
+
