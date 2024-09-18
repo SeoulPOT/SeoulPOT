@@ -58,10 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('none_select-info-container').style.display = 'none';
                         document.getElementById('district-container').style.display = 'none';
                         document.getElementById('district-info-container').style.display = 'flex';
+                        document.getElementById('district-comming-soon').style.display = 'none';
                     }
                     
-
-            
                     // 조건을 만족하는 객체가 있으면 출력
                     var foundItem = districts_list.find(function(item) {
                         return item.district_name === d.properties.name;
@@ -71,12 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         img_path = staticPath+`/${foundItem.district_name}.png`;
                         console.log('img_path : ', fallbackImage);
                         console.log('img_path : ', img_path);
-                        document.getElementById('selected-district-desc').innerText = foundItem.district_desc;
+
+                        let splitArray = foundItem.district_desc.split('|');
+
+                        document.getElementById('selected-district-desc').innerText = splitArray[0];
                         document.getElementById('selected-district-img').src = img_path;
                         document.getElementById('selected-district-img').onerror = function() {
                             this.onerror = null;
                             this.src = '/static/img/default1.png';
                         };
+                        subway_container = document.getElementById('seleceted-district-subway');
+                        createDistrictDiv(subway_container, splitArray[1])
                         
                     } else {
                         console.log(`name이 ${d.properties.name} 같은 객체를 찾을 수 없습니다.`);
@@ -89,11 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         .classed('active', false)
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
                     
-
                     if(selected_obj == undefined){
-                        document.getElementById('none_select-info-container').style.display = 'flex'; // flex
+                        document.getElementById('none_select-info-container').style.display = 'none'; // flex
                         document.getElementById('district-container').style.display = 'none';
-                        document.getElementById('district-info-container').style.display = 'none'; // none
+                        document.getElementById('district-info-container').style.display = 'flex'; // none
+                        document.getElementById('district-comming-soon').style.display = 'none';
                         document.getElementById('district-name').innerText = 'ㅤ';
                     }
 
@@ -106,24 +110,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     if(selected_obj == this){
                         selected_obj = undefined;
                         document.getElementById('none_select-info-container').style.display = 'none';
-                        document.getElementById('district-container').style.display = 'none';
+                        document.getElementById('district-container').style.display = 'none';           //가게 리스트 출력
                         document.getElementById('district-info-container').style.display = 'flex';
+                        document.getElementById('district-comming-soon').style.display = 'none';
                     }
                     else{
                         selected_obj = this;
                         is_selected = true;
                         d3.select(this).classed('clicked', true);
-                        // setTimeout(() => {
-                        //     d3.select(this).classed('clicked', false);
-                        // }, 5);
     
                         document.getElementById('district-name').innerText = d.properties.name;
                         
                         is_selected = true;
-                        document.getElementById('none_select-info-container').style.display = 'none';
-                        document.getElementById('district-container').style.display = 'flex';
-                        document.getElementById('district-info-container').style.display = 'none';
-    
+                        if(['강남구', '서초구', '송파구', '강동구'].includes(d.properties.name)){
+                            document.getElementById('none_select-info-container').style.display = 'none';
+                            document.getElementById('district-container').style.display = 'flex';
+                            document.getElementById('district-info-container').style.display = 'none';
+                            document.getElementById('district-comming-soon').style.display = 'none';
+                        }
+                        else{
+                            document.getElementById('none_select-info-container').style.display = 'none';
+                            document.getElementById('district-container').style.display = 'none';
+                            document.getElementById('district-info-container').style.display = 'none';
+                            document.getElementById('district-comming-soon').style.display = 'flex';
+                        }
                         var foundItem = districts_list.find(function(item) {
                             return item.district_name === d.properties.name;
                         });
@@ -148,6 +158,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('resize', updateMap);
 });
+
+
+function createDistrictDiv(subway_container, place_info) {
+    // subway_container 초기화
+    subway_container.innerHTML = '';
+
+    places = place_info.split('\\');
+
+    for(let place of places){
+
+        let place_info = place.split('-');
+        
+
+        // <div id="seleceted-district-subway-img-container"></div>
+        const div = document.createElement('div');
+        div.classList.add('seleceted-district-subway-img-container');
+        
+        // <img id="seleceted-district-subway-img" src="{% static 'img/subway/서울대입구.png' %}" alt="subway"></img>
+        console.log('place_info : ', place_info);
+        let subway_info = place_info[1].split(',');
+        console.log('subway_info : ', subway_info);
+        for(let subway of subway_info){
+            const img_subway = document.createElement('img');
+            img_subway.src = `/static/img/subway/${subway}.png`;
+            img_subway.alt = `${subway} 이미지`;
+            img_subway.id = 'seleceted-district-subway-img';
+            div.appendChild(img_subway);
+        }
+        // <img id="seleceted-district-subway-marker" src="{% static 'img/marker_img.png' %}" alt="marker"></img>
+        const img_marker = document.createElement('img');
+        img_marker.src = `/static/img/spot.png`;
+        img_marker.alt = `마커 이미지`;
+        img_marker.id = 'seleceted-district-subway-marker';
+        
+        
+        const img_marker_text = document.createElement('span');
+        img_marker_text.textContent = place_info[0];
+        img_marker_text.classList.add('seleceted-district-subway-marker-text');
+
+        div.appendChild(img_marker);
+        div.appendChild(img_marker_text);
+
+        subway_container.appendChild(div);
+    }
+}
 
 
 
