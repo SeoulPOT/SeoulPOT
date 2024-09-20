@@ -79,7 +79,8 @@ class AuthUserUserPermissions(models.Model):
 
 class CodeTb(models.Model):
     code = models.CharField(primary_key=True, max_length=50)
-    code_name = models.CharField(max_length=255)
+    kor_code_name = models.CharField(max_length=255)
+    eng_code_name = models.CharField(max_length=255)
     code_desc = models.TextField(blank=True, null=True)
     parent_code = models.CharField(max_length=50, blank=True, null=True)
 
@@ -90,11 +91,12 @@ class CodeTb(models.Model):
 
 class DistrictTb(models.Model):
     district_id = models.AutoField(primary_key=True)
-    district_name = models.CharField(max_length=255)
-    district_img = models.CharField(max_length=500, blank=True, null=True)
-    district_desc = models.TextField(blank=True, null=True)
-    district_lat = models.CharField(max_length=100, blank=True, null=True)
-    district_lon = models.CharField(max_length=100, blank=True, null=True)
+    kor_district_name = models.CharField(max_length=255)
+    eng_district_name = models.CharField(max_length=255)
+    kor_district_desc = models.TextField(blank=True, null=True)
+    eng_district_desc = models.TextField(blank=True, null=True)
+    district_lat = models.FloatField(blank=True, null=True)
+    district_lon = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -166,17 +168,21 @@ class PlaceTb(models.Model):
     place_name = models.CharField(max_length=255)
     place_address = models.CharField(max_length=255, blank=True, null=True)
     place_phone = models.CharField(max_length=50, blank=True, null=True)
-    place_review_num = models.IntegerField(blank=True, null=True)
     place_operating_hours = models.CharField(max_length=255, blank=True, null=True)
     place_entrance_fee = models.CharField(max_length=50, blank=True, null=True)
     place_desc = models.CharField(max_length=255, blank=True, null=True)
     place_url = models.CharField(max_length=255, blank=True, null=True)
-    place_feature = models.CharField(max_length=255, blank=True, null=True)
-    place_keyword_cd = models.CharField(max_length=50, blank=True, null=True)
+    place_review_num = models.IntegerField(blank=True, null=True)
+    place_pos_review_num = models.IntegerField(blank=True, null=True)
+    place_neg_review_num = models.IntegerField(blank=True, null=True)
+    place_ad_review_num = models.IntegerField(blank=True, null=True)
+    place_feature = models.TextField(blank=True, null=True)
+    place_thema_cd = models.CharField(max_length=50, blank=True, null=True)
     place_category_cd = models.CharField(max_length=50, blank=True, null=True)
     place_tag_cd = models.CharField(max_length=50, blank=True, null=True)
-    place_lat = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
-    place_lon = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
+    place_lat = models.FloatField(blank=True, null=True)
+    place_lon = models.FloatField(blank=True, null=True)
+    place_review_num_real = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -197,11 +203,13 @@ class RequestTb(models.Model):
 class ReviewTb(models.Model):
     review_id = models.AutoField(primary_key=True)
     place = models.ForeignKey(PlaceTb, models.DO_NOTHING, blank=True, null=True)
-    review_text = models.TextField(blank=True, null=True)
+    kor_review_text = models.TextField(blank=True, null=True)
+    eng_review_text = models.TextField(blank=True, null=True)
     review_photo = models.TextField(blank=True, null=True)
     review_date = models.DateField(blank=True, null=True)
     review_sentiment = models.IntegerField(blank=True, null=True)
     review_advertising = models.IntegerField(blank=True, null=True)
+    similar_review = models.TextField(blank=True, null=True)
     review_with_tag_cd = models.CharField(max_length=50, blank=True, null=True)
     review_daily_tag_cd = models.CharField(max_length=50, blank=True, null=True)
 
@@ -211,13 +219,15 @@ class ReviewTb(models.Model):
 
 
 class ReviewTbTemp(models.Model):
-    place_name = models.CharField(max_length=50, blank=True, null=True)
-    place_address = models.CharField(max_length=50, blank=True, null=True)
-    review_text = models.TextField(blank=True, null=True)
+    place_name = models.TextField(blank=True, null=True)
+    place_address = models.TextField(blank=True, null=True)
+    kor_review_text = models.TextField(blank=True, null=True)
+    eng_review_text = models.TextField(blank=True, null=True)
     review_photo = models.TextField(blank=True, null=True)
     review_date = models.DateField(blank=True, null=True)
     review_sentiment = models.IntegerField(blank=True, null=True)
     review_advertising = models.IntegerField(blank=True, null=True)
+    similar_review = models.TextField(blank=True, null=True)
     review_with_tag_cd = models.CharField(max_length=50, blank=True, null=True)
     review_daily_tag_cd = models.CharField(max_length=50, blank=True, null=True)
 
