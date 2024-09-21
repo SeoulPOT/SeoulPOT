@@ -8,7 +8,7 @@ from django.db.models import Count, Min, Case, When, Q, CharField, Value
 
 
 # Create your views here.
-def category(request):
+def category(request, lang):
     print("Place Page")
     
     # Get parameters from request
@@ -32,7 +32,7 @@ def category(request):
     except DistrictTb.DoesNotExist:
         district = None
 
-   # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
+    # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
@@ -44,7 +44,7 @@ def category(request):
     catagoty_tag_subquery = CodeTb.objects.filter(
                 code=OuterRef('place_tag_cd'),
                 parent_code='pt',
-            ).values('code_name')[:1]
+            ).values('kor_code_name' if lang == 'kor' else 'eng_code_name')[:1]
 
     # Filter places based on district and category, annotate with the first photo
     places = PlaceTb.objects.filter(
@@ -75,7 +75,7 @@ def category(request):
             'place_list': serialized_places,
             'current_page' : page,
             'total_pages' : paginator.num_pages,
-
+            'lang' : lang,
         }
         return JsonResponse(data, safe=False)
 
@@ -87,6 +87,7 @@ def category(request):
         'category' : place_category_cd,
         'current_page' : page,
         'total_pages' : paginator.num_pages,
+        'lang' : lang,
     }
     return render(request, 'place/place.html', context)
 

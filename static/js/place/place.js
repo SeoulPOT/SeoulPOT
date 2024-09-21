@@ -120,7 +120,12 @@ function loadMoreObjects(page) {
                     // 푸터 생성
                     const footer = document.createElement('div');
                     footer.className = 'card-footer';
-                    footer.innerHTML = `📝 리뷰 ${place.place_review_num}개`;
+                    if(lang == 'kor'){
+                        footer.innerHTML = `📝 리뷰 ${place.place_review_num}개`;
+                    }
+                    else{
+                        footer.innerHTML = `📝 ${place.place_review_num} reviews`;
+                    }
 
                     const bookmark= document.createElement('img');
                     bookmark.src = bookmark_not_check_img;
