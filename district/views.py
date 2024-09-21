@@ -20,9 +20,9 @@ def get_districts(request, lang):
             "districts": [
                 {
                     "district_id": district.district_id,
-                    "district_name": district.district_name,
-                    "district_img": district.district_img,
-                    "district_desc": district.district_desc
+                    "district_name": district.kor_district_name if lang == 'kor' else district.eng_district_name,
+                    "district_name_kor": district.kor_district_name,
+                    "district_desc": district.kor_district_desc if lang == 'kor' else district.eng_district_desc
                 }
                 for district in districts
             ],
@@ -48,7 +48,7 @@ def district(request, lang):
     return render(request, 'district/district.html', context)
 
 #구 선택 버튼 시 db 정보 조회
-def choose_district(district_id, place_category_cd):
+def choose_district(district_id, place_category_cd, lang):
     data = []
 
     # Review에서 사진을 가져오는 서브쿼리 작성
@@ -69,9 +69,9 @@ def choose_district(district_id, place_category_cd):
     )
 
     catagoty_tag_subquery = CodeTb.objects.filter(
-            code=OuterRef('place_tag_cd'),
-            parent_code='pt',
-        ).values('code_name')[:1]
+            code=OuterRef('place_category_cd'),
+            parent_code='pc',
+        ).values('kor_code_name' if lang == 'kor' else 'eng_code_name')[:1]
 
     # for category in categories:
     #     # 각 카테고리에 대해 리뷰 수가 많은 상위 4개 장소를 가져옴
@@ -138,17 +138,14 @@ def get_places_by_districts(request):
 
 @require_http_methods(["GET"])
 def get_places_by_category(request, lang, district_id, place_category_cd):
-    # request에서 district_id와 place_category_cd 가져오기
     print('get_places_by_category')
-    # district_id = request.GET.get('district_id')
-    # place_category_cd = request.GET.get('place_category_cd')
     
     # 필수 파라미터가 없으면 에러 반환
     if not district_id or not place_category_cd:
         return JsonResponse({"error": "district_id and place_category_cd are required"}, status=400)
 
     # 선택된 구에 대한 데이터 조회
-    all_data = choose_district(district_id, place_category_cd)
+    all_data = choose_district(district_id, place_category_cd, lang)
 
     # place_category_cd에 해당하는 데이터 필터링
     filtered_data = [
