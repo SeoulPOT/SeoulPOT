@@ -5,11 +5,13 @@ from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef
 from django.db.models.functions import Coalesce
 from django.db.models import Count, Min, Case, When, Q, CharField, Value
-
+from utils import SaveLog
 
 # Create your views here.
 def category(request, lang):
+    SaveLog(request)
     print("Place Page")
+    
     
     # Get parameters from request
     district_id = request.GET.get('district_id')
@@ -92,6 +94,7 @@ def category(request, lang):
     return render(request, 'place/place.html', context)
 
 def get_spots_by_category(request):
+    SaveLog(request)
     district_name = request.GET.get('district_name')
     place_category_cd = request.GET.get('place_category_cd') 
 

@@ -5,6 +5,7 @@ from main.models import DistrictTb, PlaceTb, ReviewTb, CodeTb
 from django.db.models import Count
 from django.db.models import Subquery, OuterRef
 import logging
+from utils import SaveLog
 
 # 로깅 설정
 logger = logging.getLogger(__name__)
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 #구별 간략 정보 DB 조회
 @require_http_methods(["GET"]) # GET 메소드로만 호출될 수 있게 제한
 def get_districts(request, lang):
+    SaveLog(request)
     try:
         print(lang)
         # 해당 언어에 맞게 구별 정보를 불러옴 (예시로 한국어로만 처리) #리턴데이터형식맞추기
@@ -115,6 +117,7 @@ def choose_district(district_id, place_category_cd, lang):
 
 @require_http_methods(["GET"])
 def get_places_by_districts(request):
+    SaveLog(request)
     district_id = request.GET.get('district_id')  # 요청에서 district_id 가져오기
     
     if not district_id:
@@ -131,6 +134,7 @@ def get_places_by_districts(request):
 
 @require_http_methods(["GET"])
 def get_places_by_category(request, lang, district_id, place_category_cd):
+    SaveLog(request)
     print('get_places_by_category')
     
     # 필수 파라미터가 없으면 에러 반환
