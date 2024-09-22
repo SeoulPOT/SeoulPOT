@@ -192,7 +192,20 @@ function createDistrictDiv(subway_container, place_info) {
         // <div id="seleceted-district-subway-img-container"></div>
         const div = document.createElement('div');
         div.classList.add('seleceted-district-subway-img-container');
+    
+        // <img id="seleceted-district-subway-marker" src="{% static 'img/marker_img.png' %}" alt="marker"></img>
+        const img_marker = document.createElement('img');
+        img_marker.src = `/static/img/spot.png`;
+        img_marker.alt = `마커 이미지`;
+        img_marker.id = 'seleceted-district-subway-marker';       
         
+        const img_marker_text = document.createElement('span');
+        img_marker_text.textContent = place_info[0];
+        img_marker_text.classList.add('seleceted-district-subway-marker-text');
+
+        div.appendChild(img_marker);
+        div.appendChild(img_marker_text);
+
         // <img id="seleceted-district-subway-img" src="{% static 'img/subway/서울대입구.png' %}" alt="subway"></img>
         console.log('place_info : ', place_info);
         let subway_info = place_info[1].split(',');
@@ -204,19 +217,6 @@ function createDistrictDiv(subway_container, place_info) {
             img_subway.id = 'seleceted-district-subway-img';
             div.appendChild(img_subway);
         }
-        // <img id="seleceted-district-subway-marker" src="{% static 'img/marker_img.png' %}" alt="marker"></img>
-        const img_marker = document.createElement('img');
-        img_marker.src = `/static/img/spot.png`;
-        img_marker.alt = `마커 이미지`;
-        img_marker.id = 'seleceted-district-subway-marker';
-        
-        
-        const img_marker_text = document.createElement('span');
-        img_marker_text.textContent = place_info[0];
-        img_marker_text.classList.add('seleceted-district-subway-marker-text');
-
-        div.appendChild(img_marker);
-        div.appendChild(img_marker_text);
 
         subway_container.appendChild(div);
     }
@@ -287,7 +287,11 @@ function fetchData(category) {
             btn.classList.remove('active');
     });
             
-
+    console.log('current_district : ', current_district);
+    console.log('current_category : ', current_category);   
+    path = `${current_district}/${current_category}`;
+    console.log('path : ', path);
+    
     fetch(`${current_district}/${current_category}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
