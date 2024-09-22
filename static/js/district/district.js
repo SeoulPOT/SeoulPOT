@@ -222,29 +222,6 @@ function createDistrictDiv(subway_container, place_info) {
     }
 }
 
-
-
-// // 데이터베이스 연동 코드로 수정 필요
-// async function fetchCSV(url) {
-//     const response = await fetch(url);
-//     const text = await response.text();
-//     return text;
-// }
-
-function parseCSV(text) {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',').map(header => header.trim());
-    const data = lines.slice(1).map(line => {
-        const values = line.split(',').map(value => value.trim());
-        const row = {};
-        headers.forEach((header, index) => {
-            row[header] = values[index];
-        });
-        return row;
-    });
-    return data;
-}
-
 function createStoreItem(store) {
     const div = document.createElement('div');
     div.classList.add('space-box');
