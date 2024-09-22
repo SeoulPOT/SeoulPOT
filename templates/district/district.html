@@ -112,7 +112,7 @@
     <script>
         const districts_list = {{districts|safe}};
         const categories_list = {{categories|safe}};
-        const place_page_url = "{% url 'de-food-place' %}";
+        const place_page_url = "{% url 'de-food-place' lang %}";
         const fallbackImage = "{% static 'img/default.png' %}";
         const staticPath = "{% static 'data/logo' %}";
         const selected_lang  = '{{lang}}';

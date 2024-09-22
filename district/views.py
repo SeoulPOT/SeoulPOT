@@ -51,15 +51,8 @@ def district(request, lang):
 def choose_district(district_id, place_category_cd, lang):
     data = []
 
-    # Review에서 사진을 가져오는 서브쿼리 작성
-    # photo_subquery = ReviewTb.objects.filter(
-    #     place_id=OuterRef('place_id'),
-    #     review_photo__gt=''
-    # )
-    # .order_by('review_date')
-    # .values('review_photo')[:1]
 
-       # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
+    # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
