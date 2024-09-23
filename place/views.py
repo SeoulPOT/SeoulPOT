@@ -5,11 +5,13 @@ from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef
 from django.db.models.functions import Coalesce
 from django.db.models import Count, Min, Case, When, Q, CharField, Value
-
+from utils import SaveLog
 
 # Create your views here.
-def category(request):
+def category(request, lang):
+    SaveLog(request)
     print("Place Page")
+    
     
     # Get parameters from request
     district_id = request.GET.get('district_id')
@@ -32,7 +34,7 @@ def category(request):
     except DistrictTb.DoesNotExist:
         district = None
 
-   # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
+    # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
@@ -44,7 +46,7 @@ def category(request):
     catagoty_tag_subquery = CodeTb.objects.filter(
                 code=OuterRef('place_tag_cd'),
                 parent_code='pt',
-            ).values('code_name')[:1]
+            ).values('kor_code_name' if lang == 'kor' else 'eng_code_name')[:1]
 
     # Filter places based on district and category, annotate with the first photo
     places = PlaceTb.objects.filter(
@@ -75,7 +77,7 @@ def category(request):
             'place_list': serialized_places,
             'current_page' : page,
             'total_pages' : paginator.num_pages,
-
+            'lang' : lang,
         }
         return JsonResponse(data, safe=False)
 
@@ -87,10 +89,12 @@ def category(request):
         'category' : place_category_cd,
         'current_page' : page,
         'total_pages' : paginator.num_pages,
+        'lang' : lang,
     }
     return render(request, 'place/place.html', context)
 
 def get_spots_by_category(request):
+    SaveLog(request)
     district_name = request.GET.get('district_name')
     place_category_cd = request.GET.get('place_category_cd') 
 

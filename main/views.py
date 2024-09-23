@@ -4,6 +4,8 @@ from django.views.decorators.http import require_http_methods
 import logging
 from django.http import JsonResponse
 import pytz
+from main.models import LogTb
+from utils import SaveLog
 
 # 미국 동부 표준시(EST) 타임존 설정
 est = pytz.timezone('America/New_York')
@@ -20,6 +22,10 @@ def get_sever_time(request):
         context = {
             "now_time" : datetime.now(kst).isoformat()
         }
+
+        # 로그 저장
+        SaveLog(request)
+        
         return render(request, 'main/main.html', context)
     except Exception as e:
         logger.error(f"Server error: {str(e)}")

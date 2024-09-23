@@ -8,23 +8,39 @@
             <div id="map"></div>
         </div>
         <div class="right-panel">
-            <h1>{{district.district_name}}</h1>
+            <h1>
+                {% if lang == 'kor' %}
+                    {{district.kor_district_name}}
+                {% else %}
+                    {{district.eng_district_name}}
+                {% endif %}
+            </h1>
             <div id="place-container">
                 <div class="categories">
                     {% for category in categories %}
-                        <button id="category" data-category='{{category.code}}'>{{category.code_name}}</button>
-                        {% endfor %}
+                        <button id="category" data-category='{{category.code}}'>
+                            {% if lang == 'kor' %}
+                                {{category.kor_code_name}}
+                            {% else %}
+                                {{category.eng_code_name}}
+                            {% endif %}
+                        </button>
+                    {% endfor %}
+                    <button id="category" data-category='bookmark'>
+                        <img src="{% static 'img/check.png' %}" width="25px" height="25px" alt="좋아요">
+                    </button>
                 </div>
                 <div class="card-list" id="place-list-container">
                     {% for place in place_list %}
                     <button class="card" onclick="location.href='{% url 'project-content_reviews' %}?place_id={{place.place_id}}'">
-                        <img src="{{spot.img}}" alt="건대거리" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+                        <img src="{{spot.img}}" alt="건대거리" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}'">
                         <div class="card-content">
                             <h3>{{place.place_name}}</h3>
                         </div>
                         <div class="card-footer">
                             <span>&hearts; {{spot.likes}}</span>
                         </div>
+                        <img src="{% static 'img/check.png' %}" width="25px" height="25px" alt="좋아요">
                     </button>
                     {% endfor %}
                 </div>
@@ -58,12 +74,12 @@
     <!-- 이 페이지에서만 사용하는 JS -->
     <script>
         window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
-        const get_spot_by_category = "{% url 'de-food-place' %}";
+        const get_spot_by_category = "{% url 'de-food-place' lang %}";
         const review_url = "{% url 'project-content_reviews' %}";
         var district_obj = {
             "district_lat": "{{ district.district_lat }}",
             "district_lon": "{{ district.district_lon }}",
-            "district_name" : "{{district.district_name }}",
+            "district_name" : "{{district.kor_district_name}}",
             "district_id" : "{{district.district_id}}",
             // 필요한 다른 필드들을 여기에 추가
         };
@@ -71,7 +87,11 @@
         const total_pages = {{total_pages}};
         const fallbackImage = "{% static 'img/default1.png' %}";
         const markerImage = "{% static 'img/marker_img.png' %}";
+        const clicked_markerImage = "{% static 'img/marker2_img.png' %}";
+        const bookmark_img = "{% static 'img/check.png' %}";
+        const bookmark_not_check_img = "{% static 'img/notcheck.png' %}";
         const selected_category = '{{category}}';
+        const lang = '{{lang}}';
     </script>
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
     <script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>

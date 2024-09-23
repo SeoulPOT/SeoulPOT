@@ -544,12 +544,15 @@ main {
     /* width: 25%; */
     height: 20px;
     max-height: 100px;
-    margin: 2px;
+    margin-left: 5px;
 }
 #seleceted-district-subway-marker{
     /* width: 30%; */
     height: 70%;
     max-height: 100px;
+    margin-left: 20px;
+    margin-right: 10px;
+    
 }
 
 #seleceted-district-subway-marker-text{

@@ -63,11 +63,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // 조건을 만족하는 객체가 있으면 출력
                     var foundItem = districts_list.find(function(item) {
-                        return item.district_name === d.properties.name;
+                        return item.district_name_kor === d.properties.name;
                     });
 
                     if (foundItem) {
-                        img_path = staticPath+`/${foundItem.district_name}.png`;
+
+                        if (selected_lang == 'kor'){
+                            document.getElementById('district-name').innerText = foundItem.district_name_kor;      
+                        }
+                        else{
+                            document.getElementById('district-name').innerText = foundItem.district_name;      
+                        }
+
+
+                        img_path = staticPath+`/${foundItem.district_name_kor}.png`;
                         console.log('img_path : ', fallbackImage);
                         console.log('img_path : ', img_path);
 
@@ -122,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('district-name').innerText = d.properties.name;
                         
                         is_selected = true;
-                        if(['강남구', '서초구', '송파구', '강동구'].includes(d.properties.name)){
+                        if(['강남구', '마포구', '성북구', '용산구', '종로구'].includes(d.properties.name)){
                             document.getElementById('none_select-info-container').style.display = 'none';
                             document.getElementById('district-container').style.display = 'flex';
                             document.getElementById('district-info-container').style.display = 'none';
@@ -135,10 +144,19 @@ document.addEventListener('DOMContentLoaded', function() {
                             document.getElementById('district-comming-soon').style.display = 'flex';
                         }
                         var foundItem = districts_list.find(function(item) {
-                            return item.district_name === d.properties.name;
+                            return item.district_name_kor === d.properties.name;
                         });
     
                         if (foundItem) {
+
+                            if (selected_lang == 'kor'){
+                                document.getElementById('district-name').innerText = foundItem.district_name_kor;      
+                            }
+                            else{
+                                document.getElementById('district-name').innerText = foundItem.district_name;      
+                            }
+                            
+                            console.log('click district : ', foundItem);
                             current_district = foundItem.district_id;
                             category_code = current_category ? current_category : categories_list[0].code;
                             
@@ -174,7 +192,20 @@ function createDistrictDiv(subway_container, place_info) {
         // <div id="seleceted-district-subway-img-container"></div>
         const div = document.createElement('div');
         div.classList.add('seleceted-district-subway-img-container');
+    
+        // <img id="seleceted-district-subway-marker" src="{% static 'img/marker_img.png' %}" alt="marker"></img>
+        const img_marker = document.createElement('img');
+        img_marker.src = `/static/img/spot.png`;
+        img_marker.alt = `마커 이미지`;
+        img_marker.id = 'seleceted-district-subway-marker';       
         
+        const img_marker_text = document.createElement('span');
+        img_marker_text.textContent = place_info[0];
+        img_marker_text.classList.add('seleceted-district-subway-marker-text');
+
+        div.appendChild(img_marker);
+        div.appendChild(img_marker_text);
+
         // <img id="seleceted-district-subway-img" src="{% static 'img/subway/서울대입구.png' %}" alt="subway"></img>
         console.log('place_info : ', place_info);
         let subway_info = place_info[1].split(',');
@@ -186,45 +217,9 @@ function createDistrictDiv(subway_container, place_info) {
             img_subway.id = 'seleceted-district-subway-img';
             div.appendChild(img_subway);
         }
-        // <img id="seleceted-district-subway-marker" src="{% static 'img/marker_img.png' %}" alt="marker"></img>
-        const img_marker = document.createElement('img');
-        img_marker.src = `/static/img/spot.png`;
-        img_marker.alt = `마커 이미지`;
-        img_marker.id = 'seleceted-district-subway-marker';
-        
-        
-        const img_marker_text = document.createElement('span');
-        img_marker_text.textContent = place_info[0];
-        img_marker_text.classList.add('seleceted-district-subway-marker-text');
-
-        div.appendChild(img_marker);
-        div.appendChild(img_marker_text);
 
         subway_container.appendChild(div);
     }
-}
-
-
-
-// 데이터베이스 연동 코드로 수정 필요
-async function fetchCSV(url) {
-    const response = await fetch(url);
-    const text = await response.text();
-    return text;
-}
-
-function parseCSV(text) {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',').map(header => header.trim());
-    const data = lines.slice(1).map(line => {
-        const values = line.split(',').map(value => value.trim());
-        const row = {};
-        headers.forEach((header, index) => {
-            row[header] = values[index];
-        });
-        return row;
-    });
-    return data;
 }
 
 function createStoreItem(store) {
@@ -254,7 +249,12 @@ function createStoreItem(store) {
     tag.id = 'place-tag';
 
     const reviews = document.createElement('p');
-    reviews.textContent = `📝 리뷰 ${store.place_review_num}개`;
+    if (selected_lang == 'kor'){
+        reviews.textContent = `📝 리뷰 ${store.place_review_num}개`;
+    }
+    else{
+        reviews.textContent = `📝 ${store.place_review_num} reviews`;
+    }
     reviews.id = 'place-reviews';
     
     details.appendChild(name);
@@ -287,7 +287,11 @@ function fetchData(category) {
             btn.classList.remove('active');
     });
             
-
+    console.log('current_district : ', current_district);
+    console.log('current_category : ', current_category);   
+    path = `${current_district}/${current_category}`;
+    console.log('path : ', path);
+    
     fetch(`${current_district}/${current_category}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
