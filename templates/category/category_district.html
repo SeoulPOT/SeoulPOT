@@ -1,96 +1,130 @@
 {% extends 'base/base.html' %}
 
-{% block title %}category{% endblock %}
+{% block title %}Category District{% endblock %}
 {% load static %}
 {% block content %}
-    <main id="container">
-        <section id="map-container">
-            <div id="map"></div>
-        </section >
-        <section id = "triangle"></section>
-        <section id="district-info">
-            <h1 id="district-name">ㅤ</h1>
+<main id="container">
+    <section id="map-container">
+        <div id="map"></div>
 
-            <div id="none_select-info-container">
-                <img src="{% static 'img/spot.png' %}" alt="spot">
-                <p>마우스를 올려</p>
-                <p>여행하기 좋은</p>
-                <p class="highlight">SeoulPOT을</p>
-                <p>찾아보세요</p>
+        <!-- 색상바를 지도 옆에 추가 -->
+        <div id="gradient-bar">
+            <div id="gradient-bar-labels">
+                <span>High</span>
+                <span>Low</span>
             </div>
-            <div id="district-info-container">
-                <div id ="selected-district-img-container">
-                    <img id="selected-district-img" src="">
-                </div>
-                <div id="selected-district-desc-container">
-                    <span id="selected-district-desc">설명</span>
-                </div>
-                
-            </div>
-            <div id="district-container">
-                <div id="detail">
-                    <div id="district-category">
-                        {% for category in categories %}
-                        <button id="category" data-value="{{category.code}}" onclick="fetchData('{{category.code}}')">{{category.code_name}}</button>
-                        {% endfor %}
-                    </div>
-                    <div id="district-space">
-                        <div id="space-container"></div>
-                        <div id="space-container"></div>
-                        <div id="space-container"></div>
-                        <div id="space-container"></div>
-                    </div>
-                    <div id="more-button">
-                        <button class="readmore-btn" onclick="MoveToPlacePage()">
-                            <span class="text"> More Review </span>
-                            <span class="book-wrapper">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126 75" class="book">
-                                    <rect stroke-width="3" stroke="#fff" rx="7.5" height="70" width="121" y="2.5" x="2.5"></rect>
-                                    <line stroke-width="3" stroke="#fff" y2="75" x2="63.5" x1="63.5"></line>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M25 20H50"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M101 20H76"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M16 30L50 30"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M110 30L76 30"></path>
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 65 75" class="book-page">
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M40 20H15"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M49 30L15 30"></path>
-                                    <path stroke-width="3" stroke="#fff" d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"></path>
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
+    </section>
+    <section id="triangle"></section>
+    <section id="district-info">
         
-    </main>
-    {% endblock %}
+        <!-- place_tag_name을 헤더로 표시 -->
+        <h2 id="place-tag-name">{{ place_tag_name }}</h2> <!-- 추가된 부분 -->
+        <h1 id="district-name" style="display: none;">{{ district_name }}</h1>
+        
 
-    {% block extra_css %}
-    <!-- 이 페이지에서만 사용하는 CSS -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/district/district.css' %}">
-    {% endblock %}
+        <div id="district-container">
+            <div id="district-category">
+                {% for category in categories %}
+                <button id="category" data-value="{{category.code}}" onclick="fetchData('{{category.code}}')">{{category.code_name}}</button>
+                {% endfor %}
+            </div>
+            <div id="district-space">
+                <div id="space-container"></div>
+                <div id="space-container"></div>
+                <div id="space-container"></div>
+                <div id="space-container"></div>
+            </div>
+            <div id="more-button">
+                <button class="readmore-btn" onclick="MoveToPlacePage()">
+                    <span class="text">More Review</span>
+                    <span class="book-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 126 75" class="book">
+                            <rect stroke-width="3" stroke="#fff" rx="7.5" height="70" width="121" y="2.5" x="2.5"></rect>
+                            <line stroke-width="3" stroke="#fff" y2="75" x2="63.5" x1="63.5"></line>
+                            <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M25 20H50"></path>
+                            <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M101 20H76"></path>
+                            <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M16 30L50 30"></path>
+                            <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M110 30L76 30"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 65 75" class="book-page">
+                            <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M40 20H15"></path>
+                            <path stroke-linecap="round" stroke-width="4" stroke="#fff" d="M49 30L15 30"></path>
+                            <path stroke-width="3" stroke="#fff" d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
 
-    {% block extra_js %}
-    <!-- 이 페이지에서만 사용하는 JS -->
-    <script>
-        window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
-        window.district_temp_place = "{% static 'data/district_temp_place_data.csv' %}";
-    </script>
-    <!-- JSON 데이터를 안전하게 포함 -->
-    <script>
-        const districts_list = {{districts|safe}};
-        const categories_list = {{categories|safe}};
-        const place_page_url = "{% url 'de-food-place' %}";
-        const fallbackImage = "{% static 'img/default.png' %}";
-        const staticPath = "{% static 'data/logo' %}";
-        const selected_lang  = '{{lang}}';
-    </script>
-    <script src="{% static '\js\district\district.js' %}"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    {% endblock %}
- 
-    
+{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/category/category_district.css' %}">
+<style>
+    /* 지도 옆에 추가된 색상 그라데이션 바 */
+    #gradient-bar {
+        width: 20px;
+        height: 300px;
+        background: linear-gradient(to top, #d4cbf8, #6a4d9a); /* 진한색에서 연한색으로 */
+        position: absolute;
+        left: 20px; /* 지도 오른쪽에 배치 */
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* 색상바에 레이블 추가 */
+    #gradient-bar-labels {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 200px;
+        position: absolute;
+        right: -40px; /* High와 Low 위치를 바꿉니다 */
+        top: 0;
+        color: #9077CB;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    #gradient-bar-labels span {
+        font-size: 14px;
+    }
+
+    /* 아래 코드에서 High와 Low의 순서를 바꿔줍니다. */
+    #gradient-bar-labels {
+        display: flex;
+        flex-direction: flex; /* 아래쪽을 기준으로 컬럼을 반대로 변경 */
+        justify-content: space-between;
+        height: 200px;
+        position: absolute;
+        right: -40px;
+        color: #9077CB;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
+    window.district_temp_place = "{% static 'data/district_temp_place_data.csv' %}";
+</script>
+<!-- JSON 데이터를 안전하게 포함 -->
+<script>
+    const districts_list = {{ districts|safe }};
+    console.log("Districts list:", districts_list);
+    const categories_list = {{ categories|safe }};
+    const place_page_url = "{% url 'de-food-place' %}";
+    const fallbackImage = "{% static 'img/default.png' %}";
+    const staticPath = "{% static 'data/logo' %}";
+    const place_tag_cd = '{{ place_tag_cd }}';
+    const selected_lang  = '{{lang}}';
+</script>
+<script src="{% static 'js/category/category_district.js' %}"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+{% endblock %}
