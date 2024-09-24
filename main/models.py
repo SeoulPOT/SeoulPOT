@@ -13,29 +13,29 @@ class AuthGroup(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'auth_group'
+        db_table = "auth_group"
 
 
 class AuthGroupPermissions(models.Model):
     id = models.BigAutoField(primary_key=True)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+    permission = models.ForeignKey("AuthPermission", models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'auth_group_permissions'
-        unique_together = (('group', 'permission'),)
+        db_table = "auth_group_permissions"
+        unique_together = (("group", "permission"),)
 
 
 class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    content_type = models.ForeignKey("DjangoContentType", models.DO_NOTHING)
     codename = models.CharField(max_length=100)
 
     class Meta:
         managed = False
-        db_table = 'auth_permission'
-        unique_together = (('content_type', 'codename'),)
+        db_table = "auth_permission"
+        unique_together = (("content_type", "codename"),)
 
 
 class AuthUser(models.Model):
@@ -52,7 +52,7 @@ class AuthUser(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'auth_user'
+        db_table = "auth_user"
 
 
 class AuthUserGroups(models.Model):
@@ -62,8 +62,8 @@ class AuthUserGroups(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'auth_user_groups'
-        unique_together = (('user', 'group'),)
+        db_table = "auth_user_groups"
+        unique_together = (("user", "group"),)
 
 
 class AuthUserUserPermissions(models.Model):
@@ -73,32 +73,34 @@ class AuthUserUserPermissions(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'auth_user_user_permissions'
-        unique_together = (('user', 'permission'),)
+        db_table = "auth_user_user_permissions"
+        unique_together = (("user", "permission"),)
 
 
 class CodeTb(models.Model):
     code = models.CharField(primary_key=True, max_length=50)
-    code_name = models.CharField(max_length=255)
+    kor_code_name = models.CharField(max_length=255)
+    eng_code_name = models.CharField(max_length=255)
     code_desc = models.TextField(blank=True, null=True)
     parent_code = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'code_tb'
+        db_table = "code_tb"
 
 
 class DistrictTb(models.Model):
     district_id = models.AutoField(primary_key=True)
-    district_name = models.CharField(max_length=255)
-    district_img = models.CharField(max_length=500, blank=True, null=True)
-    district_desc = models.TextField(blank=True, null=True)
-    district_lat = models.CharField(max_length=100, blank=True, null=True)
-    district_lon = models.CharField(max_length=100, blank=True, null=True)
+    kor_district_name = models.CharField(max_length=255)
+    eng_district_name = models.CharField(max_length=255)
+    kor_district_desc = models.TextField(blank=True, null=True)
+    eng_district_desc = models.TextField(blank=True, null=True)
+    district_lat = models.FloatField(blank=True, null=True)
+    district_lon = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'district_tb'
+        db_table = "district_tb"
 
 
 class DjangoAdminLog(models.Model):
@@ -107,12 +109,14 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.PositiveSmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    content_type = models.ForeignKey(
+        "DjangoContentType", models.DO_NOTHING, blank=True, null=True
+    )
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
         managed = False
-        db_table = 'django_admin_log'
+        db_table = "django_admin_log"
 
 
 class DjangoContentType(models.Model):
@@ -121,8 +125,8 @@ class DjangoContentType(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'django_content_type'
-        unique_together = (('app_label', 'model'),)
+        db_table = "django_content_type"
+        unique_together = (("app_label", "model"),)
 
 
 class DjangoMigrations(models.Model):
@@ -133,7 +137,7 @@ class DjangoMigrations(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'django_migrations'
+        db_table = "django_migrations"
 
 
 class DjangoSession(models.Model):
@@ -143,7 +147,7 @@ class DjangoSession(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'django_session'
+        db_table = "django_session"
 
 
 class LogTb(models.Model):
@@ -157,7 +161,7 @@ class LogTb(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'log_tb'
+        db_table = "log_tb"
 
 
 class PlaceTb(models.Model):
@@ -166,21 +170,25 @@ class PlaceTb(models.Model):
     place_name = models.CharField(max_length=255)
     place_address = models.CharField(max_length=255, blank=True, null=True)
     place_phone = models.CharField(max_length=50, blank=True, null=True)
-    place_review_num = models.IntegerField(blank=True, null=True)
     place_operating_hours = models.CharField(max_length=255, blank=True, null=True)
     place_entrance_fee = models.CharField(max_length=50, blank=True, null=True)
     place_desc = models.CharField(max_length=255, blank=True, null=True)
     place_url = models.CharField(max_length=255, blank=True, null=True)
-    place_feature = models.CharField(max_length=255, blank=True, null=True)
-    place_keyword_cd = models.CharField(max_length=50, blank=True, null=True)
+    place_review_num = models.IntegerField(blank=True, null=True)
+    place_pos_review_num = models.IntegerField(blank=True, null=True)
+    place_neg_review_num = models.IntegerField(blank=True, null=True)
+    place_ad_review_num = models.IntegerField(blank=True, null=True)
+    place_feature = models.TextField(blank=True, null=True)
+    place_thema_cd = models.CharField(max_length=50, blank=True, null=True)
     place_category_cd = models.CharField(max_length=50, blank=True, null=True)
     place_tag_cd = models.CharField(max_length=50, blank=True, null=True)
-    place_lat = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
-    place_lon = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
+    place_lat = models.FloatField(blank=True, null=True)
+    place_lon = models.FloatField(blank=True, null=True)
+    place_review_num_real = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'place_tb'
+        db_table = "place_tb"
 
 
 class RequestTb(models.Model):
@@ -191,36 +199,40 @@ class RequestTb(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'request_tb'
+        db_table = "request_tb"
 
 
 class ReviewTb(models.Model):
     review_id = models.AutoField(primary_key=True)
     place = models.ForeignKey(PlaceTb, models.DO_NOTHING, blank=True, null=True)
-    review_text = models.TextField(blank=True, null=True)
+    kor_review_text = models.TextField(blank=True, null=True)
+    eng_review_text = models.TextField(blank=True, null=True)
     review_photo = models.TextField(blank=True, null=True)
     review_date = models.DateField(blank=True, null=True)
     review_sentiment = models.IntegerField(blank=True, null=True)
     review_advertising = models.IntegerField(blank=True, null=True)
+    similar_review = models.TextField(blank=True, null=True)
     review_with_tag_cd = models.CharField(max_length=50, blank=True, null=True)
     review_daily_tag_cd = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'review_tb'
+        db_table = "review_tb"
 
 
 class ReviewTbTemp(models.Model):
-    place_name = models.CharField(max_length=50, blank=True, null=True)
-    place_address = models.CharField(max_length=50, blank=True, null=True)
-    review_text = models.TextField(blank=True, null=True)
+    place_name = models.TextField(blank=True, null=True)
+    place_address = models.TextField(blank=True, null=True)
+    kor_review_text = models.TextField(blank=True, null=True)
+    eng_review_text = models.TextField(blank=True, null=True)
     review_photo = models.TextField(blank=True, null=True)
     review_date = models.DateField(blank=True, null=True)
     review_sentiment = models.IntegerField(blank=True, null=True)
     review_advertising = models.IntegerField(blank=True, null=True)
+    similar_review = models.TextField(blank=True, null=True)
     review_with_tag_cd = models.CharField(max_length=50, blank=True, null=True)
     review_daily_tag_cd = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'review_tb_temp'
+        db_table = "review_tb_temp"
