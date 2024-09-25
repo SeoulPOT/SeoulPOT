@@ -4,14 +4,32 @@
 {% load static %}
 {% block content %}
     <div class="container">
-        <h1>건의사항 접수</h1>
-        <form id="suggestionForm" method="post" action="{% url 'board_create' %}">
+        <h1>
+            {% if lang == 'kor' %}
+                건의사항 접수
+            {% else %}
+                Submit Your Suggestions
+            {% endif %}
+        </h1>
+        <form id="suggestionForm" method="post" action="{% url 'board_create' lang %}">
             {% csrf_token %}
-            <label for="suggestion">건의사항:</label>
+            <label for="suggestion">
+                {% if lang == 'kor' %}
+                    건의사항:
+                {% else %}
+                    Your Suggestions:
+                {% endif %}
+            </label>
             <textarea  id="suggestion" name="request_text" rows="6" cols="40" required></textarea><br>
-            <button type="submit">제출</button>
+            <button type="submit">
+                {% if lang == 'kor' %}
+                    제출
+                {% else %}
+                    Submit
+                {% endif %}
+            </button>
         </form>
-        <!-- <a href="{% url 'board_list' %}">뒤로 가기</a> -->
+        <!-- <a href="{% url 'board_list' lang %}">뒤로 가기</a> -->
     </div>
 {% endblock %}    
 {% block extra_css %}

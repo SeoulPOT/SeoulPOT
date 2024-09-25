@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .classed('active', true)
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
     
+                        
                     if(selected_obj == undefined){
                         document.getElementById('district-name').innerText = d.properties.name;                    
                         document.getElementById('none_select-info-container').style.display = 'none';
@@ -68,11 +69,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (foundItem) {
 
-                        if (selected_lang == 'kor'){
-                            document.getElementById('district-name').innerText = foundItem.district_name_kor;      
-                        }
-                        else{
-                            document.getElementById('district-name').innerText = foundItem.district_name;      
+                        if(selected_obj == undefined){
+                            if (selected_lang == 'kor'){
+                                document.getElementById('district-name').innerText = foundItem.district_name_kor;      
+                            }
+                            else{
+                                document.getElementById('district-name').innerText = foundItem.district_name;      
+                            }
                         }
 
 
@@ -126,12 +129,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     else{
                         selected_obj = this;
                         is_selected = true;
+                        console.log('selected_obj',selected_obj);
                         d3.select(this).classed('clicked', true);
     
                         document.getElementById('district-name').innerText = d.properties.name;
                         
                         is_selected = true;
-                        if(['강남구', '마포구', '성북구', '용산구', '종로구'].includes(d.properties.name)){
+                        if(['강남구', '마포구', '중구', '용산구', '종로구'].includes(d.properties.name)){
                             document.getElementById('none_select-info-container').style.display = 'none';
                             document.getElementById('district-container').style.display = 'flex';
                             document.getElementById('district-info-container').style.display = 'none';
@@ -265,7 +269,7 @@ function createStoreItem(store) {
     div.appendChild(details);
 
     div.onclick = function() {
-        window.location.href = `/review?place_id=${store.place_id}`;
+        window.location.href = `/review/${selected_lang}?place_id=${store.place_id}`;
     };
     
     return div;

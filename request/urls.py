@@ -1,10 +1,10 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 from .views import board_list, board_create, board_delete
 
 urlpatterns = [
-    path('', views.board_list, name='board_list'),
-    path('create/', views.board_create, name='board_create'),
-    path('delete/<int:request_id>/', board_delete, name='board_delete'),
+    re_path(r'^(?P<lang>kor|eng)/$', views.board_list, name='board_list'),
+    re_path(r'^(?P<lang>kor|eng)/create/$', views.board_create, name='board_create'),
+    re_path(r'^(?P<lang>kor|eng)/delete/<int:request_id>/$', board_delete, name='board_delete'),
 
 ]
