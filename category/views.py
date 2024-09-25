@@ -41,13 +41,13 @@ def district_view(request, lang, place_thema_cd):
         category_map = {
             'ph01': {'emoji': '👨‍👩‍👦'},
             'ph02': {'emoji': '💖'},
-            'ph03': {'emoji': '🚴‍♂️'},
-            'ph04': {'emoji': '🕺'},
-            'ph05': {'emoji': '🐕'},
-            'ph06': {'emoji': '💰'},
-            'ph07': {'emoji': '😎'},
+            'ph03': {'emoji': '🕺'},
+            'ph04': {'emoji': '🐕'},
+            'ph05': {'emoji': '😎'},
+            'ph06': {'emoji': '🧘‍♀️'},
+            'ph07': {'emoji': '🚴‍♂️'},
             'ph08': {'emoji': '🌳'},
-            'ph09': {'emoji': '🧘‍♀️'},
+            'ph09': {'emoji': '💰'},
 
             # 필요한 카테고리 추가
         }
