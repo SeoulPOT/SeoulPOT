@@ -47,11 +47,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Center Coordinates:", center);
         console.log('district:' ,district_obj );
         
-
+        let map_lang = (lang === 'kor') ? 'ko' : 'en';
+        console.log(map_lang);
         map = new naver.maps.Map(document.getElementById('map'), {
             // center: new naver.maps.LatLng(center[1], center[0]),
             center: new naver.maps.LatLng(district_obj.district_lat, district_obj.district_lon),
-  
+            language: map_lang
+            
         });
         
         map.fitBounds(bounds);
