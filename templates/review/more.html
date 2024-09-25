@@ -1,0 +1,415 @@
+{% extends 'base/base.html' %}
+{% block title %}{{ place.place_name }} - 리뷰 페이지{% endblock %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <div class="left-content">
+        <div id="left-box">
+            {% for photo in profile_photo %}
+            <img id="place_img" src="{{ photo }}" alt="{{ photo }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+            {% endfor %}
+            <div id="map" class="map" onclick="openMapModal()"></div> <!-- 클릭 시 모달 오픈 -->
+            <div id="mapModalContainer" class="hidden">
+                <div id="mapModalContent">
+                    <div id="largeMap" class="map"></div> <!-- 큰 지도를 표시할 공간 -->
+                    <button class="overlay-button" onclick="closeMapModal()">&#10006;</button> <!-- 닫기 버튼 -->
+                </div>
+            </div>
+            <div class = "address">
+            <h2 id="place-name">{{ place.place_name }}</h2>   
+            <p>🗺️{{ place.place_address }}</p>
+            </div>
+            <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
+            {% if total %}
+                <p class = "profile">🚩  {{ kor_place_tag }}</p>
+                <p class = "profile">📝 리뷰 {{ total }}개</p>
+            {% endif %}
+            {% if place.place_operating_hours %}
+                <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
+            {% endif %}
+            {% if place.place_phone %}
+                <p class = "profile">📞 {{ place.place_phone }}</p>
+            {% endif %}
+            {% if place.place_entrance_fee %}
+                <p class = "profile">🪙 {{ place.place_entrance_fee }}</p>
+            {% endif %}
+            <p>{{ place.place_place_desc }}</p>
+        </div>
+    </div>
+    
+    <div class="right-content">
+        <div id="right-box">
+            <div class="theme-header">
+                <div class="tag-box">
+                    {% if thema_name %}
+                    <span class="tag_name">테마</span>
+                    {% for theme in thema_name %}
+                    <span class="tag">{{ theme }}</span>
+                    {% endfor %}
+                    {% endif %}
+                </div>        
+                <div class="dropdown" style="margin-right: 10px;">
+                    {% if feature_dict %}
+                    <span class="keyword">키워드</span>
+                    <select id="feature-select">
+                        {% for key, value in feature_dict.items %}
+                        <option disabled>{{ key }}: {{ value }}</option>
+                        {% endfor %}
+                    </select>
+                    {% endif %}
+                </div>
+            </div>
+            <div class = "tag_container">
+                <div class="explain">
+                    🔑 해당 리뷰는 AI 분석에 따라 광고성 리뷰 제거 후 각 기준별 높은 점수 순서로 정렬한 리뷰 데이터입니다.
+                </div>
+                <div class="filter-buttons">
+                    <p>정렬 방식</p>
+                    <button onclick="loadReviews('latest')">최신순 ⌛</button>
+                    <button onclick="loadReviews('positive')">긍정 👍</button>
+                    <button onclick="loadReviews('negative')">부정 👎</button>
+                </div>
+            </div>
+            <div id="review_container" class="cards">
+                {% for review in reviews %}
+                    <div class="card">
+                        <img class="review-image" src="{{ review.review_photo }}" alt="{% static 'img/default1.png' %}" onclick="openModal('{{ review.review_photo }}')" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}'; this.onclick=null;">
+                        <img class="icon-overlay" src="{% static 'img/enlarge.png' %}">
+                        <div class="card-content">
+                            <p class="card-date">{{ review.review_date|date:"Y-m-d" }}</p>
+                            {% if review.daily_tag_name %}
+                                <p class="card-daily">방문 목적: {{ review.daily_tag_name }}</p>
+                            {% endif %}
+                            {% if review.with_tag_name %}
+                                <p class="card-with">함께 방문: {{ review.with_tag_name }}</p>
+                            {% endif %}
+                            <p class="card-description">{{ review.kor_review_text }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalContainer" class="hidden">
+    <div id="modalContent">
+        <!-- <button id="modalCloseButton">닫기</button> -->
+        <img id="modalImage" src="" alt="Review Image">
+        <button class="overlay-button" onclick="closeModal()">&#10006;</button>
+    </div>
+</div>
+
+
+
+
+    {% endblock %}
+
+    {% block extra_css %}
+    
+    <style>
+    .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: row;
+        background: white;
+        padding: 10px 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        justify-content: flex-start;
+        align-items: flex-start; /* 아이템들을 상단에 정렬 */
+        gap: 15px;
+        margin: 10px;
+        transition: transform 0.2s ease-in-out; /* 호버 시 확대 효과 */
+    }
+
+    .card:hover {
+        transform: scale(1.03); /* 살짝 확대 */
+    }
+
+    .card img {
+        width: 25%;
+        height: auto; /* 높이는 자동으로 설정 */
+        aspect-ratio: 1 / 1;
+        border-radius: 10px;}
+
+    .card-content {
+        flex: 1; /* 내용이 나머지 공간을 채우도록 */
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .card-title {
+        font-size: 1.2em;
+        margin: 5px 0px ;
+    }
+
+    .card-date,.card-daily,.card-with {
+        font-size: 0.8em;
+        color: gray;
+        margin: 5px 0px;
+    }
+
+    .card-description {
+        font-size: 0.9em;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto; /* 푸터가 내용의 하단에 위치하도록 */
+    }
+    .right-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 50%;
+    }
+    
+    #mapModalContainer {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+    
+    #mapModalContent {
+        width: 80%;
+        height: 80%;
+        background-color: transparent; /* 배경 색상을 투명하게 처리하여 지도가 전체를 채우도록 설정 */
+        position: relative;
+    }
+    
+    #largeMap {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+    }
+    
+    
+    #mapModalContainer.hidden {
+        display: none;
+    }
+    
+    </style>
+    <!-- 이 페이지에서만 사용하는 CSS -->
+    <link rel="stylesheet" href="{% static 'css/review/style.css' %}">
+    {% endblock %}
+    
+    
+    {% block extra_js %}
+    <script>
+        const place_lat = {{place.place_lat}};
+        const place_lon = {{place.place_lon}};
+        const place_id = {{place.place_id}};
+        let sort_array = '{{array}}';
+        const marker_img = "{% static 'img/marker_img.png' %}";
+        const current_page = {{current_page}};
+        const total_pages = {{total_pages}};
+    
+    // 모달 열기 관련 이벤트 초기화
+    function initModalEvents() {
+        const modalOpenButtons = document.querySelectorAll('.review-image');
+        modalOpenButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const imageSrc = e.target.getAttribute('src');
+                openModal(imageSrc);
+            });
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        initModalEvents();
+    });
+        
+        // 모달 열기 및 닫기
+    function openModal(imageSrc) {
+            const modal = document.getElementById('modalContainer');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.classList.remove('hidden');
+        }
+    
+    function closeModal(){
+        const modal = document.getElementById('modalContainer');
+        modal.classList.add('hidden');
+    }
+    function openMapModal() {
+    const mapModal = document.getElementById('mapModalContainer');
+    mapModal.classList.remove('hidden');
+
+    // 큰 지도 표시
+    var largeMapOptions = {
+        center: new naver.maps.LatLng(place_lat, place_lon), // 장소 중심 위치
+        zoom: 17
+    };
+
+    var largeMap = new naver.maps.Map('largeMap', largeMapOptions);
+
+    var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(place_lat, place_lon), // 마커 위치
+        map: largeMap,
+        icon: marker_img,
+    });
+    }
+    
+    function closeMapModal(){
+        const mapModal = document.getElementById('mapModalContainer');
+        mapModal.classList.add('hidden');
+    }
+    let reviewsData = []; // 전체 리뷰 데이터를 저장할 배열
+    let filterByImage = false; // 이미지 필터 여부를 저장하는 변수
+    
+    // 페이지 로드 시 리뷰 데이터를 세팅하는 함수
+    function SetReviews(reviews) {
+        reviewsData = reviews; // 리뷰 데이터를 저장
+        renderReviews(); // 저장된 리뷰 데이터를 렌더링
+    }
+    
+    // 필터링과 정렬을 함께 적용한 리뷰 렌더링 함수
+    function renderReviews() {
+        let filteredReviews = reviewsData;
+    
+        // 이미지 필터가 활성화되면 이미지가 있는 리뷰들만 필터링
+        if (filterByImage) {
+            filteredReviews = filteredReviews.filter(review => review.review_photo);
+        }
+    
+        // 리뷰 컨테이너를 비우고 필터링된 리뷰들을 표시
+        review_container.innerHTML = '';
+    
+        filteredReviews.forEach(function(review) {
+            // 카드 요소 생성
+            var cardElement = document.createElement('div');
+            cardElement.className = 'card';
+            
+            // 이미지 요소 생성
+            var imgElement = document.createElement('img');
+            imgElement.src = review.review_photo;
+            imgElement.alt = 'Review Photo';
+            imgElement.onerror = function() {
+                this.onerror = null;
+                this.src = '/static/img/default1.png';
+            };
+            imgElement.className = 'review-image';
+            imgElement.onclick = function() {
+                openModal(review.review_photo);
+            };
+            
+            // 카드 콘텐츠 요소 생성
+            var cardContentElement = document.createElement('div');
+            cardContentElement.className = 'card-content';
+    
+            // 날짜 요소 생성
+            var dateElement = document.createElement('p');
+            dateElement.className = 'card-date';
+    
+            // 데일리 태그 요소 생성 (존재하는 경우)
+            if (review.daily_tag_name) {
+                var dailyTagElement = document.createElement('p');
+                dailyTagElement.className = 'card-daily';
+                dailyTagElement.textContent = '방문 목적: ' + review.daily_tag_name;
+                cardContentElement.appendChild(dailyTagElement);
+            }
+    
+            // 위드 태그 요소 생성 (존재하는 경우)
+            if (review.with_tag_name) {
+                var withTagElement = document.createElement('p');
+                withTagElement.className = 'card-with';
+                withTagElement.textContent = '함께 방문: ' + review.with_tag_name;
+                cardContentElement.appendChild(withTagElement);
+            }
+    
+            // 리뷰 텍스트 요소 생성
+            var descriptionElement = document.createElement('p');
+            descriptionElement.className = 'card-description';
+            descriptionElement.textContent = review.review_text;
+            
+            // 이미지와 카드 콘텐츠를 카드에 추가
+            cardElement.appendChild(imgElement);
+            cardElement.appendChild(cardContentElement);
+            
+            // 카드 요소를 리뷰 컨테이너에 추가
+            review_container.appendChild(cardElement);
+        });
+    
+        // 모달 기능을 유지하기 위해 이벤트 재연결
+        initModalEvents();
+    }
+    function loadReviews(filter) {
+    var url = "?place_id={{ place.place_id }}&array=" + filter;
+    console.log("Sending request to:", url);  // 요청 URL을 콘솔에 출력하여 확인
+
+    fetch(url, {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"  // AJAX 요청임을 명시
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();  // 응답을 JSON으로 변환
+    })
+    .then(data => {
+        console.log("Received data:", data);  // 서버에서 받은 데이터를 콘솔에 출력
+
+        var reviewContainer = document.getElementById("review_container");  // review-container -> review_container
+        reviewContainer.innerHTML = "";  // 기존 리뷰 제거
+
+        // 새로운 리뷰 추가
+        if (data.serialized_reviews.length > 0) {
+            data.serialized_reviews.forEach(function(review) {
+                var reviewElement = document.createElement("div");
+                reviewElement.className = "card";
+                reviewElement.innerHTML = `
+                    <img class="review-image" src="${review.review_photo}" alt="{% static 'img/default1.png' %}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+                    <div class="card-content">
+                        <p class="card-date">${review.review_date}</p>
+                        ${review.daily_tag_name ? `<p class="card-daily">방문 목적: ${review.daily_tag_name}</p>` : ""}
+                        ${review.with_tag_name ? `<p class="card-with">함께 방문: ${review.with_tag_name}</p>` : ""}
+                        <p class="card-description">${review.kor_review_text}</p>
+                    </div>
+                `;
+                reviewContainer.appendChild(reviewElement);
+            });
+        } else {
+            // 필터링된 리뷰가 없을 때 메시지 표시
+            reviewContainer.innerHTML = "<div>No reviews available for this filter.</div>";
+        }
+         // 새로운 리뷰가 추가된 후 모달 관련 이벤트 재연결
+        initModalEvents();
+    })
+    .catch(error => {
+        console.error("Error:", error);  // 네트워크 또는 서버 응답 문제 발생 시 에러 출력
+    });
+}
+
+
+    
+    
+    </script>
+    <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
+    <script src="{% static 'js/review/review.js' %}"></script>
+    {% endblock %}
+    
