@@ -51,10 +51,16 @@
                 </div>        
                 <div class="dropdown" style="margin-right: 10px;">
                     {% if feature_dict %}
+                    <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
                     <span class="keyword">키워드</span>
+
+                    <!-- 나머지 항목은 <select> 안에 넣음 -->
                     <select id="feature-select">
+                            <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
                         {% for key, value in feature_dict.items %}
-                        <option disabled>{{ key }}: {{ value }}</option>
+                            {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
+                            <option disabled>{{ key }}: {{ value }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                     {% endif %}

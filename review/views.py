@@ -131,6 +131,9 @@ def content_reviews(request):
     except:
         place_feature = ""
 
+    first_key = list(feature_dict.keys())[0]
+    first_value = list(feature_dict.values())[0]
+
     # ---------------------context-------------------------
 
     pos = place.place_pos_review_num
@@ -169,6 +172,8 @@ def content_reviews(request):
         "ad": ad,
         "review_photos": review_photos,  # 리뷰 사진 추가
         "reviews": serialized_reviews,
+        "first_key": first_key,
+        "first_value": first_value,
     }
 
     # "review": review,
@@ -253,6 +258,23 @@ def reviews_more(request):
     serialized_reviews = list(page_obj.object_list.values(*review_field_names))
 
     # ----------------------------------------------------------------------------
+    # try:
+    #     feature_dict = {}
+    #     place_feature = place.place_feature
+
+    #     # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
+    #     feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
+    #     # 공백 및 숫자가 아닌 문자를 제거하고 리스트로 변환
+    #     feature_keys = [key.replace("'", "").strip() for key, value in feature_list]
+    #     feature_values = [
+    #         int(value.replace("'", "").strip()) for key, value in feature_list
+    #     ]
+
+    # except Exception as e:
+    #     feature_keys = []
+    #     feature_values = []
+    #     print(f"Error occurred: {e}")
+
     try:
         feature_dict = {}
         place_feature = place.place_feature
@@ -267,6 +289,9 @@ def reviews_more(request):
     except:
         place_feature = ""
 
+    first_key = list(feature_dict.keys())[0]
+    first_value = list(feature_dict.values())[0]
+
     context = {
         "place": place,
         "reviews": page_obj,
@@ -278,6 +303,8 @@ def reviews_more(request):
         "kor_place_tag": kor_place_tag,
         "thema_name": thema_name,
         "feature_dict": feature_dict,
+        "first_key": first_key,
+        "first_value": first_value,
         "total": total,
     }
 

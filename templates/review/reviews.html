@@ -50,10 +50,16 @@
             </div>
             <div class="dropdown">
                 {% if feature_dict %}
+                <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
                 <span class="keyword">키워드</span>
+
+                <!-- 나머지 항목은 <select> 안에 넣음 -->
                 <select id="feature-select">
+                        <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
                     {% for key, value in feature_dict.items %}
-                    <option>{{ key }}: {{ value }}</option>
+                        {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
+                        <option disabled>{{ key }}: {{ value }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
                 {% endif %}
@@ -73,7 +79,7 @@
                     <div class="progress-bar-inner negative-bar" style="width: {{ neg_ratio }}%;"></div>
                 </div>
                 <p>
-                    <span class="review-summary">{{total}}개의 리뷰 중 {{pos}}개의 긍정 리뷰를 가졌어요!</span>
+                    <span class="review-summary" style="margin-left: 30px;">{{total}}개의 리뷰 중 {{pos}}개의 긍정 리뷰를 가졌어요!</span>
                 </p>
             </div>
         </div>
@@ -87,6 +93,15 @@
                 </div>
                 <p>
                     <span class="review-summary">{{total}}개의 리뷰 중 {{ ad }}개가 광고성으로 의심돼요. -.-</span>
+                    <!-- 클릭 가능한 돋보기 아이콘 -->
+                    <span id="openAdModalBtn">🔍</span>
+                    <!-- 모달 창 -->
+                    <div id="adModal" class="ad_modal">
+                        <div class="ad_content">
+                            <span id="closeAdModalBtn" class="close-btn">&times;</span>
+                            <p>모달 창입니다.</p>
+                        </div>
+                    </div>
                 </p>
             </div>
         </div>
@@ -164,6 +179,44 @@
 
 #mapModalContainer.hidden {
     display: none;
+}
+
+
+/* 모달 기본 스타일 */
+.ad_modal {
+    display: none; /* 기본적으로 모달을 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 */
+}
+
+/* 모달 내용 스타일 */
+.ad_content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+}
+
+/* 닫기 버튼 스타일 */
+.close-btn {
+    cursor: pointer;
+    color: red;
+    font-size: 20px;
+}
+
+/* 클릭 가능한 아이콘 스타일 추가 */
+#openAdModalBtn {
+    cursor: pointer;
 }
 
 </style>
@@ -359,6 +412,9 @@ function loadReviews(filter) {
     })
     .catch(error => console.error("Error:", error));  // 에러 처리
 }
+
+
+
 
 
 </script>

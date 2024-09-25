@@ -119,3 +119,28 @@ function closeModal() {
     modal.style.display = 'none'; // 모달창을 숨김
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    // 모달 열기 버튼
+    const openAdModalBtn = document.getElementById('openAdModalBtn'); // 고유한 ID 참조
+    // 모달 요소
+    const adModal = document.getElementById('adModal'); // 고유한 ID 참조
+    // 모달 닫기 버튼
+    const closeAdModalBtn = document.getElementById('closeAdModalBtn'); // 고유한 ID 참조
+
+    // 모달 열기
+    openAdModalBtn.onclick = function() {
+        adModal.style.display = 'block';
+    }
+
+    // 모달 닫기
+    closeAdModalBtn.onclick = function() {
+        adModal.style.display = 'none';
+    }
+
+    // 모달 영역 밖을 클릭하면 닫기
+    window.onclick = function(event) {
+        if (event.target == adModal) {
+            adModal.style.display = 'none';
+        }
+    }
+});
