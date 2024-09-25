@@ -22,14 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.getenv('SECRET_KEY')
-SECRET_KEY = 'django-insecure-msabi9_e7sw@y86fmyztm8-uni*%c$(bqv7x1zsy8!37nch@g1'
+SECRET_KEY = "django-insecure-msabi9_e7sw@y86fmyztm8-uni*%c$(bqv7x1zsy8!37nch@g1"
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -85,7 +84,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # MariaDB는 mysql 백엔드를 사용합니다.
-        'NAME': 'SeoulPOT',          # MariaDB 데이터베이스 이름
+        'NAME': 'SeoulPOT_TEMP',          # MariaDB 데이터베이스 이름
         'USER': 'seoulpot',          # 데이터베이스 사용자명
         'PASSWORD': 'Seoulpot!2',  # 데이터베이스 비밀번호
         'HOST': 'dkwcdr.iptime.org',                   # 일반적으로 'localhost' 또는 MariaDB 서버의 IP 주소

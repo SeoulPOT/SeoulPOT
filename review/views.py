@@ -46,16 +46,17 @@ def content_reviews(request, lang):
     )
 
     # 장소 태그 정보
-    try:
+    if lang == "kor":
         place_tag = CodeTb.objects.get(code=place.place_tag_cd)
-        print(place_tag.kor_code_name)  # 태그 이름 출력
-    except CodeTb.DoesNotExist:
-        print("해당 태그가 없습니다.")
+
+    else:
+        place_tag = CodeTb.objects.get(code=place.place_tag_cd)
 
     kor_place_tag = place_tag.kor_code_name
+    eng_place_tag = place_tag.eng_code_name
     # -------------------------------------------------------------------------------
 
-    thema_name = get_kor_code_name_for_thema_cd(place.place_thema_cd)
+    thema_name = get_code_name_for_thema_cd(place.place_thema_cd, lang)
 
     # 정렬 방식에 따른 필터링
     if array == "latest":
@@ -79,48 +80,19 @@ def content_reviews(request, lang):
     serialized_reviews = list(page_obj.object_list.values(*review_field_names))
 
     # 텍스트가 너무 길면 자르기 (30자로 제한)
-    for review in serialized_reviews:
-        if len(review["kor_review_text"]) > 25:
-            review["kor_review_text"] = review["kor_review_text"][:25] + "..."
+    if lang == "kor":
+        for review in serialized_reviews:
+            if len(review["kor_review_text"]) > 25:
+                review["kor_review_text"] = review["kor_review_text"][:25] + "..."
+    else:
+        for review in serialized_reviews:
+            if len(review["eng_review_text"]) > 45:
+                review["eng_review_text"] = review["eng_review_text"][:45] + "..."
 
-    # ------------------place_feature--------------------
-    # features = {}
-    # raw_feature = place.place_feature
-
-    # if raw_feature:
-    #     print(f"raw_feature: ${raw_feature}")
-    #     for item in raw_feature.split(","):
-    #         key, value = item.replace("'", "").split(" : ")
-    #         features[key.strip()] = int(value.strip())
-    # else:
-    #     print("raw_feature none")
-
-    # parsed_data = [features]
-
-    # -------------- review daily_tag_cd / with_tag_cd --------------
-    # 각각의 리뷰에서 daily_tag와 with_tag의 code_name을 가져오기
-    # for review in page_obj:
-    #     review.daily_tag_name = ""
-    #     review.with_tag_name = ""
-
-    #     if review.review_daily_tag_cd:
-    #         try:
-    #             daily_tag = CodeTb.objects.get(code=review.review_daily_tag_cd)
-    #             review.daily_tag_name = daily_tag.code_name
-    #         except CodeTb.DoesNotExist:
-    #             review.daily_tag_name = "Unknown Tag"
-
-    #     if review.review_with_tag_cd:
-    #         try:
-    #             with_tag = CodeTb.objects.get(code=review.review_with_tag_cd)
-    #             review.with_tag_name = with_tag.code_name
-    #         except CodeTb.DoesNotExist:
-    #             review.with_tag_name = "Unknown Tag"
-    # -----------------------------------------------------
+    # 키워드 가져오기
     try:
         feature_dict = {}
         place_feature = place.place_feature
-
         # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
         feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
         # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
@@ -128,27 +100,38 @@ def content_reviews(request, lang):
             key.replace("'", "").strip(): int(value.replace("'", "").strip())
             for key, value in feature_list
         }
+        first_key = list(feature_dict.keys())[0]
+        first_value = list(feature_dict.values())[0]
     except:
+        first_key = []
+        first_value = []
         place_feature = ""
 
-    first_key = list(feature_dict.keys())[0]
-    first_value = list(feature_dict.values())[0]
-
-    # ---------------------context-------------------------
+    # 긍정 비율 계산
 
     pos = place.place_pos_review_num
     neg = place.place_neg_review_num
-    total = place.place_review_num
+    total = place.place_review_num_real
 
     pos_ratio = round((pos / total) * 100, 2)
     neg_ratio = round((neg / total) * 100, 2)
     neutral = round(100 - (pos_ratio + neg_ratio), 2)
 
-    # -----------------------------------------------------
+    # 부정 비율 계산
 
     real = place.place_review_num_real
-    real_ratio = round((real / total) * 100, 2)
     ad = place.place_ad_review_num
+    real_ratio = round(((real - ad) / total) * 100, 2)
+
+    # 광고성 리뷰 가져오기
+    reviews = ReviewTb.objects.filter(place_id=place_id)
+
+    # kor_review_text와 similar_review를 딕셔너리 형태로 저장
+    review_dict = {
+        review.kor_review_text: review.similar_review
+        for review in reviews
+        if review.similar_review  # similar_review가 존재하는 경우만
+    }
 
     # -----------------------------------------------------
 
@@ -158,6 +141,7 @@ def content_reviews(request, lang):
         "profile_photo": profile_photo,
         "feature_dict": feature_dict,
         "kor_place_tag": kor_place_tag,
+        "eng_place_tag": eng_place_tag,
         "thema_name": thema_name,
         "array": array,
         "current_page": page_obj.number,
@@ -172,14 +156,11 @@ def content_reviews(request, lang):
         "ad": ad,
         "review_photos": review_photos,  # 리뷰 사진 추가
         "reviews": serialized_reviews,
-        "lang":lang,
+        "lang": lang,
         "first_key": first_key,
         "first_value": first_value,
+        "review_dict": review_dict,
     }
-
-    # "review": review,
-    # "features": features,
-    # "parsed_data": parsed_data,
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         context = {
@@ -212,30 +193,45 @@ def reviews_more(request, lang):
     print(place)
 
     # 기본 리뷰 쿼리셋
-    reviews = ReviewTb.objects.filter(place_id=place_id).annotate(
-        daily_tag_name=Subquery(
-            CodeTb.objects.filter(
-                parent_code="rd", code=OuterRef("review_daily_tag_cd")
-            ).values("kor_code_name")[:1]
-        ),
-        with_tag_name=Subquery(
-            CodeTb.objects.filter(
-                code=OuterRef("review_with_tag_cd"), parent_code="rw"
-            ).values("kor_code_name")[:1]
-        ),
-    )
+    if lang == "kor":
+        reviews = ReviewTb.objects.filter(place_id=place_id).annotate(
+            daily_tag_name=Subquery(
+                CodeTb.objects.filter(
+                    parent_code="rd", code=OuterRef("review_daily_tag_cd")
+                ).values("kor_code_name")[:1]
+            ),
+            with_tag_name=Subquery(
+                CodeTb.objects.filter(
+                    code=OuterRef("review_with_tag_cd"), parent_code="rw"
+                ).values("kor_code_name")[:1]
+            ),
+        )
+    else:
+        reviews = ReviewTb.objects.filter(place_id=place_id).annotate(
+            daily_tag_name=Subquery(
+                CodeTb.objects.filter(
+                    parent_code="rd", code=OuterRef("review_daily_tag_cd")
+                ).values("eng_code_name")[:1]
+            ),
+            with_tag_name=Subquery(
+                CodeTb.objects.filter(
+                    code=OuterRef("review_with_tag_cd"), parent_code="rw"
+                ).values("eng_code_name")[:1]
+            ),
+        )
     # 전체 리뷰 수
     total = place.place_review_num
 
     # 장소 태그 정보
-    try:
+    if lang == "kor":
         place_tag = CodeTb.objects.get(code=place.place_tag_cd)
-        print(place_tag.kor_code_name)  # 태그 이름 출력
-    except CodeTb.DoesNotExist:
-        print("해당 태그가 없습니다.")
-    kor_place_tag = place_tag.kor_code_name
 
-    thema_name = get_kor_code_name_for_thema_cd(place.place_thema_cd)
+    else:
+        place_tag = CodeTb.objects.get(code=place.place_tag_cd)
+
+    kor_place_tag = place_tag.kor_code_name
+    eng_place_tag = place_tag.eng_code_name
+    thema_name = get_code_name_for_thema_cd(place.place_thema_cd, lang)
 
     # 정렬 방식에 따른 필터링
     if array == "latest":
@@ -280,6 +276,9 @@ def reviews_more(request, lang):
         feature_dict = {}
         place_feature = place.place_feature
 
+        first_key = list(feature_dict.keys())[0]
+        first_value = list(feature_dict.values())[0]
+
         # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
         feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
         # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
@@ -289,9 +288,8 @@ def reviews_more(request, lang):
         }
     except:
         place_feature = ""
-
-    first_key = list(feature_dict.keys())[0]
-    first_value = list(feature_dict.values())[0]
+        first_key = []
+        first_value = []
 
     context = {
         "place": place,
@@ -302,12 +300,13 @@ def reviews_more(request, lang):
         "total_pages": paginator.num_pages,
         "reviews": serialized_reviews,
         "kor_place_tag": kor_place_tag,
+        "eng_place_tag": eng_place_tag,
         "thema_name": thema_name,
         "feature_dict": feature_dict,
         "first_key": first_key,
         "first_value": first_value,
         "total": total,
-        "lang":lang
+        "lang": lang,
     }
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -322,22 +321,35 @@ def reviews_more(request, lang):
     return render(request, "review/more.html", context)
 
 
-def get_kor_code_name_for_thema_cd(thema_cd):
+def get_code_name_for_thema_cd(thema_cd, lang):
     if not thema_cd:
         return []
 
-    # 코드별 이모지 매핑
-    emoji_mapping = {
-        "ph01": "가족👨‍👩‍👧‍👦",
-        "ph02": "연인💕",
-        "ph03": "혼놀🕺",
-        "ph04": "반려동물🐕",
-        "ph05": "트렌드(MZ)😎",
-        "ph06": "힐링🌳",
-        "ph07": "로컬애용🚲",
-        "ph08": "인테리어🛋️",
-        "ph09": "가성비💰",
-    }
+    if lang == "kor":
+        # 코드별 이모지 매핑
+        emoji_mapping = {
+            "ph01": "가족👨‍👩‍👧‍👦",
+            "ph02": "연인💕",
+            "ph03": "혼놀🕺",
+            "ph04": "반려동물🐕",
+            "ph05": "트렌드(MZ)😎",
+            "ph06": "힐링🌳",
+            "ph07": "로컬애용🚲",
+            "ph08": "인테리어🛋️",
+            "ph09": "가성비💰",
+        }
+    else:
+        emoji_mapping = {
+            "ph01": "Family👨‍👩‍👧‍👦",
+            "ph02": "Couple💕",
+            "ph03": "Solo Play🕺",
+            "ph04": "Pet🐕",
+            "ph05": "Trendy(Gen Z)😎",
+            "ph06": "Healing🌳",
+            "ph07": "Local favorite🚲",
+            "ph08": "Interior🛋️",
+            "ph09": "Cost-effective💰",
+        }
 
     # place_thema_cd에 있는 코드를 분리
     thema_cd_list = thema_cd.split(", ")

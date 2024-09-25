@@ -13,7 +13,7 @@
             <div id="mapModalContainer" class="hidden">
                 <div id="mapModalContent">
                     <div id="largeMap" class="map"></div> <!-- 큰 지도를 표시할 공간 -->
-                    <button class="overlay-button" onclick="closeMapModal()">&#10006;</button> <!-- 닫기 버튼 -->
+                    <button class="overlay-button" onclick="closeMapModal()" style="color : #000000">&#10006;</button> <!-- 닫기 버튼 -->
                 </div>
             </div>
             <div class = "address">
@@ -22,8 +22,16 @@
             </div>
             <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
             {% if total %}
+                {% if lang == 'kor' %}
                 <p class = "profile">🚩  {{ kor_place_tag }}</p>
+                {% else %}
+                <p class = "profile">🚩  {{ eng_place_tag }}</p>
+                {% endif %}
+                {% if lang == 'kor' %}
                 <p class = "profile">📝 리뷰 {{ total }}개</p>
+                {% else %}
+                <p class = "profile">📝 {{ total }} reviews</p>
+            {% endif %}
             {% endif %}
             {% if place.place_operating_hours %}
                 <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
@@ -40,6 +48,7 @@
     
     <div class="right-content">
         <div id="right-box">
+            {% if thema_name or first_key %}
             <div class="theme-header">
                 <div class="tag-box">
                     {% if thema_name %}
@@ -48,12 +57,11 @@
                     <span class="tag">{{ theme }}</span>
                     {% endfor %}
                     {% endif %}
-                </div>        
-                <div class="dropdown" style="margin-right: 10px;">
-                    {% if feature_dict %}
+                </div>
+                <div class="dropdown">
+                    {% if first_key %}
                     <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
                     <span class="keyword">키워드</span>
-
                     <!-- 나머지 항목은 <select> 안에 넣음 -->
                     <select id="feature-select">
                             <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
@@ -66,31 +74,58 @@
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
             <div class = "tag_container">
+                {% if lang == 'kor' %}
                 <div class="explain">
                     🔑 해당 리뷰는 AI 분석에 따라 광고성 리뷰 제거 후 각 기준별 높은 점수 순서로 정렬한 리뷰 데이터입니다.
                 </div>
+                {% else %}
+                <div class="explain">
+                    🔑 These reviews are sorted by highest scores per criterion after AI-based removal of promotional content.
+                </div>
+                {% endif %}
                 <div class="filter-buttons">
+                    {% if lang == 'kor' %}
                     <p>정렬 방식</p>
                     <button onclick="loadReviews('latest')">최신순 ⌛</button>
                     <button onclick="loadReviews('positive')">긍정 👍</button>
                     <button onclick="loadReviews('negative')">부정 👎</button>
+                    {% else %}
+                    <p style="padding: 0px; font-weight: normal;" >Sorted by</p>
+                    <button onclick="loadReviews('latest')" style="width: 90px;">latest ⌛</button>
+                    <button onclick="loadReviews('positive')" style="width: 100px;">positive 👍</button>
+                    <button onclick="loadReviews('negative')" style="width: 100px;">negative 👎</button>
+                    {% endif %}
                 </div>
             </div>
             <div id="review_container" class="cards">
                 {% for review in reviews %}
                     <div class="card">
-                        <img class="review-image" src="{{ review.review_photo }}" alt="{% static 'img/default1.png' %}" onclick="openModal('{{ review.review_photo }}')" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}'; this.onclick=null;">
+                        <img class="review-image" src="{{ review.review_photo }}" alt="{% static 'img/default1.png' %}" onclick="openModal('{{ review.review_photo }}')" onerror="this.onclick=null; this.onerror=null; this.src='{% static 'img/default1.png' %}';">
                         <img class="icon-overlay" src="{% static 'img/enlarge.png' %}">
                         <div class="card-content">
                             <p class="card-date">{{ review.review_date|date:"Y-m-d" }}</p>
-                            {% if review.daily_tag_name %}
-                                <p class="card-daily">방문 목적: {{ review.daily_tag_name }}</p>
+                            {% if lang == 'kor' %}
+                                {% if review.daily_tag_name %}
+                                    <p class="card-daily">방문 목적: {{ review.daily_tag_name }}</p>
+                                {% endif %}
+                                {% if review.with_tag_name %}
+                                    <p class="card-with">함께 방문: {{ review.with_tag_name }}</p>
+                                {% endif %}
+                            {% else %}
+                                {% if review.daily_tag_name %}
+                                    <p class="card-daily">Purpose of Visit: {{ review.daily_tag_name }}</p>
+                                {% endif %}
+                                {% if review.with_tag_name %}
+                                    <p class="card-with">Type of Visit: {{ review.with_tag_name }}</p>
                             {% endif %}
-                            {% if review.with_tag_name %}
-                                <p class="card-with">함께 방문: {{ review.with_tag_name }}</p>
                             {% endif %}
+                            {% if lang == 'kor' %}
                             <p class="card-description">{{ review.kor_review_text }}</p>
+                            {% else %}
+                            <p class="card-description">{{ review.eng_review_text }}</p>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
@@ -390,11 +425,33 @@
                 reviewElement.className = "card";
                 reviewElement.innerHTML = `
                     <img class="review-image" src="${review.review_photo}" alt="{% static 'img/default1.png' %}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+                    <img class="icon-overlay" src="{% static 'img/enlarge.png' %}">
                     <div class="card-content">
                         <p class="card-date">${review.review_date}</p>
-                        ${review.daily_tag_name ? `<p class="card-daily">방문 목적: ${review.daily_tag_name}</p>` : ""}
-                        ${review.with_tag_name ? `<p class="card-with">함께 방문: ${review.with_tag_name}</p>` : ""}
-                        <p class="card-description">${review.kor_review_text}</p>
+                        {% if lang == 'kor' %}
+                                {% if review.daily_tag_name %}
+                                    <p class="card-daily">방문 목적: ${ review.daily_tag_name }</p>
+                                {% endif %}
+                                {% if review.with_tag_name %}
+                                    <p class="card-with">함께 방문: ${ review.with_tag_name }</p>
+                                {% endif %}
+                        {% else %}
+                            {% for review in reviews %}
+                                {% if forloop.first %}
+                                    {% if review.daily_tag_name != null %}
+                                        <p class="card-daily">Purpose of Visit: ${ review.daily_tag_name }</p>
+                                    {% endif %}
+                                    {% if review.with_tag_name != null %}
+                                        <p class="card-with">Type of Visit: ${ review.with_tag_name }</p>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if lang == 'kor' %}
+                            <p class="card-description">${ review.kor_review_text }</p>
+                        {% else %}
+                            <p class="card-description">${ review.eng_review_text }</p>
+                        {% endif %}
                     </div>
                 `;
                 reviewContainer.appendChild(reviewElement);

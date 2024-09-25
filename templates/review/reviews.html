@@ -13,7 +13,7 @@
             <div id="mapModalContainer" class="hidden">
                 <div id="mapModalContent">
                     <div id="largeMap" class="map"></div> <!-- 큰 지도를 표시할 공간 -->
-                    <button class="overlay-button" onclick="closeMapModal()">&#10006;</button> <!-- 닫기 버튼 -->
+                    <button class="overlay-button" onclick="closeMapModal()" style="color : #000000">&#10006;</button> <!-- 닫기 버튼 -->
                 </div>
             </div>
             <div class = "address">
@@ -22,8 +22,16 @@
             </div>
             <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
             {% if total %}
+                {% if lang == 'kor' %}
                 <p class = "profile">🚩  {{ kor_place_tag }}</p>
+                {% else %}
+                <p class = "profile">🚩  {{ eng_place_tag }}</p>
+                {% endif %}
+                {% if lang == 'kor' %}
                 <p class = "profile">📝 리뷰 {{ total }}개</p>
+                {% else %}
+                <p class = "profile">📝 {{ total }} reviews</p>
+                {% endif %}
             {% endif %}
             {% if place.place_operating_hours %}
                 <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
@@ -34,12 +42,17 @@
             {% if place.place_entrance_fee %}
                 <p class = "profile">🪙 {{ place.place_entrance_fee }}</p>
             {% endif %}
+            {% for keys, values in review_dict.items %}
+                    <p>{{ key }}</p>
+                    <p>{{ value }}</p>
+                    {% endfor %}
             <p>{{ place.place_place_desc }}</p>
         </div>
     </div>
 
     <div class="right-content">
-        <div class="theme-header">
+        {% if thema_name or first_key %}
+        <div class="theme-header" style="gap:100px">
             <div class="tag-box">
                 {% if thema_name %}
                 <span class="tag_name">테마</span>
@@ -49,10 +62,9 @@
                 {% endif %}
             </div>
             <div class="dropdown">
-                {% if feature_dict %}
+                {% if first_key %}
                 <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
                 <span class="keyword">키워드</span>
-
                 <!-- 나머지 항목은 <select> 안에 넣음 -->
                 <select id="feature-select">
                         <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
@@ -65,13 +77,24 @@
                 {% endif %}
             </div>
         </div>
-        <div class="stat-box">
+        {% endif %}
+        <div class="stat-box" style = "margin-top: 10px;">
+            {% if lang == 'kor' %}
             <h3>긍/부정</h3>
+            {% else %}
+            <h3 style="width: 140px; font-weight: normal;">Sentiment</h3>
+            {% endif %}
             <div class = "stat-details">
                 <p>
-                    <span class="positive-percentage">긍정 {{ pos_ratio }}%</span>
-                    <span class="neutral-percentage">중립 {{neutral}} %</span> 
+                    {% if lang == 'kor' %}
+                    <span class="positive-percentage" style="margin-right: 120px;">긍정 {{ pos_ratio }}%</span>
+                    <span class="neutral-percentage" style="margin-right: 120px;">중립 {{neutral}}%</span> 
                     <span class="negative-percentage">부정 {{ neg_ratio }}%</span>
+                    {% else %}
+                    <span class="positive-percentage" style="margin-right: 70px;">Positive {{ pos_ratio }}%</span>
+                    <span class="neutral-percentage" style="margin-right: 70px;">Neutral {{neutral}}%</span> 
+                    <span class="negative-percentage">Negative {{ neg_ratio }}%</span>
+                    {% endif %}
                 </p>
                 <div class="progress-bar">
                     <div class="progress-bar-inner positive-bar" style="width: {{ pos_ratio }}%;"></div>
@@ -79,36 +102,62 @@
                     <div class="progress-bar-inner negative-bar" style="width: {{ neg_ratio }}%;"></div>
                 </div>
                 <p>
+                    {% if lang == 'kor' %}
                     <span class="review-summary" style="margin-left: 30px;">{{total}}개의 리뷰 중 {{pos}}개의 긍정 리뷰를 가졌어요!</span>
+                    {% else %}
+                    <span class="review-summary" style="margin-left: 30px;">Out of {{total}} reviews, {{pos}} are positive!</span>
+                    {% endif %}
                 </p>
             </div>
         </div>
     
         <div class="stat-box">
+            {% if lang == 'kor' %}
             <h3>광고성</h3>
-            <div class="stat-details">
-                <p>실 사용자 리뷰 비율</p>
+            {% else %}
+            <h3 style="font-weight: normal;">Promotional</h3>
+            {% endif %}
+            <div class="stat-details" style="height: 120px;">
+                {% if lang == 'kor' %}
+                <p>실 사용자 리뷰 비율 {{ real_ratio }}%</p>
+                {% else %}
+                <p>Real User Review Ratio {{ real_ratio }}%</p>
+                {% endif %}
                 <div class="progress-bar">
                     <div class="progress-bar-inner advertisement-bar" style="width: {{ real_ratio }}%;"></div>
                 </div>
                 <p>
-                    <span class="review-summary">{{total}}개의 리뷰 중 {{ ad }}개가 광고성으로 의심돼요. -.-</span>
                     <!-- 클릭 가능한 돋보기 아이콘 -->
                     <span id="openAdModalBtn">🔍</span>
+                    {% if lang == 'kor' %}
+                    <span class="review-summary">{{total}}개의 리뷰 중 {{ ad }}개가 광고성으로 의심돼요. -.-</span>
+                    {% else %}
+                    <span class="review-summary">Out of {{total}} reviews, {{ ad }} are suspected to be promotinal -.-</span>
+                    {% endif %}
                     <!-- 모달 창 -->
+                    {% if review_dict %}
                     <div id="adModal" class="ad_modal">
                         <div class="ad_content">
                             <span id="closeAdModalBtn" class="close-btn">&times;</span>
-                            <p>모달 창입니다.</p>
+                            <p><광고성 예시 text쌍></p>
+                            {% for keys, values in review_dict.items %}
+                            <p>{{ keys }}</p>
+                            <p>{{ values }}</p>
+                            {% endfor %}
                         </div>
                     </div>
+                    {% endif %}
                 </p>
             </div>
         </div>
     
         <div class="footer">
                 <div class="reps-image">
-                    <p>대표사진</p>
+                    {% if lang == 'kor' %}
+                    <p>대표 사진</p>
+                    {% else %}
+                    <p style="padding: 5px; font-weight: normal;">Featured Photos</p>
+                    {% endif %}
                     <div class = "image-grid">
                     {% for photo in review_photos %}
                         <img src="{{ photo }}" alt="Review Photo">
@@ -117,14 +166,26 @@
                 </div>
             <div class="review-list">
                 <div class="filter-buttons">
+                    {% if lang == 'kor' %}
+                    <p>대표 리뷰</p>
                     <button onclick="loadReviews('latest')">최신순 ⌛</button>
                     <button onclick="loadReviews('positive')">긍정 👍</button>
                     <button onclick="loadReviews('negative')">부정 👎</button>
+                    {% else %}
+                    <p style="padding: 5px; font-weight: normal;">Featured Reviews</p>
+                    <button onclick="loadReviews('latest')">latest ⌛</button>
+                    <button onclick="loadReviews('positive')">positive 👍</button>
+                    <button onclick="loadReviews('negative')">negative 👎</button>
+                    {% endif %}
                 </div>
                 <ul class="reviews" id="review-container">
                     {% for review in reviews %}
                     <li>
+                        {% if lang == 'kor' %}
                         <span>{{ review.kor_review_text }}</span>
+                        {% else %}
+                        <span>{{ review.eng_review_text }}</span>
+                        {% endif %}
                         <span class="date">{{ review.review_date|date:"Y-m-d" }}</span>
                     </li>
                     {% endfor %}
@@ -192,7 +253,7 @@
 .ad_modal {
     display: none; /* 기본적으로 모달을 숨김 */
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
@@ -205,16 +266,19 @@
     position: absolute;
     top: 50%;
     left: 50%;
+    width: 500px;
+    height: auto;
     transform: translate(-50%, -50%);
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    width: 300px;
-    text-align: center;
 }
 
 /* 닫기 버튼 스타일 */
 .close-btn {
+    position: absolute; /* 절대 위치 지정 */
+    top: 10px; /* 상단으로부터 10px 떨어진 위치 */
+    right: 10px; /* 오른쪽 끝으로부터 10px 떨어진 위치 */
     cursor: pointer;
     color: red;
     font-size: 20px;
@@ -308,6 +372,7 @@ function closeMapModal(){
     const mapModal = document.getElementById('mapModalContainer');
     mapModal.classList.add('hidden');
 }
+
 let reviewsData = []; // 전체 리뷰 데이터를 저장할 배열
 let filterByImage = false; // 이미지 필터 여부를 저장하는 변수
 
@@ -406,7 +471,11 @@ function loadReviews(filter) {
             data.serialized_reviews.forEach(function(review) {
                 var reviewElement = document.createElement("li");
                 reviewElement.innerHTML = `
-                    <span>${review.kor_review_text}</span>
+                    {% if lang == 'kor' %}
+                        <span>${review.kor_review_text}</span>
+                        {% else %}
+                        <span>${review.eng_review_text}</span>
+                        {% endif %}
                     <span class="date">${review.review_date}</span>
                 `;
                 reviewContainer.appendChild(reviewElement);

@@ -53,7 +53,7 @@ body {
     
     width : 100%;
     
-    padding: 20px;
+    padding: 10px;
 }
 
 #right-box{
@@ -67,6 +67,7 @@ body {
     object-fit: cover; /* 이미지 비율 유지*/
     align-items: center;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px 10px 0 0;
 }
 
 .right-content {
@@ -90,6 +91,7 @@ body {
     background-color: #ffffff;
     padding: 10px;
     margin-bottom: 0;
+    border-radius: 0 0 10px 10px;
 }
 
 .address h2 {
@@ -216,6 +218,7 @@ body {
     border-radius: 10px; /* 모서리를 둥글게 설정 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
     position: relative;
+    object-fit: cover; /* 이미지 비율 유지 */
 }
 
 #modalImage {
@@ -325,7 +328,6 @@ body {
     align-items: center; /* 태그들이 수직으로 중앙 정렬되도록 */
     height: 43.2px;
     width: 100%;
-    margin-bottom: 10px;
 }
 
 
@@ -372,7 +374,7 @@ body {
 
 .dropdown select {
     text-align: center;
-    width: 200px;
+    width: 250px;
     justify-content: end;
     padding: 5px;
     font-size: 16px;
@@ -382,12 +384,12 @@ body {
 }
 
 .dropdown option {
-    /* pointer-events: none; 마우스 상호작용 차단 */
+    width: 200px;
     background-color: #fff; /* 호버 시 색상 유지 */
     color: #000; /* 텍스트 색상 유지 */
 }
 
-.stat-box {
+.stat-box { 
     display: flex;
     background-color: #CCE2FA;
     border-radius: 10px;
@@ -397,16 +399,16 @@ body {
     gap: 50px;
 }
 .stat-details {
-    flex: 2;
-    display: flex;
+    width: 100%;
     flex-direction: column;
     align-items: flex-start;
+    margin: 0;
 }
 
 .stat-box h3{
     color: #787591;
     background-color: #ffffff;
-    width:80px;
+    width: 110px;
     height: 20px;
     padding: 10px;
     text-align: center;
@@ -464,6 +466,7 @@ body {
 .footer {
     width: 100%;
     max-width: 100%;
+    max-height: 50px;
     display: flex;
     border-radius: 10px;
     gap: 10px;
@@ -475,7 +478,7 @@ body {
 .reps-image {
     background-color: #CCE2FA;
     width: 50%;
-    height: 270px;
+    height: 280px;
     padding: 15px;
     grid-template-columns: repeat(2, 1fr);
     border-radius: 10px;
@@ -491,7 +494,7 @@ body {
     margin-bottom: 8px;
     border-radius: 10px;
     text-align: center;
-    padding: 5px;
+    padding: 10px;
 }
 
 .image-grid {
@@ -508,18 +511,37 @@ body {
     border-radius: 10px;
 }
 
+
+
 .review-list {
     display: flex;
-    width: 100%; /* 각 박스의 너비를 50%로 설정 */
-    height: 270px;
+    width: 100%;
+    height: 280px;
     padding: 15px;
     background-color: #CCE2FA;
     flex-direction: column;
     justify-content: space-between;
     border-radius: 10px;
     box-sizing: border-box;
-
 }
+
+.review-list p {
+    color: #787591;
+    font-weight: bold;
+    width: 25%;
+    background-color: #ffffff;
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+    margin-top: 0;
+    margin-right: auto;
+}
+
+.review-list button {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽으로 밀착 */
+} 
+
 
 .tag_container {
     display: flex;
@@ -542,7 +564,6 @@ body {
 }
 
 .filter-buttons p {
-    margin-top: 10px;
     width: 90px;
 }
 
@@ -571,7 +592,7 @@ body {
     display: flex;
     font-size: 14px;
     justify-content: space-between;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .date {
