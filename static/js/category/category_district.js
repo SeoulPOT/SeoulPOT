@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .attr('class', 'district')
                 .attr('fill', function (d) {
                     // 각 구역에 따른 색상을 place_count 값에 따라 설정
-                    const foundItem = districts_list.find(item => item.district_name.trim().toLowerCase() === d.properties.name.trim().toLowerCase());
+                    const foundItem = districts_list.find(item => item.kor_district_name.trim().toLowerCase() === d.properties.name.trim().toLowerCase());
                     
                     console.log("Districts list:", districts_list);
             
@@ -131,9 +131,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         // document.getElementById('district-info-container').style.display = 'none';
 
                         var foundItem = districts_list.find(function(item) {
-                            console.log('Checking district_name:', item.district_name.trim().toLowerCase(), 'with GeoJSON name:', d.properties.name.trim().toLowerCase());
-                            return item.district_name.trim().toLowerCase() === d.properties.name.trim().toLowerCase();
+                            var districtNameKor = item.kor_district_name.trim().toLowerCase();
+                            var districtNameEng = item.eng_district_name ? item.eng_district_name.trim().toLowerCase() : "";
+                            console.log('Checking district_name:', districtNameKor, 'and', districtNameEng, 'with GeoJSON name:', d.properties.name.trim().toLowerCase());
+                        
+                            return districtNameKor === d.properties.name.trim().toLowerCase() || districtNameEng === d.properties.name.trim().toLowerCase();
                         });
+                        
+                        
+                        
                         
                         if (foundItem) {
                             console.log('Found district:', foundItem.district_name, ', ID:', foundItem.district_id);
@@ -194,13 +200,15 @@ function fetchData(category) {
     // }
 
     console.log('selected_lang:', selected_lang);
-    console.log('place_tag_cd:', place_tag_cd);
+    console.log('place_thema_cd:', place_thema_cd);
     console.log('current_district:', current_district);
     console.log('current_category:', current_category);
 
 
-    console.log('Fetch URL:', `/${selected_lang}/${place_tag_cd}/${current_district}/${current_category}/`);
-    fetch(`/category/${selected_lang}/${place_tag_cd}/${current_district}/${current_category}/`, {
+
+
+    console.log('Fetch URL:', `/${selected_lang}/${current_district}/${current_category}/${place_thema_cd}`);
+    fetch(`/category/${selected_lang}/${current_district}/${current_category}/${place_thema_cd}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
@@ -264,7 +272,11 @@ function createStoreItem(store) {
     const tag = document.createElement('p');
     tag.textContent = store.place_tag_name;
     const reviews = document.createElement('p');
-    reviews.textContent = `📝 리뷰 ${store.place_review_num}개`;
+    if (selected_lang === 'kor') {
+        reviews.textContent = `📝 리뷰 ${store.place_review_num}개`;  // 한국어 버전
+    } else {
+        reviews.textContent = `📝 review ${store.place_review_num}`;  // 영어 버전
+    }
 
     details.appendChild(name);
     details.appendChild(tag);
