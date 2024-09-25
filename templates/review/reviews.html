@@ -1,5 +1,4 @@
 {% extends 'base/base.html' %}
-
 {% block title %}{{ place.place_name }} - 리뷰 페이지{% endblock %}
 {% load static %}
 {% block content %}
@@ -7,115 +6,230 @@
 <div class="container">
     <div class="left-content">
         <div id="left-box">
-            <img id="place_img" src="{{ place.review_photo }}" alt="{{ place.place_name }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
-            <h2 id="place-name">{{ place.place_name }}</h2>
-            {% if review_num %}
-                <p>📝 리뷰 {{ review_num }}개</p>
-            {% endif %}
-            {% if category_name %}
-                <p>{{ category_name }}</p>
-            {% endif %}
-            {% if tag_name %}
-                <p>🧩 {{ tag_name }}</p>
+            {% for photo in profile_photo %}
+            <img id="place_img" src="{{ photo }}" alt="{{ photo }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+            {% endfor %}
+            <div id="map" class="map" onclick="openMapModal()"></div> <!-- 클릭 시 모달 오픈 -->
+            <div id="mapModalContainer" class="hidden">
+                <div id="mapModalContent">
+                    <div id="largeMap" class="map"></div> <!-- 큰 지도를 표시할 공간 -->
+                    <button class="overlay-button" onclick="closeMapModal()">&#10006;</button> <!-- 닫기 버튼 -->
+                </div>
+            </div>
+            <div class = "address">
+            <h2 id="place-name">{{ place.place_name }}</h2>   
+            <p>🗺️{{ place.place_address }}</p>
+            </div>
+            <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
+            {% if total %}
+                <p class = "profile">🚩  {{ kor_place_tag }}</p>
+                <p class = "profile">📝 리뷰 {{ total }}개</p>
             {% endif %}
             {% if place.place_operating_hours %}
-                <p>⏰ {{ place.place_operating_hours }}</p>
+                <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
             {% endif %}
             {% if place.place_phone %}
-                <p>📞 {{ place.place_phone }}</p>
+                <p class = "profile">📞 {{ place.place_phone }}</p>
             {% endif %}
             {% if place.place_entrance_fee %}
-                <p>🪙 {{ place.place_entrance_fee }}</p>
+                <p class = "profile">🪙 {{ place.place_entrance_fee }}</p>
             {% endif %}
             <p>{{ place.place_place_desc }}</p>
-            <div id="map" class="map"></div>
-            <address>
-                <p>🗺️ {{ place.place_address }}</p>
-            </address>
-            <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
         </div>
     </div>
 
     <div class="right-content">
-        <div id="right-box">
-            <div id="tag_container">
-                <div class="keyword">
-                    <span>🔑 키워드 : </span>
-                    <button># 카페</button>
-                    <button># 가족</button>
-                </div>
-                <div class="feature-box">
-                    <div class="feature">
-                        <span>📢 특징 :</span>
-                        {% if parsed_data %}
-                            <span class="first-item">
-                                {% for key, value in parsed_data.0.items %}
-                                    {% if forloop.first %}
-                                        {{ key }}: {{ value }}
-                                    {% endif %}
-                                {% endfor %}
-                            </span>
-                            <div id="more-feature" style="display: none;">
-                                {% for key, value in parsed_data.0.items %}
-                                    {% if not forloop.first %}
-                                        <span>{{ key }}: {{ value }}</span>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <!-- <button id="toggle-button" onclick="toggleFeature()">+</button> -->
-                </div>
-
-                <div class="sort">
-                    <span>정렬 방식</span>
-                    <button onclick="setSortOption('latest')">최신순</button>
-                    <button onclick="setSortOption('oldest')">오래된순</button>
-                </div>
+        <div class="theme-header">
+            <div class="tag-box">
+                {% if thema_name %}
+                <span class="tag_name">테마</span>
+                {% for theme in thema_name %}
+                <span class="tag">{{ theme }}</span>
+                {% endfor %}
+                {% endif %}
             </div>
+            <div class="dropdown">
+                {% if feature_dict %}
+                <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
+                <span class="keyword">키워드</span>
 
-            <div id="review_container" class="cards">
-                {% for review in reviews %}
-                    <div class="card">
-                        <img src="{{ review.review_photo }}" alt="Review Photo" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
-                        <div class="card-content">
-                            <p class="card-date">{{ review.review_date }}</p>
-                            {% if review.daily_tag_name %}
-                                <p class="card-daily">방문 목적: {{ review.daily_tag_name }}</p>
-                            {% endif %}
-                            {% if review.with_tag_name %}
-                                <p class="card-with">함께 방문: {{ review.with_tag_name }}</p>
-                            {% endif %}
-                            <p class="card-description">{{ review.review_text }}</p>
+                <!-- 나머지 항목은 <select> 안에 넣음 -->
+                <select id="feature-select">
+                        <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
+                    {% for key, value in feature_dict.items %}
+                        {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
+                        <option disabled>{{ key }}: {{ value }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+        </div>
+        <div class="stat-box">
+            <h3>긍/부정</h3>
+            <div class = "stat-details">
+                <p>
+                    <span class="positive-percentage">긍정 {{ pos_ratio }}%</span>
+                    <span class="neutral-percentage">중립 {{neutral}} %</span> 
+                    <span class="negative-percentage">부정 {{ neg_ratio }}%</span>
+                </p>
+                <div class="progress-bar">
+                    <div class="progress-bar-inner positive-bar" style="width: {{ pos_ratio }}%;"></div>
+                    <div class="progress-bar-inner neutral-bar" style="width: {{ neutral }}%;"></div>
+                    <div class="progress-bar-inner negative-bar" style="width: {{ neg_ratio }}%;"></div>
+                </div>
+                <p>
+                    <span class="review-summary" style="margin-left: 30px;">{{total}}개의 리뷰 중 {{pos}}개의 긍정 리뷰를 가졌어요!</span>
+                </p>
+            </div>
+        </div>
+    
+        <div class="stat-box">
+            <h3>광고성</h3>
+            <div class="stat-details">
+                <p>실 사용자 리뷰 비율</p>
+                <div class="progress-bar">
+                    <div class="progress-bar-inner advertisement-bar" style="width: {{ real_ratio }}%;"></div>
+                </div>
+                <p>
+                    <span class="review-summary">{{total}}개의 리뷰 중 {{ ad }}개가 광고성으로 의심돼요. -.-</span>
+                    <!-- 클릭 가능한 돋보기 아이콘 -->
+                    <span id="openAdModalBtn">🔍</span>
+                    <!-- 모달 창 -->
+                    <div id="adModal" class="ad_modal">
+                        <div class="ad_content">
+                            <span id="closeAdModalBtn" class="close-btn">&times;</span>
+                            <p>모달 창입니다.</p>
                         </div>
                     </div>
-                {% endfor %}
+                </p>
             </div>
-
-            <div class="pagination">
-                <span id="page_container" class="step-links">
-                    {% if reviews.has_previous %}
-                        <button class="page-button" onclick="movePage(1, '{{ array }}')">&laquo; 처음</button>
-                        <button class="page-button" onclick="movePage({{ reviews.previous_page_number }}, '{{ array }}')">이전</button>
+        </div>
+    
+        <div class="footer">
+                <div class="reps-image">
+                    <p>대표사진</p>
+                    <div class = "image-grid">
+                    {% for photo in review_photos %}
+                        <img src="{{ photo }}" alt="Review Photo">
+                    {% endfor %}
+                    </div>
+                </div>
+            <div class="review-list">
+                <div class="filter-buttons">
+                    <button onclick="loadReviews('latest')">최신순 ⌛</button>
+                    <button onclick="loadReviews('positive')">긍정 👍</button>
+                    <button onclick="loadReviews('negative')">부정 👎</button>
+                </div>
+                <ul class="reviews" id="review-container">
+                    {% for review in reviews %}
+                    <li>
+                        <span>{{ review.kor_review_text }}</span>
+                        <span class="date">{{ review.review_date|date:"Y-m-d" }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <!-- 더보기 버튼 -->
+                <a href="{% url 'reviews_more' lang %}?place_id={{ place.place_id }}" class = "more-link">
+                    {% if lang == 'kor' %}
+                        더보기 >
+                    {% else %}
+                        more > 
                     {% endif %}
-                    <span class="current" id="current_page">
-                        Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}.
-                    </span>
-                    {% if reviews.has_next %}
-                        <button class="page-button" onclick="movePage({{ reviews.next_page_number }}, '{{ array }}')">다음</button>
-                        <button class="page-button" onclick="movePage({{ reviews.paginator.num_pages }}, '{{ array }}')">마지막 &raquo;</button>
-                    {% endif %}
-                </span>
+                </a>
             </div>
         </div>
     </div>
-</div>
+
+    
+
+
 {% endblock %}
 
 {% block extra_css %}
+
+<style>
+.right-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 50%;
+}
+
+#mapModalContainer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#mapModalContent {
+    width: 80%;
+    height: 80%;
+    background-color: transparent; /* 배경 색상을 투명하게 처리하여 지도가 전체를 채우도록 설정 */
+    position: relative;
+}
+
+#largeMap {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+
+#mapModalContainer.hidden {
+    display: none;
+}
+
+
+/* 모달 기본 스타일 */
+.ad_modal {
+    display: none; /* 기본적으로 모달을 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 */
+}
+
+/* 모달 내용 스타일 */
+.ad_content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+}
+
+/* 닫기 버튼 스타일 */
+.close-btn {
+    cursor: pointer;
+    color: red;
+    font-size: 20px;
+}
+
+/* 클릭 가능한 아이콘 스타일 추가 */
+#openAdModalBtn {
+    cursor: pointer;
+}
+
+</style>
 <!-- 이 페이지에서만 사용하는 CSS -->
 <link rel="stylesheet" href="{% static 'css/review/style.css' %}">
 {% endblock %}
+
 
 {% block extra_js %}
 <script>
@@ -126,7 +240,191 @@
     const marker_img = "{% static 'img/marker_img.png' %}";
     const current_page = {{current_page}};
     const total_pages = {{total_pages}};
+
+    function initModalEvents() {
+    const modalOpenButtons = document.querySelectorAll('.open-modal-button');
+    modalOpenButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const imageSrc = e.target.getAttribute('data-image-src');
+            openModal(imageSrc);
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initModalEvents();
+});
+
+function movePage(page, array) {
+    fetch(`?place_id=${place_id}&page=${page}&array=${array}`, {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+    .then(Response => Response.json())
+    .then(data => {
+        SetPagination(data.current_page, data.total_pages);
+        SetReviews(data.reviews);
+        initModalEvents(); // 페이지가 이동한 후에도 모달 관련 이벤트를 다시 연결
+    })
+    .catch(error => {
+        console.error('Failed to load review data:', error);
+    });
+}
+
+    // 모달 열기 및 닫기
+function openModal(imageSrc) {
+        const modal = document.getElementById('modalContainer');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = imageSrc;
+        modal.classList.remove('hidden');
+    }
+
+    function closeModal(){
+        const modal = document.getElementById('modalContainer');
+        modal.classList.add('hidden');
+    }
+    function openMapModal() {
+    const mapModal = document.getElementById('mapModalContainer');
+    mapModal.classList.remove('hidden');
+
+    // 큰 지도 표시
+    var largeMapOptions = {
+        center: new naver.maps.LatLng(place_lat, place_lon), // 장소 중심 위치
+        zoom: 17
+    };
+
+    var largeMap = new naver.maps.Map('largeMap', largeMapOptions);
+
+    var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng(place_lat, place_lon), // 마커 위치
+        map: largeMap,
+        icon: marker_img,
+    });
+}
+
+function closeMapModal(){
+    const mapModal = document.getElementById('mapModalContainer');
+    mapModal.classList.add('hidden');
+}
+let reviewsData = []; // 전체 리뷰 데이터를 저장할 배열
+let filterByImage = false; // 이미지 필터 여부를 저장하는 변수
+
+// 페이지 로드 시 리뷰 데이터를 세팅하는 함수
+function SetReviews(reviews) {
+    reviewsData = reviews; // 리뷰 데이터를 저장
+    renderReviews(); // 저장된 리뷰 데이터를 렌더링
+}
+
+// 필터링과 정렬을 함께 적용한 리뷰 렌더링 함수
+function renderReviews() {
+    let filteredReviews = reviewsData;
+
+    // 이미지 필터가 활성화되면 이미지가 있는 리뷰들만 필터링
+    if (filterByImage) {
+        filteredReviews = filteredReviews.filter(review => review.review_photo);
+    }
+
+    // 리뷰 컨테이너를 비우고 필터링된 리뷰들을 표시
+    review_container.innerHTML = '';
+
+    filteredReviews.forEach(function(review) {
+        // 카드 요소 생성
+        var cardElement = document.createElement('div');
+        cardElement.className = 'card';
+        
+        // 이미지 요소 생성
+        var imgElement = document.createElement('img');
+        imgElement.src = review.review_photo;
+        imgElement.alt = 'Review Photo';
+        imgElement.onerror = function() {
+            this.onerror = null;
+            this.src = '/static/img/default1.png';
+        };
+        imgElement.className = 'review-image';
+        imgElement.onclick = function() {
+            openModal(review.review_photo);
+        };
+        
+        // 카드 콘텐츠 요소 생성
+        var cardContentElement = document.createElement('div');
+        cardContentElement.className = 'card-content';
+
+        // 날짜 요소 생성
+        var dateElement = document.createElement('p');
+        dateElement.className = 'card-date';
+
+        // 데일리 태그 요소 생성 (존재하는 경우)
+        if (review.daily_tag_name) {
+            var dailyTagElement = document.createElement('p');
+            dailyTagElement.className = 'card-daily';
+            dailyTagElement.textContent = '방문 목적: ' + review.daily_tag_name;
+            cardContentElement.appendChild(dailyTagElement);
+        }
+
+        // 위드 태그 요소 생성 (존재하는 경우)
+        if (review.with_tag_name) {
+            var withTagElement = document.createElement('p');
+            withTagElement.className = 'card-with';
+            withTagElement.textContent = '함께 방문: ' + review.with_tag_name;
+            cardContentElement.appendChild(withTagElement);
+        }
+
+        // 리뷰 텍스트 요소 생성
+        var descriptionElement = document.createElement('p');
+        descriptionElement.className = 'card-description';
+        descriptionElement.textContent = review.review_text;
+        
+        // 이미지와 카드 콘텐츠를 카드에 추가
+        cardElement.appendChild(imgElement);
+        cardElement.appendChild(cardContentElement);
+        
+        // 카드 요소를 리뷰 컨테이너에 추가
+        review_container.appendChild(cardElement);
+    });
+
+    // 모달 기능을 유지하기 위해 이벤트 재연결
+    initModalEvents();
+}
+function loadReviews(filter) {
+    var url = "?place_id={{ place.place_id }}&array=" + filter;
+
+    fetch(url, {
+        method: "GET",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest"  // AJAX 요청임을 명시
+        }
+    })
+    .then(response => response.json())  // 응답을 JSON으로 변환
+    .then(data => {
+        var reviewContainer = document.getElementById("review-container");
+        reviewContainer.innerHTML = "";  // 기존 리뷰 제거
+        
+        // 새로운 리뷰 추가
+        if (data.serialized_reviews.length > 0) {
+            data.serialized_reviews.forEach(function(review) {
+                var reviewElement = document.createElement("li");
+                reviewElement.innerHTML = `
+                    <span>${review.kor_review_text}</span>
+                    <span class="date">${review.review_date}</span>
+                `;
+                reviewContainer.appendChild(reviewElement);
+            });
+        } else {
+            // 필터링된 리뷰가 없을 때 메시지 표시
+            reviewContainer.innerHTML = "<li>No reviews available for this filter.</li>";
+        }
+    })
+    .catch(error => console.error("Error:", error));  // 에러 처리
+}
+
+
+
+
+
 </script>
+
 <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
 <script src="{% static 'js/review/review.js' %}"></script>
 {% endblock %}

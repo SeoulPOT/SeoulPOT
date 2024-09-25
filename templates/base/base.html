@@ -16,9 +16,9 @@
             <img src="{% static 'img/logo.png' %}" alt="logo">
         </div>
         <button id="home" onclick="location.href='{% url 'main' %}'">HOME</button>
-        <button id="districts" onclick="location.href='{% url 'district' 'kor' %}'">DISTRICTS</button>
-        <!-- <button id="category" onclick="location.href='{% url 'main' %}'">CATEGORYIES</button> -->
-        <button id="request" onclick="location.href='{% url 'board_create' %}'">REQUEST</button>
+        <button id="districts" onclick="location.href='{% url 'district' lang %}'">DISTRICTS</button>
+        <button id="category" onclick="location.href='{% url 'category_choice' lang %}'">CATEGORYIES</button>
+        <button id="request" onclick="location.href='{% url 'board_create' lang %}'">REQUEST</button>
         
     </header>
 

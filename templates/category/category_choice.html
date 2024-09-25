@@ -1,28 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Selection</title>
-</head>
-<body>
-    <h1>카테고리 선택화면입니다</h1>
-    <div class="choice">
-        <span>카테고리 선택</span>
-        {% for category in categories %}
-        <button onclick="setCategoryAndRedirect('{{ category.code }}')">
-            {{ category.code_name }}
-        </button>
-        {% endfor %}
-    </div>
+{% extends 'base/base.html' %}
 
-    <script>
-        function setCategoryAndRedirect(category_cd) {
-            var lang = "{{ lang }}";
-            var url = `/category/${lang}/${category_cd}/`;  // category_cd를 포함한 URL로 리다이렉트
-            window.location.href = url;
-        }
-    </script>
-</body>
-</html>
+{% block title %}Category Selection{% endblock %}
+{% load static %}
+{% block content %}
+<main id="category-container">
+    <section class="category-selection">
+        <h1>2-1 카테고리 추천</h1>
+        <div class="category-grid">
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt01')">
+                    <span class="emoji">👨‍👩‍👦</span>
+                    <span class="name">가족</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt02')">
+                    <span class="emoji">💖</span>
+                    <span class="name">연인</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt03')">
+                    <span class="emoji">🚴‍♂️</span>
+                    <span class="name">로컬애용</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt04')">
+                    <span class="emoji">🕺</span>
+                    <span class="name">혼놀</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt05')">
+                    <span class="emoji">🐕</span>
+                    <span class="name">반려동물</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt06')">
+                    <span class="emoji">💰</span>
+                    <span class="name">가성비</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt07')">
+                    <span class="emoji">😎</span>
+                    <span class="name">MZ</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt08')">
+                    <span class="emoji">🌳</span>
+                    <span class="name">인테리어</span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('pt09')">
+                    <span class="emoji">🧘‍♀️</span>
+                    <span class="name">힐링</span>
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/category/category_choice.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function setCategoryAndRedirect(category_code) {
+        const lang = "{{ lang|escapejs }}";
+        const url = `/category/${lang}/${category_code}/`;  // category_district로 이동하는 URL
+        window.location.href = url;
+    }
+</script>
+{% endblock %}

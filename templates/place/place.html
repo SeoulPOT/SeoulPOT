@@ -32,7 +32,7 @@
                 </div>
                 <div class="card-list" id="place-list-container">
                     {% for place in place_list %}
-                    <button class="card" onclick="location.href='{% url 'project-content_reviews' %}?place_id={{place.place_id}}'">
+                    <button class="card" onclick="location.href='{% url 'reviews' lang %}?place_id={{place.place_id}}'">
                         <img src="{{spot.img}}" alt="건대거리" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}'">
                         <div class="card-content">
                             <h3>{{place.place_name}}</h3>
@@ -75,7 +75,7 @@
     <script>
         window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
         const get_spot_by_category = "{% url 'de-food-place' lang %}";
-        const review_url = "{% url 'project-content_reviews' %}";
+        const review_url = "{% url 'reviews' lang %}";
         var district_obj = {
             "district_lat": "{{ district.district_lat }}",
             "district_lon": "{{ district.district_lon }}",
