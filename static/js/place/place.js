@@ -103,6 +103,7 @@ function loadMoreObjects(page) {
                         this.onerror = null;  // 무한 반복 방지
                         this.src = fallbackImage;  // 대체 이미지 경로
                     };
+                    card_img.classList.add('place-img'); // 클래스 추가
 
                     // 카드 내용 생성
                     const cardContent = document.createElement('div');
