@@ -49,7 +49,7 @@ function SetReviews(reviews) {
             // 날짜 요소 생성
             var dateElement = document.createElement('p');
             dateElement.className = 'card-date';
-            dateElement.textContent = formatDate(review.review_date);
+            // dateElement.textContent = formatDate(review.review_date);
             cardContentElement.appendChild(dateElement);
             
             console.log(review);
@@ -97,12 +97,12 @@ function setSortOption(array) {
     movePage(1, array);
 }
 
-//데이트 양식 변경 함수
-function formatDate(inputDate) {
-    const date = new Date(inputDate);  // "2024-04-19" 형식의 문자열을 Date 객체로 변환
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    return date.toLocaleDateString('en-US', options).replace(',', '').replace(/(\d{1,2}) /, '$1.');
-}
+// //데이트 양식 변경 함수
+// function formatDate(inputDate) {
+//     const date = new Date(inputDate);  // "2024-04-19" 형식의 문자열을 Date 객체로 변환
+//     const options = { month: 'short', day: 'numeric', year: 'numeric' };
+//     return date.toLocaleDateString('en-US', options).replace(',', '').replace(/(\d{1,2}) /, '$1.');
+// }
 
 
 // 모달 열기

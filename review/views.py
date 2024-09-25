@@ -8,11 +8,10 @@ import json
 
 def content_reviews(request):
     place_id = request.GET.get("place_id")
-    place_category_cd = request.GET.get("place_category_cd")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
 
-    photo_subquery = (
+    profile_photo = (
         ReviewTb.objects.filter(place_id=place_id, review_photo__gt="")
         .exclude(review_photo="h")
         .values_list("review_photo", flat=True)[:1]
@@ -22,27 +21,15 @@ def content_reviews(request):
     review_photos = (
         ReviewTb.objects.filter(place_id=place_id, review_photo__gt="")
         .exclude(review_photo="h")
-        .values_list("review_photo", flat=True)[:4]
+        .values_list("review_photo", flat=True)[1:5]
     )
 
     place = (
         PlaceTb.objects.filter(place_id=place_id)
-        .annotate(
-            review_photo=Subquery(photo_subquery)
-        )  # 리뷰 사진 가져오기 (Subquery 결과를 이용해 각 객체에 review_photo라는 필드를 추가)
+        .annotate()  # 리뷰 사진 가져오기 (Subquery 결과를 이용해 각 객체에 review_photo라는 필드를 추가)
         .first()
     )  # place_review_num을 기준으로 정렬
     print(place)
-
-    # place = get_object_or_404(PlaceTb, pk=place_id)  # 콘텐츠 가져오기, 없으면 404
-    daily_tag_subquery = CodeTb.objects.filter(
-        parent_code="rd", code=OuterRef("review_daily_tag_cd")
-    ).values("kor_code_name")[:1]
-
-    with_tag_subquery = CodeTb.objects.filter(
-        code=OuterRef("review_with_tag_cd"),
-        parent_code="rw",
-    ).values("kor_code_name")[:1]
 
     # 기본 리뷰 쿼리셋
     reviews = ReviewTb.objects.filter(place_id=place_id).annotate(
@@ -58,6 +45,18 @@ def content_reviews(request):
         ),
     )
 
+    # 장소 태그 정보
+    try:
+        place_tag = CodeTb.objects.get(code=place.place_tag_cd)
+        print(place_tag.kor_code_name)  # 태그 이름 출력
+    except CodeTb.DoesNotExist:
+        print("해당 태그가 없습니다.")
+
+    kor_place_tag = place_tag.kor_code_name
+    # -------------------------------------------------------------------------------
+
+    thema_name = get_kor_code_name_for_thema_cd(place.place_thema_cd)
+
     # 정렬 방식에 따른 필터링
     if array == "latest":
         reviews = reviews.order_by("-review_date")[:5]  # 최신순으로 5개
@@ -72,7 +71,7 @@ def content_reviews(request):
 
     paginator = Paginator(reviews, 10)  # 리뷰를 10개씩 나누어서 페이지를 나눈다
     page_obj = paginator.get_page(page)
-
+    ########################################################################################################
     # 리뷰 데이터를 JSON 형식으로 변환
     review_field_names = [field.name for field in ReviewTb._meta.fields]
     review_field_names.extend(["daily_tag_name", "with_tag_name"])
@@ -81,8 +80,8 @@ def content_reviews(request):
 
     # 텍스트가 너무 길면 자르기 (30자로 제한)
     for review in serialized_reviews:
-        if len(review["kor_review_text"]) > 30:
-            review["kor_review_text"] = review["kor_review_text"][:30] + "..."
+        if len(review["kor_review_text"]) > 25:
+            review["kor_review_text"] = review["kor_review_text"][:25] + "..."
 
     # ------------------place_feature--------------------
     # features = {}
@@ -97,32 +96,6 @@ def content_reviews(request):
     #     print("raw_feature none")
 
     # parsed_data = [features]
-
-    # --------------place category / tag-----------------
-
-    # place_category_cd와 일치하는 kor_code_name 가져오기
-    try:
-        category_code = CodeTb.objects.get(code=place_category_cd)
-        category_name = category_code.kor_code_name
-    except CodeTb.DoesNotExist:
-        category_name = ""
-
-    # place_tag_cd와 일치하는 kor_code_name 가져오기
-    try:
-        place = PlaceTb.objects.filter(
-            place_id=place_id
-        ).first()  # first()는 결과가 없을 때 None을 반환합니다.
-
-        if place is not None:
-            # place가 None이 아닐 경우에만 place_tag_cd에 접근
-            tag_cd = place.place_tag_cd
-        else:
-            # None일 경우 처리 로직
-            print("PlaceTb에서 해당 id에 맞는 레코드가 없습니다.")
-
-        # tag_name = tag_code.kor_code_name
-    except CodeTb.DoesNotExist:
-        tag_name = ""
 
     # -------------- review daily_tag_cd / with_tag_cd --------------
     # 각각의 리뷰에서 daily_tag와 with_tag의 code_name을 가져오기
@@ -144,14 +117,19 @@ def content_reviews(request):
     #         except CodeTb.DoesNotExist:
     #             review.with_tag_name = "Unknown Tag"
     # -----------------------------------------------------
-    place_feature = place.place_feature
+    try:
+        feature_dict = {}
+        place_feature = place.place_feature
 
-    # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
-    feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
-    # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
-    feature_dict = {
-        key: int(value.replace("'", "").strip()) for key, value in feature_list
-    }
+        # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
+        feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
+        # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
+        feature_dict = {
+            key.replace("'", "").strip(): int(value.replace("'", "").strip())
+            for key, value in feature_list
+        }
+    except:
+        place_feature = ""
 
     # ---------------------context-------------------------
 
@@ -174,9 +152,10 @@ def content_reviews(request):
     context = {
         "place": place,
         "reviews": page_obj,
-        "photo_subquery": photo_subquery,
+        "profile_photo": profile_photo,
         "feature_dict": feature_dict,
-        "category_name": category_name,
+        "kor_place_tag": kor_place_tag,
+        "thema_name": thema_name,
         "array": array,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
@@ -210,11 +189,10 @@ def content_reviews(request):
 
 def reviews_more(request):
     place_id = request.GET.get("place_id")
-    place_category_cd = request.GET.get("place_category_cd")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
 
-    photo_subquery = (
+    profile_photo = (
         ReviewTb.objects.filter(place_id=place_id, review_photo__gt="")
         .exclude(review_photo="h")
         .values_list("review_photo", flat=True)[:1]
@@ -222,9 +200,7 @@ def reviews_more(request):
 
     place = (
         PlaceTb.objects.filter(place_id=place_id)
-        .annotate(
-            review_photo=Subquery(photo_subquery)
-        )  # 리뷰 사진 가져오기 (Subquery 결과를 이용해 각 객체에 review_photo라는 필드를 추가)
+        .annotate()  # 리뷰 사진 가져오기 (Subquery 결과를 이용해 각 객체에 review_photo라는 필드를 추가)
         .first()
     )  # place_review_num을 기준으로 정렬
     print(place)
@@ -242,6 +218,18 @@ def reviews_more(request):
             ).values("kor_code_name")[:1]
         ),
     )
+    # 전체 리뷰 수
+    total = place.place_review_num
+
+    # 장소 태그 정보
+    try:
+        place_tag = CodeTb.objects.get(code=place.place_tag_cd)
+        print(place_tag.kor_code_name)  # 태그 이름 출력
+    except CodeTb.DoesNotExist:
+        print("해당 태그가 없습니다.")
+    kor_place_tag = place_tag.kor_code_name
+
+    thema_name = get_kor_code_name_for_thema_cd(place.place_thema_cd)
 
     # 정렬 방식에 따른 필터링
     if array == "latest":
@@ -264,19 +252,34 @@ def reviews_more(request):
 
     serialized_reviews = list(page_obj.object_list.values(*review_field_names))
 
+    # ----------------------------------------------------------------------------
+    try:
+        feature_dict = {}
+        place_feature = place.place_feature
+
+        # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
+        feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
+        # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
+        feature_dict = {
+            key.replace("'", "").strip(): int(value.replace("'", "").strip())
+            for key, value in feature_list
+        }
+    except:
+        place_feature = ""
+
     context = {
         "place": place,
         "reviews": page_obj,
-        "photo_subquery": photo_subquery,
+        "profile_photo": profile_photo,
         "array": array,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
         "reviews": serialized_reviews,
+        "kor_place_tag": kor_place_tag,
+        "thema_name": thema_name,
+        "feature_dict": feature_dict,
+        "total": total,
     }
-
-    # "review": review,
-    # "features": features,
-    # "parsed_data": parsed_data,
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         context = {
@@ -288,3 +291,50 @@ def reviews_more(request):
         return JsonResponse(context, safe=False)
 
     return render(request, "review/more.html", context)
+
+
+def get_kor_code_name_for_thema_cd(thema_cd):
+    if not thema_cd:
+        return []
+
+    # 코드별 이모지 매핑
+    emoji_mapping = {
+        "ph01": "가족👨‍👩‍👧‍👦",
+        "ph02": "연인💕",
+        "ph03": "혼놀🕺",
+        "ph04": "반려동물🐕",
+        "ph05": "트렌드(MZ)😎",
+        "ph06": "힐링🌳",
+        "ph07": "로컬애용🚲",
+        "ph08": "인테리어🛋️",
+        "ph09": "가성비💰",
+    }
+
+    # place_thema_cd에 있는 코드를 분리
+    thema_cd_list = thema_cd.split(", ")
+
+    # 코드 이름을 저장할 리스트
+    kor_code_names = []
+
+    # 각 코드를 조회하여 kor_code_name에 이모지를 추가하여 리스트에 추가
+    for code in thema_cd_list:
+        try:
+            code_obj = CodeTb.objects.get(code=code)
+            # 이모지가 매핑된 경우 이모지를 추가, 그렇지 않으면 기본 kor_code_name 사용
+            kor_code_name_with_emoji = emoji_mapping.get(code, code_obj.kor_code_name)
+            kor_code_names.append(kor_code_name_with_emoji)
+        except CodeTb.DoesNotExist:
+            kor_code_names.append(f"Unknown code: {code}")
+
+    return kor_code_names  # 리스트 반환
+
+
+def get_code_name_for_place_tag_cd(place_tag_cd):
+    # 코드 이름을 저장할 리스트
+    kor_code_names = []
+
+    # 각 코드를 조회하여 kor_code_name에 이모지를 추가하여 리스트에 추가
+    for code in place_tag_cd:
+        code_obj = CodeTb.objects.get(code=code)
+        kor_code_names.append(code_obj.kor_code_name)
+    return kor_code_names

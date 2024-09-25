@@ -6,36 +6,33 @@
 <div class="container">
     <div class="left-content">
         <div id="left-box">
-            <img id="place_img" src="{{ photo_subquery }}" alt="{{ photo_subquery }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
-            <h2 id="place-name">{{ place.place_name }}</h2>
+            {% for photo in profile_photo %}
+            <img id="place_img" src="{{ photo }}" alt="{{ photo }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+            {% endfor %}
             <div id="map" class="map" onclick="openMapModal()"></div> <!-- 클릭 시 모달 오픈 -->
             <div id="mapModalContainer" class="hidden">
                 <div id="mapModalContent">
                     <div id="largeMap" class="map"></div> <!-- 큰 지도를 표시할 공간 -->
                     <button class="overlay-button" onclick="closeMapModal()">&#10006;</button> <!-- 닫기 버튼 -->
                 </div>
-            </div>       
-            <address>
-                <p>🗺️ {{ place.place_address }}</p>
-            </address>
+            </div>
+            <div class = "address">
+            <h2 id="place-name">{{ place.place_name }}</h2>   
+            <p>🗺️{{ place.place_address }}</p>
+            </div>
             <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
             {% if total %}
-                <p>📝 리뷰 {{ total }}개</p>
-            {% endif %}
-            {% if category_name %}
-                <p>{{ category_name }}</p>
-            {% endif %}
-            {% if tag_name %}
-                <p>🧩 {{ tag_name }}</p>
+                <p class = "profile">🚩  {{ kor_place_tag }}</p>
+                <p class = "profile">📝 리뷰 {{ total }}개</p>
             {% endif %}
             {% if place.place_operating_hours %}
-                <p>⏰ {{ place.place_operating_hours }}</p>
+                <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
             {% endif %}
             {% if place.place_phone %}
-                <p>📞 {{ place.place_phone }}</p>
+                <p class = "profile">📞 {{ place.place_phone }}</p>
             {% endif %}
             {% if place.place_entrance_fee %}
-                <p>🪙 {{ place.place_entrance_fee }}</p>
+                <p class = "profile">🪙 {{ place.place_entrance_fee }}</p>
             {% endif %}
             <p>{{ place.place_place_desc }}</p>
         </div>
@@ -45,29 +42,30 @@
         <div id="right-box">
             <div class="theme-header">
                 <div class="tag-box">
-                    <span>테마</span>
-                    <span class="tag">연인 💕</span>
-                    <span class="tag">가족 👪</span>
+                    {% if thema_name %}
+                    <span class="tag_name">테마</span>
+                    {% for theme in thema_name %}
+                    <span class="tag">{{ theme }}</span>
+                    {% endfor %}
+                    {% endif %}
                 </div>        
-                <div class="dropdown">
+                <div class="dropdown" style="margin-right: 10px;">
+                    {% if feature_dict %}
+                    <span class="keyword">키워드</span>
                     <select id="feature-select">
                         {% for key, value in feature_dict.items %}
-                        <option>{{ key }}: {{ value }}</option>
+                        <option disabled>{{ key }}: {{ value }}</option>
                         {% endfor %}
                     </select>
+                    {% endif %}
                 </div>
             </div>
-            <div id="tag_container">
-                <div class="keyword">
-                    <span>🔑 해당 리뷰는 AI 분석 결과에 따라 광고성 리뷰 제거 후 기준별 가장 높은 점수대로 정렬한 데이터입니다</span>
+            <div class = "tag_container">
+                <div class="explain">
+                    🔑 해당 리뷰는 AI 분석에 따라 광고성 리뷰 제거 후 각 기준별 높은 점수 순서로 정렬한 리뷰 데이터입니다.
                 </div>
-                <div class="feature-box">
-                    <div class="feature">
-                        사진 <input type="checkbox" id="filter-images" onchange="filterReviewsWithImages()">
-                    </div>
-                </div>
-
                 <div class="filter-buttons">
+                    <p>정렬 방식</p>
                     <button onclick="loadReviews('latest')">최신순 ⌛</button>
                     <button onclick="loadReviews('positive')">긍정 👍</button>
                     <button onclick="loadReviews('negative')">부정 👎</button>
@@ -77,9 +75,9 @@
                 {% for review in reviews %}
                     <div class="card">
                         <img class="review-image" src="{{ review.review_photo }}" alt="{% static 'img/default1.png' %}" onclick="openModal('{{ review.review_photo }}')" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}'; this.onclick=null;">
-                        <i class="icon-overlay">↕</i> <!-- 겹칠 아이콘 -->
+                        <img class="icon-overlay" src="{% static 'img/enlarge.png' %}">
                         <div class="card-content">
-                            <p class="card-date">{{ review.review_date }}</p>
+                            <p class="card-date">{{ review.review_date|date:"Y-m-d" }}</p>
                             {% if review.daily_tag_name %}
                                 <p class="card-daily">방문 목적: {{ review.daily_tag_name }}</p>
                             {% endif %}
@@ -97,7 +95,6 @@
 
 <div id="modalContainer" class="hidden">
     <div id="modalContent">
-        
         <!-- <button id="modalCloseButton">닫기</button> -->
         <img id="modalImage" src="" alt="Review Image">
         <button class="overlay-button" onclick="closeModal()">&#10006;</button>
@@ -325,7 +322,6 @@
             // 날짜 요소 생성
             var dateElement = document.createElement('p');
             dateElement.className = 'card-date';
-            dateElement.textContent = formatDate(review.review_date);
     
             // 데일리 태그 요소 생성 (존재하는 경우)
             if (review.daily_tag_name) {
