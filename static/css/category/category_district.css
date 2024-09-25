@@ -1,3 +1,9 @@
+
+
+
+
+
+
 /* font import */
 /* @font-face {
     font-family: 'NeoDunggeunmo';
@@ -42,11 +48,13 @@
         height : 100%;
     }
     
+    
     #map {
         width: 800px;
         height: 700px;
         box-sizing: border-box;
     }
+    
     
     /* Triangle (Arrow) */
     #triangle {
@@ -78,7 +86,7 @@
     /* District Info Heading */
     #district-info h1 {
         /* 초기 default일 때 안보이도록 조절 필요 */
-        /* display: none !important; */
+        display: none;
         margin: 5px 0px;
         height: 5vh;
         font-size: 5vh;
@@ -87,8 +95,24 @@
         justify-content: center;
     }
     
-    /* District Container */
-    #district-info-container {
+    #district-info h2 {
+        /* 초기 default일 때 안보이도록 조절 필요 */
+        display: flex;
+        margin: 5px 0px;
+        height: 5vh;
+        font-size: 5vh;
+        color: #9077CB;
+        text-align: center;
+        justify-content: center;
+    
+        /* 위치 수정 */
+        position: relative; /* 필요한 경우 */
+        top: -20px; /* 원하는 만큼 위로 이동 */
+        left: 0; /* 기본적으로 왼쪽 정렬 */
+        text-align: left; /* 왼쪽 정렬을 유지 */
+    }
+    
+    #district-container {
         background-color: #D4CBF8;
         border-radius: 15px;
         padding: 20px;
@@ -97,12 +121,15 @@
         height: 100%; 
         min-height: 500px;
         box-sizing: border-box;
-        display: none;
-        flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: center;
         margin: 0 auto; /* Center align container */
+        flex-direction: column;
+        justify-content: flex-start;
     }
+    
+    
+    
     
     #district-preparing-container {
         background-color: #D4CBF8;
@@ -113,7 +140,6 @@
         height: auto; 
         min-height: 500px;
         box-sizing: border-box;
-        display: none;
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -136,26 +162,6 @@
         justify-content: center;
         margin: 0 auto; /* Center align container */
     }
-    
-    
-    /* District Container */
-    #district-container {
-        background-color: #D4CBF8;
-        border-radius: 15px;
-        padding: 20px;
-        width: 100%;
-        min-width : 500;
-        height: 100%; 
-        min-height: 500px;
-        box-sizing: border-box;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto; /* Center align container */
-        flex-direction: column;
-        justify-content: flex-start;
-    }
-    
     
     
     /* District Content - Default */
@@ -249,26 +255,27 @@
     }
     
     /* District Space */
+    
     #district-space {
         display: flex;
-        flex-direction: column; 
-        align-items: center;
-        gap: 10px; 
-        width: 100%; 
-        max-width: 1200px; 
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        width: 100%;
     }
     
-    /* Space Box */
+    
     #space-container {
         width: 100%;
-        max-width: calc((200px + 20px) * 4 - 40px); 
-        height: 80px;
-        padding: 1%;
-        border-radius: 5px;
-        background-color: #fff;
-        color: #9077CB;
+        height: 80px; /* 높이를 고정 */
+        padding: 8px; /* 여백을 추가 */
         box-sizing: border-box;
-        overflow-y: auto;
+        background-color: #fff;
+        border-radius: 10px;
+        display: flex; /* 플렉스박스로 요소를 수평 정렬 */
+        align-items: center; /* 수직 중앙 정렬 */
+        justify-content: space-between; /* 아이템 간격 조정 */
+        overflow: hidden; /* 내용이 넘치지 않도록 */
     }
     
     #space-container:hover {
@@ -276,39 +283,43 @@
         background-color: #f6f4f4;
     }
     
+    
     .space-box {
-        height: 100%;
         width: 100%;
+        height: 100px;  /* 장소 정보의 높이를 적절히 조정 */
         display: flex;
         gap: 10px;
         align-items: center;
         justify-content: start;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 10px;
     }
     
     .space-box img {
-        height: 100%; 
-        aspect-ratio: 1 / 1;
-        max-height: 110px;
-        border-radius: 5px;
-        object-fit: cover;
+        width: 60px; /* 이미지의 너비를 제한 */
+        height: 60px; /* 이미지의 높이도 제한 */
+        border-radius: 10px; /* 모서리 둥글게 */
+        object-fit: cover; /* 이미지 비율 유지하면서 박스에 맞춤 */
     }
     
     .space-box .details {
-        height : 100%;
-        width: calc(100% - 100px);
+        margin-left: 8px; /* 이미지와 텍스트 사이 간격 */
+        width: calc(100% - 70px); /* 이미지 크기를 제외한 나머지 공간에 텍스트 배치 */
         display: flex;
         flex-direction: column;
-        overflow-wrap: anywhere;
+        justify-content: space-between; /* 텍스트를 위아래로 균등하게 배치 */
     }
     
     .space-box .details h3 {
         margin: 2px;
         font-size: 1.3em;
+        color :#b6a4de;
     }
     
     .space-box .details p {
         margin: 2px;
-        font-size: 0.9em;
+        font-size: 0.8em;
         color :#b6a4de;
     }
     
@@ -437,7 +448,7 @@
     /* District Styles */
     .district {
         cursor: pointer;
-        fill: #D4CBF8;
+        /*fill: #D4CBF8 !important; 기본색을 설정하고, 이 속성은 JavaScript로 덮어씌워질 것 */
         stroke: #fff;
         stroke-width: 1.5;
         position: relative;
@@ -481,7 +492,7 @@
     #selected-district-img {
         height: 60%;
         max-height:150px;
-        justify-content: acenter;
+        justify-content: center;
         align-items: center;
     }
     
@@ -491,4 +502,28 @@
         overflow-y: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
+    }
+    
+    /* 반응형 디자인 */
+    @media (max-width: 1200px) {
+        #district-container {
+            max-width: 90%;
+        }
+    }
+    
+    @media (max-width: 600px) {
+        #container {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    
+        #map {
+            width: 100%;
+            height: 300px;
+        }
+    
+        #district-container {
+            max-width: 100%;
+        }
     }
