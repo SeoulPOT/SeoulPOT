@@ -575,3 +575,9 @@ main {
     height: 30%;
     margin-top: 20%;
 }
+
+#category {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
