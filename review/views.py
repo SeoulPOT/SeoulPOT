@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import json
 
 
-def content_reviews(request):
+def content_reviews(request, lang):
     place_id = request.GET.get("place_id")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
@@ -169,6 +169,7 @@ def content_reviews(request):
         "ad": ad,
         "review_photos": review_photos,  # 리뷰 사진 추가
         "reviews": serialized_reviews,
+        "lang":lang
     }
 
     # "review": review,
@@ -187,7 +188,7 @@ def content_reviews(request):
     return render(request, "review/reviews.html", context)
 
 
-def reviews_more(request):
+def reviews_more(request, lang):
     place_id = request.GET.get("place_id")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
@@ -279,6 +280,7 @@ def reviews_more(request):
         "thema_name": thema_name,
         "feature_dict": feature_dict,
         "total": total,
+        "lang":lang
     }
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":

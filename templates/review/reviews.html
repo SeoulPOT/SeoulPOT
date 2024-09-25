@@ -115,7 +115,13 @@
                     {% endfor %}
                 </ul>
                 <!-- 더보기 버튼 -->
-                <a href="{% url 'reviews_more' %}?place_id={{ place.place_id }}" class = "more-link">더보기 ></a>
+                <a href="{% url 'reviews_more' lang %}?place_id={{ place.place_id }}" class = "more-link">
+                    {% if lang == 'kor' %}
+                        더보기 >
+                    {% else %}
+                        more > 
+                    {% endif %}
+                </a>
             </div>
         </div>
     </div>
