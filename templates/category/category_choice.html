@@ -8,57 +8,129 @@
         <h1>2-1 카테고리 추천</h1>
         <div class="category-grid">
             <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt01')">
+                <button onclick="setCategoryAndRedirect('ph01')">
                     <span class="emoji">👨‍👩‍👦</span>
-                    <span class="name">가족</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            가족
+                        {% elif lang == 'eng' %}
+                            Family
+                        {% else %}
+                            가족 <!-- 기본값-->
+                        {% endif %}
+                    </span>
                 </button>
             </div>
             <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt02')">
+                <button onclick="setCategoryAndRedirect('ph02')">
                     <span class="emoji">💖</span>
-                    <span class="name">연인</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            연인
+                        {% elif lang == 'eng' %}
+                            Couple
+                        {% else %}
+                            연인 <!-- 기본값-->
+                        {% endif %}
+                    </span>
                 </button>
             </div>
             <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt03')">
-                    <span class="emoji">🚴‍♂️</span>
-                    <span class="name">로컬애용</span>
-                </button>
-            </div>
-            <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt04')">
+                <button onclick="setCategoryAndRedirect('ph03')">
                     <span class="emoji">🕺</span>
-                    <span class="name">혼놀</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            혼놀
+                        {% elif lang == 'eng' %}
+                            Alone fun
+                        {% else %}
+                            혼놀 <!-- 기본값-->
+                        {% endif %}
+                    </span>
                 </button>
             </div>
             <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt05')">
+                <button onclick="setCategoryAndRedirect('ph04')">
                     <span class="emoji">🐕</span>
-                    <span class="name">반려동물</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            반려동물
+                        {% elif lang == 'eng' %}
+                            Pet
+                        {% else %}
+                            k <!-- 기본값-->
+                        {% endif %}
+                    </span>
                 </button>
             </div>
             <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt06')">
-                    <span class="emoji">💰</span>
-                    <span class="name">가성비</span>
-                </button>
-            </div>
-            <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt07')">
+                <button onclick="setCategoryAndRedirect('ph05')">
                     <span class="emoji">😎</span>
-                    <span class="name">MZ</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            트렌드(MZ)
+                        {% elif lang == 'eng' %}
+                            Trendy (MZ generation)
+                        {% else %}
+                            트렌드(MZ) <!-- 기본값-->
+                        {% endif %}
+                    </span>
                 </button>
             </div>
             <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt08')">
-                    <span class="emoji">🌳</span>
-                    <span class="name">인테리어</span>
-                </button>
-            </div>
-            <div class="category-item">
-                <button onclick="setCategoryAndRedirect('pt09')">
+                <button onclick="setCategoryAndRedirect('ph06')">
                     <span class="emoji">🧘‍♀️</span>
-                    <span class="name">힐링</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            힐링
+                        {% elif lang == 'eng' %}
+                            Healing
+                        {% else %}
+                            힐링 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph07')">
+                    <span class="emoji">🚴‍♂️</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            로컬애용
+                        {% elif lang == 'eng' %}
+                            Local favorite
+                        {% else %}
+                            로컬애용 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph08')">
+                    <span class="emoji">🌳</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            인테리어
+                        {% elif lang == 'eng' %}
+                            interior
+                        {% else %}
+                            인테리어 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph09')">
+                    <span class="emoji">💰</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            가성비
+                        {% elif lang == 'eng' %}
+                            Cost-effectiveness
+                        {% else %}
+                            가성비 <!-- 기본값 -->
+                        {% endif %}
+                    </span>
                 </button>
             </div>
         </div>

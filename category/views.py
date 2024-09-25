@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 def category_choice(request, lang):
-    # 1. CodeTb에서 parent_code가 'pt'로 시작하는 코드들 가져오기
-    categories = CodeTb.objects.filter(parent_code='pt').values('code', 'code_name')
-
+    # 1. CodeTb에서 parent_code가 'ph'로 시작하는 코드들 가져오기
+    categories = CodeTb.objects.filter(parent_code='ph').values('code', 'kor_code_name', 'eng_code_name')
+    print(lang)
     # 2. HTML 템플릿에 전달할 context
     context = {
         'categories': list(categories),
@@ -31,57 +31,64 @@ def category_choice(request, lang):
 
 
 @require_http_methods(["GET"])
-def district_view(request, lang, place_tag_cd):
+def district_view(request, lang, place_thema_cd):
 
     print("district_view 함수가 호출되었습니다.")
-    logger.info(f"Request received for lang: {lang}, place_tag_cd: {place_tag_cd}")
+    logger.info(f"Request received for lang: {lang}, place_tag_cd: {place_thema_cd}")
     
     try:
         # 이모지와 카테고리 이름을 코드에 따라 매핑
         category_map = {
-            'pt01': {'emoji': '👨‍👩‍👦'},
-            'pt02': {'emoji': '💑'},
-            'pt03': {'emoji': '🎶'},
-            'pt04': {'emoji': '🌲'},
-            'pt05': {'emoji': '🕺'},
-            'pt06': {'emoji': '🐕'},
-            'pt07': {'emoji': '🧑‍🤝‍🧑'},
-            'pt08': {'emoji': '🍔'},
-            'pt09': {'emoji': '😎'},
-            'pt10': {'emoji': '🏛️'},
-            'pt11': {'emoji': '🛍️'},
-            'pt12': {'emoji': '🧘‍♀️'},
+            'ph01': {'emoji': '👨‍👩‍👦'},
+            'ph02': {'emoji': '💖'},
+            'ph03': {'emoji': '🚴‍♂️'},
+            'ph04': {'emoji': '🕺'},
+            'ph05': {'emoji': '🐕'},
+            'ph06': {'emoji': '💰'},
+            'ph07': {'emoji': '😎'},
+            'ph08': {'emoji': '🌳'},
+            'ph09': {'emoji': '🧘‍♀️'},
+
             # 필요한 카테고리 추가
         }
 
-        category_info = category_map.get(place_tag_cd, {'emoji': ''})
+        category_info = category_map.get(place_thema_cd, {'emoji': ''})
 
-        place_tag = CodeTb.objects.get(code=place_tag_cd)
+        place_thema = CodeTb.objects.get(code=place_thema_cd)
         
-        if place_tag:
-            place_tag_name = f"{category_info['emoji']} {place_tag.code_name}"
+        
+
+        if place_thema and lang == "kor":
+            place_thema_name = f"{category_info['emoji']} {place_thema.kor_code_name}"
+        elif place_thema and lang == "eng":
+            place_thema_name = f"{category_info['emoji']} {place_thema.eng_code_name}"
         else:
-            place_tag_name = f"{category_info['emoji']} {category_info['name']}"
+            place_thema_name = f"{category_info['emoji']} {category_info['name']}"
         
         # 전체 구별 정보 반환
         districts = DistrictTb.objects.annotate(
-            place_count=Count('placetb', filter=Q(placetb__place_tag_cd=place_tag_cd))
+            place_count=Count('placetb', filter=Q(placetb__place_thema_cd=place_thema_cd))
         )
         response_data = {
             "districts": [
                 {
                     "district_id": district.district_id,
-                    "district_name": district.district_name,
-                    "district_img": district.district_img,
-                    "district_desc": district.district_desc,
+                    "kor_district_name": district.kor_district_name,
+                    "eng_district_name":district.eng_district_name,
+                    # "district_img": district.district_img,
+                    "kor_district_desc": district.kor_district_desc,
+                    "eng_district_desc":district.eng_district_desc,
+                    "district_lat":district.district_lat,
+                    "district_lon":district.district_lon,
                     "place_count": district.place_count
                 }
                 for district in districts
             ],
             "categories": list(CodeTb.objects.filter(parent_code='PC').exclude(code='PC03').values()),
             "lang": lang,
-            "place_tag_cd": place_tag_cd,
-            "place_tag_name": place_tag_name,
+            "place_thema_cd": place_thema_cd,
+            "place_thema_name": place_thema_name,
+            
             
         }
 
@@ -105,11 +112,9 @@ def district_view(request, lang, place_tag_cd):
 
 
 @require_http_methods(["GET"])
-def category_district(request, lang, place_tag_cd, district_id, place_category_cd):
+def category_district(request, lang, district_id, place_category_cd, place_thema_cd):
 
-    print(f"category_district_view 호출됨: lang={lang}, place_tag_cd={place_tag_cd}, district_id={district_id}, place_category_cd={place_category_cd}")
-
-    logger.info(f"Request received for lang: {lang}, place_tag_cd: {place_tag_cd}, district_id: {district_id}, place_category_cd: {place_category_cd}")
+    
 
     try:
         # place_category_cd가 없으면 오류 반환
@@ -117,7 +122,7 @@ def category_district(request, lang, place_tag_cd, district_id, place_category_c
             return JsonResponse({"error": "place_category_cd is required"}, status=400)
 
         # 선택된 구에 대한 데이터 조회
-        data = choose_district(district_id, place_category_cd, place_tag_cd)
+        data = choose_district(district_id, place_category_cd, lang, place_thema_cd)
 
         response = {
             "data": data
@@ -136,7 +141,7 @@ def category_district(request, lang, place_tag_cd, district_id, place_category_c
         }, status=400)
 
 
-def choose_district(district_id, place_category_cd, place_tag_cd):
+def choose_district(district_id, place_category_cd, lang, place_thema_cd):
     data = []
 
     photo_subquery = (
@@ -147,14 +152,20 @@ def choose_district(district_id, place_category_cd, place_tag_cd):
         .values('review_photo')[:1]
     )
 
-    category_tag_subquery = CodeTb.objects.filter(
-        code=OuterRef('place_tag_cd'),
-        parent_code='pt',
-    ).values('code_name')[:1]
+    if lang == 'kor':
+        category_tag_subquery = CodeTb.objects.filter(
+            code=OuterRef('place_tag_cd'),
+            parent_code='pt',
+        ).values('kor_code_name')[:1]
+    elif lang == 'eng':
+        category_tag_subquery = CodeTb.objects.filter(
+            code=OuterRef('place_tag_cd'),
+            parent_code='pt',
+        ).values('eng_code_name')[:1]
 
     top_places = (
         PlaceTb.objects
-        .filter(district_id=district_id, place_category_cd=place_category_cd)
+        .filter(district_id=district_id, place_thema_cd=place_thema_cd, place_category_cd=place_category_cd)
         .annotate(
             review_photo=Subquery(photo_subquery),  # 리뷰 사진 가져오기
             place_tag_name=Subquery(category_tag_subquery)
