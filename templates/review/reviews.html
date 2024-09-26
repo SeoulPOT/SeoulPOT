@@ -6,9 +6,9 @@
 <div class="container">
     <div class="left-content">
         <div id="left-box">
-            {% for photo in profile_photo %}
-            <img id="place_img" src="{{ photo }}" alt="{{ photo }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
-            {% endfor %}
+            {% if place.profile_photo %}
+            <img id="place_img" src="{{ place.profile_photo }}" alt="{{ place.profile_photo }}" onerror="this.onerror=null; this.src='{% static 'img/default1.png' %}';">
+            {% endif %}
             <div id="map" class="map" onclick="openMapModal()"></div> <!-- 클릭 시 모달 오픈 -->
             <div id="mapModalContainer" class="hidden">
                 <div id="mapModalContent">
@@ -92,7 +92,7 @@
                         <select id="feature-select" style="width: 370px; margin-right:10px">
                             <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
                         {% for key, value in mapped_feature_dict.items %}
-                            {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
+                            {% if not forloop.first %} <!-- 첫 번째 항목 제외 -->
                             <option disabled>{{ key }}: {{ value }}</option>
                             {% endif %}
                         {% endfor %}

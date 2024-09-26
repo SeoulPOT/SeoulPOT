@@ -11,10 +11,12 @@ def content_reviews(request, lang):
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
 
-    profile_photo = (
-        ReviewTb.objects.filter(place_id=place_id, review_photo__gt="")
-        .exclude(review_photo="h")
-        .values_list("review_photo", flat=True)[:1]
+    # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
+    photo_subquery = (
+        ReviewTb.objects.filter(place_id=OuterRef("place_id"))
+        .exclude(review_photo="")
+        .order_by("review_date")
+        .values("review_photo")[:1]
     )
 
     # 리뷰에서 최대 4개의 사진을 가져오되, 값이 'h'인 사진은 제외
@@ -26,7 +28,7 @@ def content_reviews(request, lang):
 
     place = (
         PlaceTb.objects.filter(place_id=place_id)
-        .annotate()  # 리뷰 사진 가져오기 (Subquery 결과를 이용해 각 객체에 review_photo라는 필드를 추가)
+        .annotate(profile_photo=Subquery(photo_subquery))  # 리뷰 사진 가져오기
         .first()
     )  # place_review_num을 기준으로 정렬
     print(place)
@@ -206,7 +208,6 @@ def content_reviews(request, lang):
     context = {
         "place": place,
         "reviews": page_obj,
-        "profile_photo": profile_photo,
         "feature_dict": feature_dict,
         "mapped_feature_dict": mapped_feature_dict,
         "kor_place_tag": kor_place_tag,
@@ -248,15 +249,17 @@ def reviews_more(request, lang):
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
 
-    profile_photo = (
-        ReviewTb.objects.filter(place_id=place_id, review_photo__gt="")
-        .exclude(review_photo="h")
-        .values_list("review_photo", flat=True)[:1]
+    # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
+    photo_subquery = (
+        ReviewTb.objects.filter(place_id=OuterRef("place_id"))
+        .exclude(review_photo="")
+        .order_by("review_date")
+        .values("review_photo")[:1]
     )
 
     place = (
         PlaceTb.objects.filter(place_id=place_id)
-        .annotate()  # 리뷰 사진 가져오기 (Subquery 결과를 이용해 각 객체에 review_photo라는 필드를 추가)
+        .annotate(profile_photo=Subquery(photo_subquery))  # 리뷰 사진 가져오기
         .first()
     )  # place_review_num을 기준으로 정렬
     print(place)
@@ -412,7 +415,6 @@ def reviews_more(request, lang):
     context = {
         "place": place,
         "reviews": page_obj,
-        "profile_photo": profile_photo,
         "array": array,
         "current_page": page_obj.number,
         "total_pages": paginator.num_pages,
