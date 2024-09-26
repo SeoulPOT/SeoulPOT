@@ -90,22 +90,90 @@ def content_reviews(request, lang):
                 review["eng_review_text"] = review["eng_review_text"][:45] + "..."
 
     # 키워드 가져오기
+    korean_english_mapping = {
+        "커피가 맛있어요": "The coffee is delicious",
+        "디저트가 맛있어요": "The dessert is delicious",
+        "음료가 맛있어요": "The drinks are delicious",
+        "특별한 메뉴가 있어요": "There's a special menu",
+        "가성비가 좋아요": "The value for money is good",
+        "건강한 맛이에요": "It tastes healthy",
+        "비싼 만큼 가치있어요": "It's worth the price",
+        "메뉴 구성이 알차요": "The menu composition is substantial",
+        "음식이 맛있어요": "The food is delicious",
+        "양이 많아요": "The portions are generous",
+        "재료가 신선해요": "The ingredients are fresh",
+        "빵이 맛있어요": "The bread is delicious",
+        "차가 맛있어요": "The tea is delicious",
+        "술이 다양해요": "There's a wide variety of alcohol",
+        "기본 안주가 좋아요": "The complimentary snacks are good",
+        "코스요리가 알차요": "The course meals are substantial",
+        "주문제작을 잘해줘요": "They are good at custom orders",
+        "종류가 다양해요": "There is a wide variety of choices",
+        "인테리어가 멋져요": "The interior is stylish",
+        "사진이 잘 나와요": "The place is great for taking photos",
+        "대화하기 좋아요": "It's a good place to have a conversation",
+        "집중하기 좋아요": "It's a good place to focus",
+        "뷰가 좋아요": "The view is nice",
+        "매장이 넓어요": "The store is spacious",
+        "아늑해요": "It's cozy",
+        "야외공간이 멋져요": "The outdoor space is great",
+        "음악이 좋아요": "The music is good",
+        "차분한 분위기에요": "The atmosphere is calm",
+        "컨셉이 독특해요": "The concept is unique",
+        "단체모임 하기 좋아요": "It's good for group gatherings",
+        "혼밥하기 좋아요": "It's good for dining alone",
+        "혼술하기 좋아요": "It's good for drinking alone",
+        "친절해요": "The staff is friendly",
+        "매장이 청결해요": "The store is clean",
+        "화장실이 깨끗해요": "The restroom is clean",
+        "주차하기 편해요": "Parking is convenient",
+        "좌석이 편해요": "The seats are comfortable",
+        "룸이 잘 되어있어요": "The rooms are well set up",
+        "반려동물과 가기 좋아요": "It's a good place to go with pets",
+        "아이와 가기 좋아요": "It's a good place to go with children",
+        "선물하기 좋아요": "It's a good place for gift shopping",
+        "오래 머무르기 좋아요": "It's a good place to stay for a long time",
+        "음식이 빨리 나와요": "The food comes out quickly",
+        "읽을만한 책이 많아요": "There are many books worth reading",
+        "특별한 날 가기 좋아요": "It's a great place for special occasions",
+        "포장이 깔끔해요": "The packaging is neat",
+        "파티하기 좋아요": "It's a good place for parties",
+    }
+
     try:
         feature_dict = {}
+        mapped_feature_dict = {}
         place_feature = place.place_feature
+
         # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
         feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
+
         # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
         feature_dict = {
             key.replace("'", "").strip(): int(value.replace("'", "").strip())
             for key, value in feature_list
         }
-        first_key = list(feature_dict.keys())[0]
-        first_value = list(feature_dict.values())[0]
+
+        # lang이 'kor'인 경우: 그대로 시행
+        if lang == "kor":
+            first_key = list(feature_dict.keys())[0]
+            first_value = list(feature_dict.values())[0]
+
+        # lang이 'kor'이 아닌 경우: 영어로 매핑된 값을 사용
+        else:
+            mapped_feature_dict = {
+                korean_english_mapping.get(
+                    key, key
+                ): value  # 매핑된 값이 있으면 사용, 없으면 그대로 사용
+                for key, value in feature_dict.items()
+            }
+            first_key = list(mapped_feature_dict.keys())[0]
+            first_value = list(mapped_feature_dict.values())[0]
+
     except:
+        place_feature = ""
         first_key = []
         first_value = []
-        place_feature = ""
 
     # 긍정 비율 계산
 
@@ -140,6 +208,7 @@ def content_reviews(request, lang):
         "reviews": page_obj,
         "profile_photo": profile_photo,
         "feature_dict": feature_dict,
+        "mapped_feature_dict": mapped_feature_dict,
         "kor_place_tag": kor_place_tag,
         "eng_place_tag": eng_place_tag,
         "thema_name": thema_name,
@@ -255,37 +324,86 @@ def reviews_more(request, lang):
     serialized_reviews = list(page_obj.object_list.values(*review_field_names))
 
     # ----------------------------------------------------------------------------
-    # try:
-    #     feature_dict = {}
-    #     place_feature = place.place_feature
-
-    #     # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
-    #     feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
-    #     # 공백 및 숫자가 아닌 문자를 제거하고 리스트로 변환
-    #     feature_keys = [key.replace("'", "").strip() for key, value in feature_list]
-    #     feature_values = [
-    #         int(value.replace("'", "").strip()) for key, value in feature_list
-    #     ]
-
-    # except Exception as e:
-    #     feature_keys = []
-    #     feature_values = []
-    #     print(f"Error occurred: {e}")
+    korean_english_mapping = {
+        "커피가 맛있어요": "The coffee is delicious",
+        "디저트가 맛있어요": "The dessert is delicious",
+        "음료가 맛있어요": "The drinks are delicious",
+        "특별한 메뉴가 있어요": "There's a special menu",
+        "가성비가 좋아요": "The value for money is good",
+        "건강한 맛이에요": "It tastes healthy",
+        "비싼 만큼 가치있어요": "It's worth the price",
+        "메뉴 구성이 알차요": "The menu composition is substantial",
+        "음식이 맛있어요": "The food is delicious",
+        "양이 많아요": "The portions are generous",
+        "재료가 신선해요": "The ingredients are fresh",
+        "빵이 맛있어요": "The bread is delicious",
+        "차가 맛있어요": "The tea is delicious",
+        "술이 다양해요": "There's a wide variety of alcohol",
+        "기본 안주가 좋아요": "The complimentary snacks are good",
+        "코스요리가 알차요": "The course meals are substantial",
+        "주문제작을 잘해줘요": "They are good at custom orders",
+        "종류가 다양해요": "There is a wide variety of choices",
+        "인테리어가 멋져요": "The interior is stylish",
+        "사진이 잘 나와요": "The place is great for taking photos",
+        "대화하기 좋아요": "It's a good place to have a conversation",
+        "집중하기 좋아요": "It's a good place to focus",
+        "뷰가 좋아요": "The view is nice",
+        "매장이 넓어요": "The store is spacious",
+        "아늑해요": "It's cozy",
+        "야외공간이 멋져요": "The outdoor space is great",
+        "음악이 좋아요": "The music is good",
+        "차분한 분위기에요": "The atmosphere is calm",
+        "컨셉이 독특해요": "The concept is unique",
+        "단체모임 하기 좋아요": "It's good for group gatherings",
+        "혼밥하기 좋아요": "It's good for dining alone",
+        "혼술하기 좋아요": "It's good for drinking alone",
+        "친절해요": "The staff is friendly",
+        "매장이 청결해요": "The store is clean",
+        "화장실이 깨끗해요": "The restroom is clean",
+        "주차하기 편해요": "Parking is convenient",
+        "좌석이 편해요": "The seats are comfortable",
+        "룸이 잘 되어있어요": "The rooms are well set up",
+        "반려동물과 가기 좋아요": "It's a good place to go with pets",
+        "아이와 가기 좋아요": "It's a good place to go with children",
+        "선물하기 좋아요": "It's a good place for gift shopping",
+        "오래 머무르기 좋아요": "It's a good place to stay for a long time",
+        "음식이 빨리 나와요": "The food comes out quickly",
+        "읽을만한 책이 많아요": "There are many books worth reading",
+        "특별한 날 가기 좋아요": "It's a great place for special occasions",
+        "포장이 깔끔해요": "The packaging is neat",
+        "파티하기 좋아요": "It's a good place for parties",
+    }
 
     try:
         feature_dict = {}
+        mapped_feature_dict = {}
         place_feature = place.place_feature
-
-        first_key = list(feature_dict.keys())[0]
-        first_value = list(feature_dict.values())[0]
 
         # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
         feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
+
         # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
         feature_dict = {
             key.replace("'", "").strip(): int(value.replace("'", "").strip())
             for key, value in feature_list
         }
+
+        # lang이 'kor'인 경우: 그대로 시행
+        if lang == "kor":
+            first_key = list(feature_dict.keys())[0]
+            first_value = list(feature_dict.values())[0]
+
+        # lang이 'kor'이 아닌 경우: 영어로 매핑된 값을 사용
+        else:
+            mapped_feature_dict = {
+                korean_english_mapping.get(
+                    key, key
+                ): value  # 매핑된 값이 있으면 사용, 없으면 그대로 사용
+                for key, value in feature_dict.items()
+            }
+            first_key = list(mapped_feature_dict.keys())[0]
+            first_value = list(mapped_feature_dict.values())[0]
+
     except:
         place_feature = ""
         first_key = []
@@ -303,6 +421,7 @@ def reviews_more(request, lang):
         "eng_place_tag": eng_place_tag,
         "thema_name": thema_name,
         "feature_dict": feature_dict,
+        "mapped_feature_dict": mapped_feature_dict,
         "first_key": first_key,
         "first_value": first_value,
         "total": total,

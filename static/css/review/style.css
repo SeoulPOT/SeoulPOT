@@ -333,7 +333,7 @@ body {
 
 .tag-box {
     display: flex; /* 태그들을 가로로 배치 */
-    gap: 10px; /* 태그들 사이의 간격 */
+    gap: 5px; /* 태그들 사이의 간격 */
     align-items: center; /* 태그들이 수직으로 중앙 정렬되도록 */
     width: 100%;
 }

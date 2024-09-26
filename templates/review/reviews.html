@@ -52,28 +52,52 @@
 
     <div class="right-content">
         {% if thema_name or first_key %}
+        {% if lang == 'kor' %}
         <div class="theme-header" style="gap:100px">
+        {% else %}
+        <div class="theme-header" style="gap:5px">
+        {% endif %}
             <div class="tag-box">
                 {% if thema_name %}
+                {% if lang == 'kor' %}
                 <span class="tag_name">테마</span>
+                {% else %}
+                <span class="tag_name" >Theme</span>
+                {% endif %}
                 {% for theme in thema_name %}
                 <span class="tag">{{ theme }}</span>
                 {% endfor %}
                 {% endif %}
             </div>
             <div class="dropdown">
-                {% if first_key %}
-                <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
-                <span class="keyword">키워드</span>
-                <!-- 나머지 항목은 <select> 안에 넣음 -->
-                <select id="feature-select">
-                        <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
-                    {% for key, value in feature_dict.items %}
-                        {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
-                        <option disabled>{{ key }}: {{ value }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+                {% if lang == 'kor' %}
+                    {% if first_key %}
+                    <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
+                    <span class="keyword">키워드</span>
+                    <!-- 나머지 항목은 <select> 안에 넣음 -->
+                    <select id="feature-select">
+                            <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
+                        {% for key, value in feature_dict.items %}
+                            {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
+                            <option disabled>{{ key }}: {{ value }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    {% endif %}
+                {% else %}
+                    {% if first_key %}
+                    <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
+                    <span class="keyword" style="margin-right: 10px;">Keywords</span>
+                    <!-- 나머지 항목은 <select> 안에 넣음 -->
+                        <select id="feature-select" style="width: 370px; margin-right:10px">
+                            <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
+                        {% for key, value in mapped_feature_dict.items %}
+                            {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
+                            <option disabled>{{ key }}: {{ value }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
