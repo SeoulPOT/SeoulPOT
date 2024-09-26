@@ -18,15 +18,27 @@
     <section id="triangle"></section>
     <section id="district-info">
         
-        <!-- place_tag_name을 헤더로 표시 -->
-        <h2 id="place-tag-name">{{ place_tag_name }}</h2> <!-- 추가된 부분 -->
-        <h1 id="district-name" style="display: none;">{{ district_name }}</h1>
+        <!-- place_thema_name을 헤더로 표시 -->
+        <h2 id="place_thema_name">{{ place_thema_name }}</h2> <!-- 추가된 부분 -->
+        <h1 id="district-name" style="display: none;">
+            {% if lang == 'kor' %}
+                {{ district.kor_district_name }}
+            {% elif lang == 'eng' %}
+                {{ district.eng_district_name }}
+            {% endif %}
+        </h1>        
         
 
         <div id="district-container">
             <div id="district-category">
                 {% for category in categories %}
-                <button id="category" data-value="{{category.code}}" onclick="fetchData('{{category.code}}')">{{category.code_name}}</button>
+                <button id="category" data-value="{{category.code}}" onclick="fetchData('{{category.code}}')">
+                    {% if lang == 'kor' %}
+                        {{ category.kor_code_name }}
+                    {% elif lang == 'eng' %}
+                        {{ category.eng_code_name }}
+                    {% endif %}
+                </button>
                 {% endfor %}
             </div>
             <div id="district-space">
@@ -123,6 +135,7 @@
     const fallbackImage = "{% static 'img/default.png' %}";
     const staticPath = "{% static 'data/logo' %}";
     const place_tag_cd = '{{ place_tag_cd }}';
+    const place_thema_cd = '{{ place_thema_cd }}';
     const selected_lang  = '{{lang}}';
 </script>
 <script src="{% static 'js/category/category_district.js' %}"></script>

@@ -100,7 +100,7 @@
         display: flex;
         margin: 5px 0px;
         height: 5vh;
-        font-size: 5vh;
+        font-size: 4vh;
         color: #9077CB;
         text-align: center;
         justify-content: center;
@@ -117,7 +117,7 @@
         border-radius: 15px;
         padding: 20px;
         width: 100%;
-        min-width : 500;
+        min-width : 600;
         height: 100%; 
         min-height: 500px;
         box-sizing: border-box;
@@ -226,11 +226,11 @@
     
     #district-category button {
         flex: 1 1 22%;
-        min-width: 90px;
+        min-width: 120px;
         max-width: 200px;
-        padding: 10px 20px;
+        padding: 10px 0px;
         height: auto;
-        font-size: 14px;
+        font-size: 13px;
         text-align: center;
         border: none;
         background-color: #fff;
@@ -313,7 +313,7 @@
     
     .space-box .details h3 {
         margin: 2px;
-        font-size: 1.3em;
+        font-size: 1em;
         color :#b6a4de;
     }
     
