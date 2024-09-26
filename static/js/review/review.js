@@ -121,11 +121,11 @@ function closeModal() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // 모달 열기 버튼
-    const openAdModalBtn = document.getElementById('openAdModalBtn'); // 고유한 ID 참조
+    const openAdModalBtn = document.getElementById('openAdModalBtn');
     // 모달 요소
-    const adModal = document.getElementById('adModal'); // 고유한 ID 참조
+    const adModal = document.getElementById('adModal');
     // 모달 닫기 버튼
-    const closeAdModalBtn = document.getElementById('closeAdModalBtn'); // 고유한 ID 참조
+    const closeAdModalBtn = document.getElementById('closeAdModalBtn');
 
     // 모달 열기
     openAdModalBtn.onclick = function() {

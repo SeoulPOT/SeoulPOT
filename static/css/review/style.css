@@ -472,7 +472,7 @@ body {
     gap: 10px;
     flex: auto;
     justify-content: flex-end; /* 두 요소 사이의 간격을 균등하게 배치 */
-    align-items: flex-start; /* 요소들을 위쪽으로 정렬 */
+    align-items: flex-start;
 }
 
 .reps-image {
