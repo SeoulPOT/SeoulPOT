@@ -49,7 +49,11 @@
     <div class="right-content">
         <div id="right-box">
             {% if thema_name or first_key %}
+            {% if lang == 'kor' %}
             <div class="theme-header">
+            {% else %}
+            <div class="theme-header" style="gap:0px;">
+            {% endif %}
                 <div class="tag-box">
                     {% if thema_name %}
                     {% if lang == 'kor' %}
@@ -80,7 +84,7 @@
                     {% else %}
                         {% if first_key %}
                         <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
-                        <span class="keyword" style="margin-right: 10px;">Keywords</span>
+                        <span class="keyword" style="margin-left: 5px; margin-right: 10px;">Keywords</span>
                         <!-- 나머지 항목은 <select> 안에 넣음 -->
                             <select id="feature-select" style="width: 370px; margin-right:10px">
                                 <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
