@@ -286,7 +286,7 @@ function createStoreItem(store) {
     div.appendChild(details);
 
     div.onclick = function() {
-        window.location.href = `/review?place_id=${store.place_id}`;
+        window.location.href = `/review/${selected_lang}?place_id=${store.place_id}`;
     };
 
     return div;
