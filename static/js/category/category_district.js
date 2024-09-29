@@ -292,6 +292,7 @@ function createStoreItem(store) {
     return div;
 }
 
-function MoveToPlacePage() {
-    window.location.href = `${place_page_url}?district_id=${current_district}&place_category_cd=${current_category}`;
+function MoveToPlacePage()
+{
+    window.location.href = place_page_url+`?district_id=${current_district}&place_category_cd=${current_category}` ;
 }
