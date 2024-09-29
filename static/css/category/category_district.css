@@ -1,0 +1,529 @@
+
+
+
+
+
+
+/* font import */
+/* @font-face {
+    font-family: 'NeoDunggeunmo';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3/NeoDunggeunmo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal; */
+
+
+    @font-face {
+        font-family: 'PTBandocheB';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/PTBandocheB.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
+    .highlight {
+        color: #9378C1;
+        font-size: 24px;
+    }
+    
+    /* Main */
+    main {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-y:auto;
+        overflow-x:hidden;
+        width: 80%;
+        height: calc(100% - 70px); 
+        flex-direction: row;
+        margin-top: 70px; 
+    }
+    
+    /* Map Container */
+    #map-container {
+        flex: 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        position:static;
+        height : 100%;
+    }
+    
+    
+    #map {
+        width: 800px;
+        height: 700px;
+        box-sizing: border-box;
+    }
+    
+    
+    /* Triangle (Arrow) */
+    #triangle {
+        width: 0;
+        height: 0; /* 화살표 높이 조절 js 필요 */
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent; 
+        border-right: 20px solid #D4CBF8; 
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+    
+    /* District Info */
+    #district-info {
+        flex: 2;
+        height : 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        background-color: transparent;
+        box-sizing: border-box;
+        padding-right:10%;
+        padding : 5% 0;
+        overflow: hidden
+    }
+    
+    /* District Info Heading */
+    #district-info h1 {
+        /* 초기 default일 때 안보이도록 조절 필요 */
+        display: none;
+        margin: 5px 0px;
+        height: 5vh;
+        font-size: 5vh;
+        color: #9077CB;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    #district-info h2 {
+        /* 초기 default일 때 안보이도록 조절 필요 */
+        display: flex;
+        margin: 5px 0px;
+        height: 5vh;
+        font-size: 4vh;
+        color: #9077CB;
+        text-align: center;
+        justify-content: center;
+    
+        /* 위치 수정 */
+        position: relative; /* 필요한 경우 */
+        top: -20px; /* 원하는 만큼 위로 이동 */
+        left: 0; /* 기본적으로 왼쪽 정렬 */
+        text-align: left; /* 왼쪽 정렬을 유지 */
+    }
+    
+    #district-container {
+        background-color: #D4CBF8;
+        border-radius: 15px;
+        padding: 20px;
+        width: 100%;
+        min-width : 600;
+        height: 100%; 
+        min-height: 500px;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto; /* Center align container */
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    
+    
+    
+    
+    #district-preparing-container {
+        background-color: #D4CBF8;
+        border-radius: 15px;
+        padding: 20px;
+        width: 100%;
+        min-width : 500;
+        height: auto; 
+        min-height: 500px;
+        box-sizing: border-box;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto; /* Center align container */
+    }
+    
+    
+    #none_select-info-container {
+        background-color: #D4CBF8;
+        border-radius: 15px;
+        padding: 20px;
+        width: 100%;
+        min-width : 500;
+        height: 100%; 
+        min-height: 500px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto; /* Center align container */
+    }
+    
+    
+    /* District Content - Default */
+    #default{
+        display: none !important;
+        margin: 20px;
+        display: block;
+        width: 90%;
+    }
+    
+    #spot{
+        margin: 10px;
+        text-align: center;
+        margin-right: auto;
+        padding-bottom: 10px;
+    }
+    
+    #default p{
+        font-size: 1.2em;
+        color: #9077CB;
+        text-align: center;
+        margin: 10px;
+    }
+    
+    /* District Content - Introduce */
+    #introduce{
+        display: none !important;
+        margin: 20px;
+        display: block;
+    }
+    
+    #intro-img img {
+        border-radius: 10px; 
+        width: 100%;
+        height: auto; 
+    }
+    
+    #intro-content p{
+        font-size: 1.2em;
+        color: #9077CB;
+        text-align: center;
+        margin: 10px;
+    }
+    
+    /* District Content - Detail */
+    #detail{
+        /* display: none !important; */
+        display : block;
+        width: 100%;
+    }
+    
+    /* District Category */
+    #district-category {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 10px;
+        width: 100%;
+        max-width: 1200px;
+    }
+    
+    #district-category button {
+        flex: 1 1 22%;
+        min-width: 120px;
+        max-width: 200px;
+        padding: 10px 0px;
+        height: auto;
+        font-size: 13px;
+        text-align: center;
+        border: none;
+        background-color: #fff;
+        color: #9077CB;
+        border-radius: 30px;
+        cursor: pointer;
+        box-sizing: border-box;
+        transition: background-color 0.4s ease; 
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    
+    
+    #district-category button:hover {
+        background-color: rgba(144, 119, 203, 0.5);
+        color: #fff;
+    }
+    
+    #district-category button.active {
+        background-color: #6a4d9a;
+        color: #fff;
+    }
+    
+    /* District Space */
+    
+    #district-space {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    
+    #space-container {
+        width: 100%;
+        height: 80px; /* 높이를 고정 */
+        padding: 8px; /* 여백을 추가 */
+        box-sizing: border-box;
+        background-color: #fff;
+        border-radius: 10px;
+        display: flex; /* 플렉스박스로 요소를 수평 정렬 */
+        align-items: center; /* 수직 중앙 정렬 */
+        justify-content: space-between; /* 아이템 간격 조정 */
+        overflow: hidden; /* 내용이 넘치지 않도록 */
+    }
+    
+    #space-container:hover {
+        cursor: pointer;
+        background-color: #f6f4f4;
+    }
+    
+    
+    .space-box {
+        width: 100%;
+        height: 100px;  /* 장소 정보의 높이를 적절히 조정 */
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: start;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 10px;
+    }
+    
+    .space-box img {
+        width: 60px; /* 이미지의 너비를 제한 */
+        height: 60px; /* 이미지의 높이도 제한 */
+        border-radius: 10px; /* 모서리 둥글게 */
+        object-fit: cover; /* 이미지 비율 유지하면서 박스에 맞춤 */
+    }
+    
+    .space-box .details {
+        margin-left: 8px; /* 이미지와 텍스트 사이 간격 */
+        width: calc(100% - 70px); /* 이미지 크기를 제외한 나머지 공간에 텍스트 배치 */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* 텍스트를 위아래로 균등하게 배치 */
+    }
+    
+    .space-box .details h3 {
+        margin: 2px;
+        font-size: 1em;
+        color :#b6a4de;
+    }
+    
+    .space-box .details p {
+        margin: 2px;
+        font-size: 0.8em;
+        color :#b6a4de;
+    }
+    
+    #place-reviews {
+        margin-top: auto;
+    }
+    
+    /* More Button */
+    #more-button {
+        display: flex;
+        width:100%;
+        justify-content: flex-end;
+        margin-top : 20px;
+    }
+    
+    .readmore-btn {
+        width: fit-contentd;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background-color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 0px 15px;
+        gap: 0px;
+        transition: all 0.4s;
+    }
+    
+    .book-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        position: relative;
+        width: 45px;
+        height: 100%;
+        fill : #9077CB;
+    }
+    
+    .book-wrapper .book-page {
+        width: 50%;
+        height: auto;
+        position: absolute;
+    }
+    
+    .text {
+        width: 105px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        color: #9077CB;
+    }
+    
+    .readmore-btn:hover .book-page {
+        animation: paging 0.4s linear infinite;
+        transform-origin: left;
+    }
+    
+    .readmore-btn:hover .book-wrapper {
+        fill:#4C677B;
+    
+    }
+    .readmore-btn:hover {
+        background-color: rgba(144, 119, 203, 0.5);;
+    }
+    
+    .readmore-btn:hover .text {
+        color: #fff;
+    }
+    
+    
+    
+    @keyframes paging {
+        0% {
+            transform: rotateY(0deg) skewY(0deg);
+        }
+        50% {
+            transform: rotateY(90deg) skewY(-20deg);
+        }
+        100% {
+            transform: rotateY(180deg) skewY(0deg);
+        }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        #district-category button {
+            flex: 1 1 45%; 
+        }
+    
+        #space-box {
+            max-width: calc((100px + 20px) * 4 - 40px); 
+        }
+    }
+    
+    @media (max-width: 600px) {
+        #container {
+            display:block;
+            width: 100%;
+            flex-direction: column; 
+            overflow-x: hidden; 
+        }
+        #district-info{
+            padding-right: 0;
+        }
+        #map-container {
+            overflow:visible;
+            height: 300px;
+        }
+        #map {
+            width: 800px;
+            height:300px;
+            box-sizing: border-box;
+        }
+        #triangle{
+            visibility: hidden;
+        }
+        #space-box {
+            max-width: calc((200px + 20px) * 2 - 20px);
+        }
+    }
+    
+    /* District Styles */
+    .district {
+        cursor: pointer;
+        /*fill: #D4CBF8 !important; 기본색을 설정하고, 이 속성은 JavaScript로 덮어씌워질 것 */
+        stroke: #fff;
+        stroke-width: 1.5;
+        position: relative;
+        transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1), fill 0.4s ease; 
+    }
+    
+    .district:hover {
+        fill: #9077CB;
+        transform: scale(1.3);
+        filter: drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.3));
+    }
+    
+    .district:active {
+        fill: rgba(144, 119, 203, 0.5);;
+        filter: drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.4)); 
+        transform: scale(1.1);
+    }
+    
+    .district.clicked {
+        animation: colorFill 0.5s forwards;
+    }
+    
+    @keyframes colorFill {
+        0% {
+            fill: #D4CBF8;
+        }
+        100% {
+            fill: #6a4d9a;
+        }
+    }
+    
+    
+    #selected-district-img-container{
+        height: 60%;
+        width: 100%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #selected-district-img {
+        height: 60%;
+        max-height:150px;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #selected-district-desc-container {
+        height: 50%;
+        width: 90%;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    /* 반응형 디자인 */
+    @media (max-width: 1200px) {
+        #district-container {
+            max-width: 90%;
+        }
+    }
+    
+    @media (max-width: 600px) {
+        #container {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    
+        #map {
+            width: 100%;
+            height: 300px;
+        }
+    
+        #district-container {
+            max-width: 100%;
+        }
+    }

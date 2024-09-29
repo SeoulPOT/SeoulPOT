@@ -13,17 +13,35 @@
 
             <div id="none_select-info-container">
                 <img src="{% static 'img/spot.png' %}" alt="spot">
-                <p>마우스를 올려</p>
-                <p>여행하기 좋은</p>
-                <p class="highlight">SeoulPOT을</p>
-                <p>찾아보세요</p>
+                {% if lang == 'kor' %}
+                    <p>마우스를 올려</p>
+                    <p>여행하기 좋은</p>
+                    <p class="highlight">SeoulPOT을</p>
+                    <p>찾아보세요</p>
+                {% else %}
+                    <p>Hover over</p>
+                    <p>the map</p>
+                    <p>to find</p>
+                    <p class="highlight">SeoulPOT</p>
+                {% endif %}
             </div>
             <div id="district-info-container">
                 <div id ="selected-district-img-container">
                     <img id="selected-district-img" src="">
                 </div>
-                <div id="selected-district-desc-container">
-                    <span id="selected-district-desc">설명</span>
+                <div id="selected-district-desc-container-inner">
+                    <div id="selected-district-desc-container">
+                        <span id="selected-district-desc">설명</span>
+                    </div>
+                    <hr class="custom-line"> 
+                    <img id="seleceted-district-subway-logo" src="{% static 'img/seoulpot.png' %}" alt="logo">
+                    <div id="seleceted-district-subway">
+                        <div id="seleceted-district-subway-img-container">
+                            <img id="seleceted-district-subway-img" src="{% static 'img/subway/서울대입구.png' %}" alt="subway">
+                            <img id="seleceted-district-subway-marker" src="{% static 'img/marker_img.png' %}" alt="marker">
+                            <span id="seleceted-district-subway-marker-text">관악산</span>
+                        </div>
+                    </div>
                 </div>
                 
             </div>
@@ -31,7 +49,13 @@
                 <div id="detail">
                     <div id="district-category">
                         {% for category in categories %}
-                        <button id="category" data-value="{{category.code}}" onclick="fetchData('{{category.code}}')">{{category.code_name}}</button>
+                        <button id="category" data-value="{{category.code}}" onclick="fetchData('{{category.code}}')">
+                            {% if lang == 'kor' %}
+                                {{category.kor_code_name}}
+                            {% else %}
+                                {{category.eng_code_name}}
+                            {% endif %}
+                        </button>
                         {% endfor %}
                     </div>
                     <div id="district-space">
@@ -62,6 +86,11 @@
                     </div>
                 </div>
             </div>
+            <div id="district-comming-soon">
+                <img id="district-comming-soon-img" src="{% static 'img/spot.png' %}" alt="commingsoon">
+                <h1>Comming</h1>
+                <h1>Soon</h1>
+            </div>
         </section>
         
     </main>
@@ -83,7 +112,7 @@
     <script>
         const districts_list = {{districts|safe}};
         const categories_list = {{categories|safe}};
-        const place_page_url = "{% url 'de-food-place' %}";
+        const place_page_url = "{% url 'de-food-place' lang %}";
         const fallbackImage = "{% static 'img/default.png' %}";
         const staticPath = "{% static 'data/logo' %}";
         const selected_lang  = '{{lang}}';

@@ -1,4 +1,3 @@
-let page_container;
 let review_container;
 document.addEventListener('DOMContentLoaded', function() {
     // Naver Map integration
@@ -13,106 +12,22 @@ document.addEventListener('DOMContentLoaded', function() {
         position: new naver.maps.LatLng(place_lat, place_lon), // 마커 위치
         map: map,
         icon: marker_img,
-    });
+    });    
     
-    
-    page_container = document.getElementById('page_container');
     review_container =  document.getElementById('review_container');
     console.log('review_container:',review_container);
-
-    SetPagination(current_page, total_pages);
 });
 
-function toggleFeature() {
-    var moreFeature = document.getElementById('more-feature');
-    var toggleButton = document.getElementById('toggle-button');
-    
-    if (moreFeature.style.display === "none") {
-        moreFeature.style.display = "block";
-        toggleButton.textContent = "-"; // 버튼 텍스트를 "v"로 변경
-    } else {
-        moreFeature.style.display = "none";
-        toggleButton.textContent = "+"; // 버튼 텍스트를 "^"로 변경
-    }
-}
-
-function movePage(page, array) {
-    fetch(`?place_id=${place_id}&page=${page}&array=${array}`, {
-        method: "GET",
-        headers: {
-            "X-Requested-With": "XMLHttpRequest"  // 서버가 요청을 AJAX로 인식하게 하는 헤더
-        }
-    })
-    .then(Response => Response.json())
-    .then(data => {
-        console.log("nextReview: ", data);
-        SetPagination(data.current_page, data.total_pages);
-        SetReviews(data.reviews);   
-    })
-    .catch(error => {
-        console.error('Failed to load review data:', error);
-    });
-}
-
-function SetPagination(current_page, total_page)
-{
-    console.log("current_page", current_page);
-    page_container.innerHTML = '';
-
-    current_page -= 1;
-    page_group_index = Math.floor(current_page / 5);
-    page_group_page_index = current_page % 5 ; 
-    total_group_index = Math.floor(total_page / 5);
-    total_group_page_index = total_page % 5 ; 
-
-    if(page_group_index != 0){
-        let newButton1 = document.createElement('button');
-        newButton1.className = 'page-button';
-        newButton1.onclick = function() { movePage((page_group_index-1)*5+1) };
-        newButton1.innerHTML = '&laquo; 이전';
-        page_container.appendChild(newButton1);
-
-        // let newButton2 = document.createElement('button');
-        // newButton2.className = 'page-button';
-        // newButton2.onclick = function() { movePage(current_page-1) };
-        // newButton2.innerHTML = '이전';
-        // page_container.appendChild(newButton2);
-    }
-
-    for (let i = 1; i <= 5 && ((page_group_index)*5+i) <= total_page; i++) {
-        let newButton1 = document.createElement('button');
-        newButton1.className = 'page-button';
-        newButton1.onclick = function() { movePage((page_group_index)*5+i) };
-        newButton1.innerHTML = `${(page_group_index)*5+i}`;
-        
-        console.log(`${current_page} ${i-1} ${page_group_page_index}`);
-        if( i-1 == page_group_page_index ){
-            newButton1.classList.add('active');
-        }
-        
-        page_container.appendChild(newButton1);
-        
-    }
-
-    if(page_group_index != total_group_index){
-        // let newButton1 = document.createElement('button');
-        // newButton1.className = 'page-button';
-        // newButton1.onclick = function() { movePage(current_page+1) };
-        // newButton1.innerHTML = '다음';
-        // page_container.appendChild(newButton1);
-
-        let newButton2 = document.createElement('button');
-        newButton2.className = 'page-button';
-        newButton2.onclick = function() { movePage((page_group_index+1)*5+1) };
-        newButton2.innerHTML = '다음 &raquo';
-        page_container.appendChild(newButton2);
-    }
-}
+document.addEventListener('DOMContentLoaded', function() {
+    initModalEvents();
+});
 
 function SetReviews(reviews) {
     // review_container가 배열이나 HTMLCollection이라고 가정
     review_container.innerHTML = '';
-
+    reviewsData = reviews;
+    renderReviews();  // 저장된 리뷰 데이터를 렌더링
+    initModalEvents();  // 페이지 렌더링 후 모달 이벤트 다시 설정
     reviews.forEach(function(review) {
             // 카드 요소 생성
             var cardElement = document.createElement('div');
@@ -134,7 +49,7 @@ function SetReviews(reviews) {
             // 날짜 요소 생성
             var dateElement = document.createElement('p');
             dateElement.className = 'card-date';
-            dateElement.textContent = formatDate(review.review_date);
+            // dateElement.textContent = formatDate(review.review_date);
             cardContentElement.appendChild(dateElement);
             
             console.log(review);
@@ -174,6 +89,7 @@ function SetReviews(reviews) {
     });
 }
 
+
 function setSortOption(array) {
     console.log(array);
     console.log(sort_array);
@@ -181,9 +97,50 @@ function setSortOption(array) {
     movePage(1, array);
 }
 
-//데이트 양식 변경 함수
-function formatDate(inputDate) {
-    const date = new Date(inputDate);  // "2024-04-19" 형식의 문자열을 Date 객체로 변환
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    return date.toLocaleDateString('en-US', options).replace(',', '').replace(/(\d{1,2}) /, '$1.');
+// //데이트 양식 변경 함수
+// function formatDate(inputDate) {
+//     const date = new Date(inputDate);  // "2024-04-19" 형식의 문자열을 Date 객체로 변환
+//     const options = { month: 'short', day: 'numeric', year: 'numeric' };
+//     return date.toLocaleDateString('en-US', options).replace(',', '').replace(/(\d{1,2}) /, '$1.');
+// }
+
+
+// 모달 열기
+function openModal(imageSrc) {
+    const modal = document.getElementById('modalContainer');
+    const modalImage = document.getElementById('modalImage');
+    modalImage.src = imageSrc;
+    modal.style.display = 'flex'; // 모달창을 화면에 표시
 }
+
+// 모달 닫기
+function closeModal() {
+    const modal = document.getElementById('modalContainer');
+    modal.style.display = 'none'; // 모달창을 숨김
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 모달 열기 버튼
+    const openAdModalBtn = document.getElementById('openAdModalBtn');
+    // 모달 요소
+    const adModal = document.getElementById('adModal');
+    // 모달 닫기 버튼
+    const closeAdModalBtn = document.getElementById('closeAdModalBtn');
+
+    // 모달 열기
+    openAdModalBtn.onclick = function() {
+        adModal.style.display = 'block';
+    }
+
+    // 모달 닫기
+    closeAdModalBtn.onclick = function() {
+        adModal.style.display = 'none';
+    }
+
+    // 모달 영역 밖을 클릭하면 닫기
+    window.onclick = function(event) {
+        if (event.target == adModal) {
+            adModal.style.display = 'none';
+        }
+    }
+});

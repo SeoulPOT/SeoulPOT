@@ -1,0 +1,153 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Category Selection{% endblock %}
+{% load static %}
+{% block content %}
+<main id="category-container">
+    <section class="category-selection">
+        <h1>2-1 카테고리 추천</h1>
+        <div class="category-grid">
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph01')">
+                    <span class="emoji">👨‍👩‍👦</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            가족
+                        {% elif lang == 'eng' %}
+                            Family
+                        {% else %}
+                            가족 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph02')">
+                    <span class="emoji">💖</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            연인
+                        {% elif lang == 'eng' %}
+                            Couple
+                        {% else %}
+                            연인 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph03')">
+                    <span class="emoji">🕺</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            혼놀
+                        {% elif lang == 'eng' %}
+                            Alone fun
+                        {% else %}
+                            혼놀 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph04')">
+                    <span class="emoji">🐕</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            반려동물
+                        {% elif lang == 'eng' %}
+                            Pet
+                        {% else %}
+                            k <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph05')">
+                    <span class="emoji">😎</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            트렌드(MZ)
+                        {% elif lang == 'eng' %}
+                            Trendy (MZ generation)
+                        {% else %}
+                            트렌드(MZ) <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph06')">
+                    <span class="emoji">🧘‍♀️</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            힐링
+                        {% elif lang == 'eng' %}
+                            Healing
+                        {% else %}
+                            힐링 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph07')">
+                    <span class="emoji">🚴‍♂️</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            로컬애용
+                        {% elif lang == 'eng' %}
+                            Local favorite
+                        {% else %}
+                            로컬애용 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph08')">
+                    <span class="emoji">🌳</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            인테리어
+                        {% elif lang == 'eng' %}
+                            interior
+                        {% else %}
+                            인테리어 <!-- 기본값-->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+            <div class="category-item">
+                <button onclick="setCategoryAndRedirect('ph09')">
+                    <span class="emoji">💰</span>
+                    <span class="name">
+                        {% if lang == 'kor' %}
+                            가성비
+                        {% elif lang == 'eng' %}
+                            Cost-effectiveness
+                        {% else %}
+                            가성비 <!-- 기본값 -->
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/category/category_choice.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function setCategoryAndRedirect(category_code) {
+        const lang = "{{ lang|escapejs }}";
+        const url = `/category/${lang}/${category_code}/`;  // category_district로 이동하는 URL
+        window.location.href = url;
+    }
+</script>
+{% endblock %}

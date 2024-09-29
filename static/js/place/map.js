@@ -47,11 +47,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Center Coordinates:", center);
         console.log('district:' ,district_obj );
         
-
+        let map_lang = (lang === 'kor') ? 'ko' : 'en';
+        console.log(map_lang);
         map = new naver.maps.Map(document.getElementById('map'), {
             // center: new naver.maps.LatLng(center[1], center[0]),
             center: new naver.maps.LatLng(district_obj.district_lat, district_obj.district_lon),
-  
+            language: map_lang
+            
         });
         
         map.fitBounds(bounds);
@@ -110,22 +112,97 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
-function addMarker(lat, lon){
- // 마커를 생성하고 지도에 추가
+function addMarker(place){
+    var infoDiv = document.getElementById('info');
+    // 마커를 생성하고 지도에 추가
     var marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(lat, lon), // 마커의 위치 (서울)
+        position: new naver.maps.LatLng(place.place_lat, place.place_lon), // 마커의 위치 (서울)
         map: map, // 마커를 추가할 지도 객체
         icon: markerImage,
+        
     });
+
+    let infowindow = createInfoWindow( place.place_name, place.place_desc);
+    
+    naver.maps.Event.addListener(marker, "mouseover", function(e) {
+        infowindow.open(map, marker);        
+    });
+
+    // 마우스 아웃 시 infoDiv 숨기기
+    naver.maps.Event.addListener(marker, 'mouseout', function() {
+        infowindow.close();
+    });
+
+    naver.maps.Event.addListener(marker, "click", function() {
+        // 현재 아이콘이 기본 아이콘인지 확인하고, 클릭된 아이콘으로 변경
+        // if (marker.icon === markerImage) {
+        //     marker.setIcon(clicked_markerImage);
+        // } else {
+        //     marker.setIcon(markerImage);
+        // }
+        window.location.href = review_url+`?place_id=${place.place_id}` ;
+    });
+
     return marker;
 }
 
-function clearMarkers(markers){
-    console.log('markers : ', markers);
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
+function changeMarker(marker, is_bookmarked){
+    if(is_bookmarked){
+        marker.setIcon(clicked_markerImage);
+    }else{
+        marker.setIcon(markerImage);
     }
+}
+
+function createInfoWindow(place_name, place_desc)
+{
+    // 핀 요소
+    var infoWindowElement = `
+        <<div class="custom-infowindow">
+                <h3>${place_name}</h3>
+                <p>${place_desc}</p>
+            </div>
+        `;
+
+    var infowindow = new naver.maps.InfoWindow({
+        content: infoWindowElement,
     
-    // 배열 비우기 (선택 사항)
-    markers = [];
+        
+        borderWidth: 0,
+        disableAnchor: false,
+        backgroundColor: 'white',
+        anchorSize: new naver.maps.Size(20, 2), // 앵커 크기를 작게 설정
+        anchorSkew: true,
+        anchorColor: "white",
+    
+    
+        pixelOffset: new naver.maps.Point(0, -10),
+    });
+    return infowindow;   
+}
+
+function clearMarkers(markers) {
+    console.log('markers : ', markers);
+    console.log('bookmark_markers : ', bookmark_markers);
+
+    // bookmark_markers에 있는 마커의 ID를 Set으로 만듭니다.
+    const bookmarkedMarkerIds = new Set(bookmark_markers.map(m => m._nmarker_id));
+    console.log('bookmarkedMarkerIds : ', bookmarkedMarkerIds);
+    // 북마크되지 않은 마커만 삭제합니다.
+    const remainingMarkers = markers.filter(marker => {
+        if (!bookmarkedMarkerIds.has(marker._nmarker_id)) {
+            marker.setMap(null);
+            return false;
+        }
+        return true;
+    });
+
+    console.log('Remaining markers : ', remainingMarkers);
+
+    // markers 배열을 업데이트합니다.
+    return remainingMarkers;
+}
+
+function clearMarker(marker) {
+    marker.setMap(null);
 }
