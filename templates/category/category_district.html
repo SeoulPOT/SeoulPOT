@@ -145,7 +145,6 @@
     const districts_list = {{ districts|safe }};
     console.log("Districts list:", districts_list);
     const categories_list = {{ categories|safe }};
-    const place_page_url = "{% url 'de-food-place' %}";
     const fallbackImage = "{% static 'img/default.png' %}";
     const staticPath = "{% static 'data/logo' %}";
     const place_tag_cd = '{{ place_tag_cd }}';
