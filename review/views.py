@@ -4,9 +4,11 @@ from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef, Value
 from django.http import JsonResponse
 import json
-
+from utils import SaveLog
 
 def content_reviews(request, lang):
+    SaveLog(request)
+
     place_id = request.GET.get("place_id")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
@@ -245,6 +247,8 @@ def content_reviews(request, lang):
 
 
 def reviews_more(request, lang):
+    SaveLog(request)
+
     place_id = request.GET.get("place_id")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
@@ -443,6 +447,8 @@ def reviews_more(request, lang):
 
 
 def get_code_name_for_thema_cd(thema_cd, lang):
+
+
     if not thema_cd:
         return []
 

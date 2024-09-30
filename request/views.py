@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect
 from main.models import RequestTb
 from django.utils import timezone
 import socket
+from utils import SaveLog
 
 def board_list(request, lang):
+    SaveLog(request)
     requests = RequestTb.objects.all().order_by('-request_time')
 
     context = {
@@ -13,6 +15,7 @@ def board_list(request, lang):
     return render(request, 'request/board_list.html', context)
 
 def board_create(request, lang):
+    SaveLog(request)
     if request.method == "POST":
         request_text = request.POST.get('request_text')
         request_ip = get_client_ip(request)
@@ -27,6 +30,7 @@ def board_create(request, lang):
     return render(request, 'request/board_create.html', context)
 
 def get_client_ip(request):
+    SaveLog(request)
     ip_address = request.META.get('HTTP_X_FORWARDED_FOR')
     if ip_address:
         ip = ip_address.split(',')[-1].strip()
@@ -37,6 +41,7 @@ def get_client_ip(request):
 from django.shortcuts import get_object_or_404
 
 def board_delete(request, request_id, lang):
+    SaveLog(request)
     # 해당 요청을 데이터베이스에서 가져옴
     board_request = get_object_or_404(RequestTb, pk=request_id)
 
