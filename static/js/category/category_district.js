@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (!selected_obj) {
                         document.getElementById('district-name').innerText = d.properties.name;
-                        // document.getElementById('none_select-info-container').style.display = 'none';
+                        document.getElementById('none_select-info-container').style.display = 'none';
                         document.getElementById('district-container').style.display = 'none';
                         // document.getElementById('district-info-container').style.display = 'flex';
                     }
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
 
                     if (!selected_obj) {
-                        // document.getElementById('none_select-info-container').style.display = 'flex';
+                        document.getElementById('none_select-info-container').style.display = 'flex';
                         document.getElementById('district-container').style.display = 'none';
                         // document.getElementById('district-info-container').style.display = 'none';
                         document.getElementById('district-name').innerText = '';
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (selected_obj === this) {
                         selected_obj = undefined;
                         document.getElementById('district-name').innerText = '';
-                        // document.getElementById('none_select-info-container').style.display = 'none';
+                        document.getElementById('none_select-info-container').style.display = 'none';
                         document.getElementById('district-container').style.display = 'none';
                         // document.getElementById('district-info-container').style.display = 'flex';
                     } else {
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         d3.select(this).classed('clicked', true);
 
                         document.getElementById('district-name').innerText = d.properties.name;
-                        // document.getElementById('none_select-info-container').style.display = 'none';
+                        document.getElementById('none_select-info-container').style.display = 'none';
                         document.getElementById('district-container').style.display = 'flex';
                         // document.getElementById('district-info-container').style.display = 'none';
 
@@ -286,12 +286,13 @@ function createStoreItem(store) {
     div.appendChild(details);
 
     div.onclick = function() {
-        window.location.href = `/review?place_id=${store.place_id}`;
+        window.location.href = `/review/${selected_lang}?place_id=${store.place_id}`;
     };
 
     return div;
 }
 
-function MoveToPlacePage() {
-    window.location.href = `${place_page_url}?district_id=${current_district}&place_category_cd=${current_category}`;
+function MoveToPlacePage()
+{
+    window.location.href = place_page_url+`?district_id=${current_district}&place_category_cd=${current_category}` ;
 }
