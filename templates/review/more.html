@@ -290,6 +290,7 @@
         const marker_img = "{% static 'img/marker_img.png' %}";
         const current_page = {{current_page}};
         const total_pages = {{total_pages}};
+        const lang = '{{ lang }}';
     
     // 모달 열기 관련 이벤트 초기화
     function initModalEvents() {
@@ -452,30 +453,15 @@
                     <img class="icon-overlay" src="{% static 'img/enlarge.png' %}">
                     <div class="card-content">
                         <p class="card-date">${review.review_date}</p>
-                        {% if lang == 'kor' %}
-                                {% if review.daily_tag_name %}
-                                    <p class="card-daily">방문 목적: ${ review.daily_tag_name }</p>
-                                {% endif %}
-                                {% if review.with_tag_name %}
-                                    <p class="card-with">함께 방문: ${ review.with_tag_name }</p>
-                                {% endif %}
-                        {% else %}
-                            {% for review in reviews %}
-                                {% if forloop.first %}
-                                    {% if review.daily_tag_name != null %}
-                                        <p class="card-daily">Purpose of Visit: ${ review.daily_tag_name }</p>
-                                    {% endif %}
-                                    {% if review.with_tag_name != null %}
-                                        <p class="card-with">Type of Visit: ${ review.with_tag_name }</p>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                        {% if lang == 'kor' %}
-                            <p class="card-description">${ review.kor_review_text }</p>
-                        {% else %}
-                            <p class="card-description">${ review.eng_review_text }</p>
-                        {% endif %}
+                        ${lang === 'kor' ? `
+                                ${review.daily_tag_name ? `<p class="card-daily">방문 목적: ${review.daily_tag_name}</p>` : ''}
+                                ${review.with_tag_name ? `<p class="card-with">함께 방문: ${review.with_tag_name}</p>` : ''}
+                                <p class="card-description">${review.kor_review_text}</p>
+                            ` : `
+                                ${review.daily_tag_name ? `<p class="card-daily">Purpose of Visit: ${review.daily_tag_name}</p>` : ''}
+                                ${review.with_tag_name ? `<p class="card-with">Type of Visit: ${review.with_tag_name}</p>` : ''}
+                                <p class="card-description">${review.eng_review_text}</p>
+                            `}
                     </div>
                 `;
                 reviewContainer.appendChild(reviewElement);

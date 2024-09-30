@@ -34,7 +34,11 @@
                 {% endif %}
             {% endif %}
             {% if place.place_operating_hours %}
+                {% if lang == 'kor' %}
                 <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
+                {% else %}
+                <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
+                {% endif %}
             {% endif %}
             {% if place.place_phone %}
                 <p class = "profile">📞 {{ place.place_phone }}</p>
@@ -114,7 +118,7 @@
                     <span class="positive-percentage" style="margin-right: 330px;">긍정 {{ pos_ratio }}%</span>
                     <span class="negative-percentage">부정 {{ neg_ratio }}%</span>
                     {% else %}
-                    <span class="positive-percentage" style="margin-right: 300px;">Positive {{ pos_ratio }}%</span>
+                    <span class="positive-percentage" style="margin-right: 240px;">Positive {{ pos_ratio }}%</span>
                     <span class="negative-percentage">Negative {{ neg_ratio }}%</span>
                     {% endif %}
                 </p>
