@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # 구별 대시보드 렌더링
 @require_http_methods(["GET"]) # GET 메소드로만 호출될 수 있게 제한
 def district(request, lang):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang})
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         pass
@@ -25,7 +25,7 @@ def district(request, lang):
 # 카테고리 변경 시 해당 카테고리 데이터 조회
 @require_http_methods(["GET"]) # GET 메소드로만 호출될 수 있게 제한
 def get_places_by_category(request, lang, district_id, place_category_cd):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang, 'district_id': district_id, 'place_category_cd':place_category_cd})
     print('get_places_by_category')
     
     # 필수 파라미터가 없으면 에러 반환

@@ -7,11 +7,11 @@ import json
 from utils import SaveLog
 
 def content_reviews(request, lang):
-    SaveLog(request)
-
     place_id = request.GET.get("place_id")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
+
+    SaveLog(request, {'lang':lang, 'place_id':place_id, 'array':array, 'page':page})
 
     # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (
@@ -175,11 +175,11 @@ def content_reviews(request, lang):
 
 
 def reviews_more(request, lang):
-    SaveLog(request)
-
     place_id = request.GET.get("place_id")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
+
+    SaveLog(request, {'lang':lang, 'place_id':place_id, 'array':array, 'page':page})
 
     # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (

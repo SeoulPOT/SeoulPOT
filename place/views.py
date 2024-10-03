@@ -9,7 +9,7 @@ from utils import SaveLog
 
 # Create your views here.
 def category(request, lang):
-    SaveLog(request)
+    
     print("Place Page")
     
     
@@ -18,6 +18,7 @@ def category(request, lang):
     place_category_cd = request.GET.get('place_category_cd') 
     page = request.GET.get('page', 1)
 
+    SaveLog(request, {'lang' : lang, 'district_id':district_id, 'place_category_cd':place_category_cd, 'page':page})
     # Validate page number
     try:
         page = int(page)
@@ -94,9 +95,10 @@ def category(request, lang):
     return render(request, 'place/place.html', context)
 
 def get_spots_by_category(request):
-    SaveLog(request)
     district_name = request.GET.get('district_name')
     place_category_cd = request.GET.get('place_category_cd') 
+
+    SaveLog(request, {'district_name': district_name, 'place_category_cd': place_category_cd})
 
     data = DistrictTb.object.filter(district_name = district_name)
     PlaceTb.object.filter(place_category_cd = place_category_cd)

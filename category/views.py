@@ -18,10 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 def category_choice(request, lang):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang})
     # 1. CodeTb에서 parent_code가 'ph'로 시작하는 코드들 가져오기
     categories = CodeTb.objects.filter(parent_code='ph').values('code', 'kor_code_name', 'eng_code_name')
-    print(lang)
+
     # 2. HTML 템플릿에 전달할 context
     context = {
         'categories': list(categories),
@@ -34,7 +34,7 @@ def category_choice(request, lang):
 
 @require_http_methods(["GET"])
 def district_view(request, lang, place_thema_cd):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang, 'place_thema_cd':place_thema_cd})
     print("district_view 함수가 호출되었습니다.")
     logger.info(f"Request received for lang: {lang}, place_tag_cd: {place_thema_cd}")
     
@@ -115,7 +115,7 @@ def district_view(request, lang, place_thema_cd):
 
 @require_http_methods(["GET"])
 def category_district(request, lang, district_id, place_category_cd, place_thema_cd):
-    SaveLog(request)
+    SaveLog(request, {'lang': lang, 'district_id' : district_id, 'place_category_cd' : place_category_cd, 'place_thema_cd' : place_thema_cd})
     
 
     try:
