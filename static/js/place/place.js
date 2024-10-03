@@ -263,7 +263,11 @@ function toggleBookmark(placeId, marker, button, imgElement) {
         }
         
         // bookmark_markers 배열에서 marker 제거
-        const markerIndex = bookmark_markers.findIndex(m => m.id === marker.id);
+        console.log('remove marker : ', marker)
+        console.log('remove marker id : ', marker.map.id)
+        console.log('bookmark_markers: ', bookmark_markers)
+        const markerIndex = bookmark_markers.findIndex(m => m === marker);
+        console.log('bookmark_marker index: ', markerIndex)
         if (markerIndex > -1) {
             bookmark_markers.splice(markerIndex, 1);
         }

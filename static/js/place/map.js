@@ -149,8 +149,10 @@ function addMarker(place){
 function changeMarker(marker, is_bookmarked){
     if(is_bookmarked){
         marker.setIcon(clicked_markerImage);
+        marker.setZIndex(100);  // 큰 값으로 설정하여 맨 위로
     }else{
         marker.setIcon(markerImage);
+        marker.setZIndex(1);  // 큰 값으로 설정하여 맨 위로
     }
 }
 

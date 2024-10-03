@@ -39,7 +39,7 @@ def category(request, lang):
     photo_subquery = (
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
-        .exclude(review_photo='')
+        .filter(has_photo=True)  # has_photo 필드를 사용
         .order_by('-review_date')
         .values('review_photo')[:1]
     )
