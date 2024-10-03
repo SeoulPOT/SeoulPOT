@@ -309,5 +309,5 @@ function createStoreItem(store) {
 
 function MoveToPlacePage()
 {
-    window.location.href = place_page_url+`?district_id=${current_district}&place_category_cd=${current_category}` ;
+    window.location.href = place_page_url+`?district_id=${current_district}&place_category_cd=${current_category}&place_thema_cd=${place_thema_cd}` ;
 }

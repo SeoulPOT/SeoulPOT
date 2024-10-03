@@ -167,7 +167,10 @@ def choose_district(district_id, place_category_cd, lang, place_thema_cd):
 
     top_places = (
         PlaceTb.objects
-        .filter(district_id=district_id, place_thema_cd=place_thema_cd, place_category_cd=place_category_cd)
+        .filter(
+            district_id=district_id,
+            place_category_cd=place_category_cd,
+            place_thema_cd__contains=place_thema_cd)
         .annotate(
             review_photo=Subquery(photo_subquery),  # 리뷰 사진 가져오기
             place_tag_name=Subquery(category_tag_subquery)

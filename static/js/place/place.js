@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadMoreObjects(page) {
-    fetch(`${get_spot_by_category}?district_id=${current_dsitrict}&place_category_cd=${current_category}&page=${page}`, {
+    fetch(`${get_spot_by_category}?district_id=${current_dsitrict}&place_category_cd=${current_category}&page=${page}&place_thema_cd=${place_thema_cd}`, {
         method: "GET",
         headers: {
             "X-Requested-With": "XMLHttpRequest"  // 서버가 요청을 AJAX로 인식하게 하는 헤더
@@ -255,7 +255,7 @@ function toggleBookmark(placeId, marker, button, imgElement) {
     } else {
         imgElement.src = bookmark_not_check_img;
         changeMarker(marker, false);
-        
+         
         // bookmark_buttons 배열에서 버튼 제거
         const buttonIndex = bookmark_buttons.indexOf(button);
         if (buttonIndex > -1) {
