@@ -39,7 +39,7 @@ def category(request, lang):
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
         .exclude(review_photo='')
-        .order_by('review_date')
+        .order_by('-review_date')
         .values('review_photo')[:1]
     )
 
@@ -55,7 +55,7 @@ def category(request, lang):
     ).annotate(
         review_photo=Subquery(photo_subquery),
         place_tag_name =  Subquery(catagoty_tag_subquery)
-    ).order_by('-place_review_num')
+    ).order_by('-place_review_num_real')
 
     # Paginate the results
     paginator = Paginator(places, 12)

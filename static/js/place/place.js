@@ -122,10 +122,10 @@ function loadMoreObjects(page) {
                     const footer = document.createElement('div');
                     footer.className = 'card-footer';
                     if(lang == 'kor'){
-                        footer.innerHTML = `📝 리뷰 ${place.place_review_num}개`;
+                        footer.innerHTML = `📝 리뷰 ${place.place_review_num_real}개`;
                     }
                     else{
-                        footer.innerHTML = `📝 ${place.place_review_num} reviews`;
+                        footer.innerHTML = `📝 ${place.place_review_num_real} reviews`;
                     }
 
                     const bookmark= document.createElement('img');

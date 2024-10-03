@@ -79,10 +79,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
 
                     if (!selected_obj) {
-                        document.getElementById('district-name').innerText = d.properties.name;
-                        document.getElementById('none_select-info-container').style.display = 'none';
+                        // document.getElementById('district-name').innerText = d.properties.name;
+                        // document.getElementById('none_select-info-container').style.display = 'flex';
+                        // document.getElementById('district-container').style.display = 'none';
+                        // document.getElementById('district-comming-soon').style.display = 'none';
+                        // document.getElementById('district-info-container').style.display = 'none';
+
+                        document.getElementById('none_select-info-container').style.display = 'flex'; // flex
                         document.getElementById('district-container').style.display = 'none';
-                        // document.getElementById('district-info-container').style.display = 'flex';
+                        // document.getElementById('district-info-container').style.display = 'none'; // none
+                        document.getElementById('district-comming-soon').style.display = 'none';
+                        document.getElementById('district-name').innerText = 'ㅤ';
                     }
 
                     var foundItem = districts_list.find(function(item) {
@@ -107,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('none_select-info-container').style.display = 'flex';
                         document.getElementById('district-container').style.display = 'none';
                         // document.getElementById('district-info-container').style.display = 'none';
+                        document.getElementById('district-comming-soon').style.display = 'none';
                         document.getElementById('district-name').innerText = '';
                     }
                 })
@@ -117,18 +125,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (selected_obj === this) {
                         selected_obj = undefined;
                         document.getElementById('district-name').innerText = '';
-                        document.getElementById('none_select-info-container').style.display = 'none';
-                        document.getElementById('district-container').style.display = 'none';
+                        document.getElementById('none_select-info-container').style.display = 'flex';
+                        document.getElementById('district-container').style.display = 'none';           //가게 리스트 출력
                         // document.getElementById('district-info-container').style.display = 'flex';
+                        document.getElementById('district-comming-soon').style.display = 'none';
                     } else {
                         selected_obj = this;
                         is_selected = true;
                         d3.select(this).classed('clicked', true);
 
-                        document.getElementById('district-name').innerText = d.properties.name;
-                        document.getElementById('none_select-info-container').style.display = 'none';
-                        document.getElementById('district-container').style.display = 'flex';
-                        // document.getElementById('district-info-container').style.display = 'none';
+                        is_selected = true;
+                        if(['강남구', '마포구', '중구', '용산구', '종로구'].includes(d.properties.name)){
+                            document.getElementById('none_select-info-container').style.display = 'none';
+                            document.getElementById('district-container').style.display = 'flex';
+                            // document.getElementById('district-info-container').style.display = 'none';
+                            document.getElementById('district-comming-soon').style.display = 'none';
+                        }
+                        else{
+                            document.getElementById('none_select-info-container').style.display = 'none';
+                            document.getElementById('district-container').style.display = 'none';
+                            // document.getElementById('district-info-container').style.display = 'none';
+                            document.getElementById('district-comming-soon').style.display = 'flex';
+                        }
 
                         var foundItem = districts_list.find(function(item) {
                             var districtNameKor = item.kor_district_name.trim().toLowerCase();
@@ -137,9 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                             return districtNameKor === d.properties.name.trim().toLowerCase() || districtNameEng === d.properties.name.trim().toLowerCase();
                         });
-                        
-                        
-                        
                         
                         if (foundItem) {
                             console.log('Found district:', foundItem.district_name, ', ID:', foundItem.district_id);

@@ -17,7 +17,7 @@ def content_reviews(request, lang):
     photo_subquery = (
         ReviewTb.objects.filter(place_id=OuterRef("place_id"))
         .exclude(review_photo="")
-        .order_by("review_date")
+        .order_by("-review_date")
         .values("review_photo")[:1]
     )
 
@@ -159,6 +159,7 @@ def content_reviews(request, lang):
         "first_key": first_key,
         "first_value": first_value,
         "review_dict": review_dict,
+
     }
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -184,7 +185,7 @@ def reviews_more(request, lang):
     photo_subquery = (
         ReviewTb.objects.filter(place_id=OuterRef("place_id"))
         .exclude(review_photo="")
-        .order_by("review_date")
+        .order_by("-review_date")
         .values("review_photo")[:1]
     )
 
@@ -223,7 +224,8 @@ def reviews_more(request, lang):
             ),
         )
     # 전체 리뷰 수
-    total = place.place_review_num
+    # total = place.place_review_num
+    total = place.place_review_num_real
 
     # 장소 태그 정보
     if lang == "kor":

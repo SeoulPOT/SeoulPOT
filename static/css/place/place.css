@@ -208,13 +208,19 @@ button.card:hover {
 }
 
 #place-container {
-    background: #D4CBF8;
+    background-color: #D4CBF8;
+    border-radius: 15px;
     padding: 20px;
-    border-radius: 20px;
-    width: 90%;
-    height: 90%;
-    overflow-y: hidden;
-
+    width: 100%;
+    min-width: 500;
+    height: 100%;
+    min-height: 500px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 #page {

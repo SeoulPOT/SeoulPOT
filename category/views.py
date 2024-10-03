@@ -172,7 +172,7 @@ def choose_district(district_id, place_category_cd, lang, place_thema_cd):
             review_photo=Subquery(photo_subquery),  # 리뷰 사진 가져오기
             place_tag_name=Subquery(category_tag_subquery)
         )
-        .order_by('-place_review_num')[:4]  # 리뷰 수를 기준으로 정렬
+        .order_by('-place_review_num_real')[:4]  # 리뷰 수를 기준으로 정렬
     )
 
     for place in top_places:
@@ -180,7 +180,7 @@ def choose_district(district_id, place_category_cd, lang, place_thema_cd):
             "place_category_cd": place.place_category_cd,
             "place_name": place.place_name,
             "place_tag_cd": place.place_tag_cd,
-            "place_review_num": place.place_review_num,
+            "place_review_num": place.place_review_num_real,
             "review_photo": place.review_photo if place.review_photo else "",
             "place_id": place.place_id,
             "place_tag_name": place.place_tag_name,
