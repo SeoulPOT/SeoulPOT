@@ -74,7 +74,7 @@
     {% block extra_js %}
     <!-- 이 페이지에서만 사용하는 JS -->
     <script>
-        window.geojsonUrl = "{% static 'data/seoul-districts.geojson' %}";
+        window.geojsonUrl = "{% static 'data/seoul-districts-temp.geojson' %}";
         const get_spot_by_category = "{% url 'de-food-place' lang %}";
         const review_url = "{% url 'reviews' lang %}";
         var district_obj = {
