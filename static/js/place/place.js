@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadMoreObjects(page) {
-    fetch(`${get_spot_by_category}?district_id=${current_dsitrict}&place_category_cd=${current_category}&page=${page}`, {
+    fetch(`${get_spot_by_category}?district_id=${current_dsitrict}&place_category_cd=${current_category}&page=${page}&place_thema_cd=${place_thema_cd}`, {
         method: "GET",
         headers: {
             "X-Requested-With": "XMLHttpRequest"  // 서버가 요청을 AJAX로 인식하게 하는 헤더
@@ -122,10 +122,10 @@ function loadMoreObjects(page) {
                     const footer = document.createElement('div');
                     footer.className = 'card-footer';
                     if(lang == 'kor'){
-                        footer.innerHTML = `📝 리뷰 ${place.place_review_num}개`;
+                        footer.innerHTML = `📝 리뷰 ${place.place_review_num_real}개`;
                     }
                     else{
-                        footer.innerHTML = `📝 ${place.place_review_num} reviews`;
+                        footer.innerHTML = `📝 ${place.place_review_num_real} reviews`;
                     }
 
                     const bookmark= document.createElement('img');
@@ -255,7 +255,7 @@ function toggleBookmark(placeId, marker, button, imgElement) {
     } else {
         imgElement.src = bookmark_not_check_img;
         changeMarker(marker, false);
-        
+         
         // bookmark_buttons 배열에서 버튼 제거
         const buttonIndex = bookmark_buttons.indexOf(button);
         if (buttonIndex > -1) {
@@ -263,7 +263,11 @@ function toggleBookmark(placeId, marker, button, imgElement) {
         }
         
         // bookmark_markers 배열에서 marker 제거
-        const markerIndex = bookmark_markers.findIndex(m => m.id === marker.id);
+        console.log('remove marker : ', marker)
+        console.log('remove marker id : ', marker.map.id)
+        console.log('bookmark_markers: ', bookmark_markers)
+        const markerIndex = bookmark_markers.findIndex(m => m === marker);
+        console.log('bookmark_marker index: ', markerIndex)
         if (markerIndex > -1) {
             bookmark_markers.splice(markerIndex, 1);
         }

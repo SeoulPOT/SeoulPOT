@@ -214,6 +214,7 @@ class ReviewTb(models.Model):
     similar_review = models.TextField(blank=True, null=True)
     review_with_tag_cd = models.CharField(max_length=50, blank=True, null=True)
     review_daily_tag_cd = models.CharField(max_length=50, blank=True, null=True)
+    has_photo = models.BooleanField(blank=False)
 
     class Meta:
         managed = False

@@ -2,13 +2,13 @@ from  main.models import LogTb
 from datetime import datetime
 import pytz
 
-def SaveLog(request):
+def SaveLog(request, add_info={}):
 
     kst = pytz.timezone('Asia/Seoul')
 
     user_ip = request.META.get('REMOTE_ADDR')
     button_id = request.GET.get('button_id')
-    add_info = request.GET.get('add_info')
+    # add_info = request.GET.get('add_info')
     session_id = request.GET.get('session_id')
     page_url = request.path
     

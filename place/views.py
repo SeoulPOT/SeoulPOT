@@ -9,15 +9,17 @@ from utils import SaveLog
 
 # Create your views here.
 def category(request, lang):
-    SaveLog(request)
+    
     print("Place Page")
     
     
     # Get parameters from request
     district_id = request.GET.get('district_id')
     place_category_cd = request.GET.get('place_category_cd') 
+    place_thema_cd = request.GET.get('place_thema_cd','')
     page = request.GET.get('page', 1)
 
+    SaveLog(request, {'lang' : lang, 'district_id':district_id, 'place_category_cd':place_category_cd,'place_thema_cd':place_thema_cd, 'page':page})
     # Validate page number
     try:
         page = int(page)
@@ -38,8 +40,8 @@ def category(request, lang):
     photo_subquery = (
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
-        .exclude(review_photo='')
-        .order_by('review_date')
+        .filter(has_photo=True)  # has_photo 필드를 사용
+        .order_by('-review_date')
         .values('review_photo')[:1]
     )
 
@@ -49,13 +51,23 @@ def category(request, lang):
             ).values('kor_code_name' if lang == 'kor' else 'eng_code_name')[:1]
 
     # Filter places based on district and category, annotate with the first photo
+    # 기본 필터링 조건
+    filters = {
+        'district_id': district_id,
+        'place_category_cd': place_category_cd,
+    }
+
+    # place_thema_cd가 빈 문자열이 아닐 경우 조건 추가
+    if place_thema_cd != '':
+        filters['place_thema_cd__contains'] = place_thema_cd
+        print(f'테마있음: {place_thema_cd}')
+
     places = PlaceTb.objects.filter(
-        district_id=district_id,
-        place_category_cd=place_category_cd
+            **filters
     ).annotate(
         review_photo=Subquery(photo_subquery),
         place_tag_name =  Subquery(catagoty_tag_subquery)
-    ).order_by('-place_review_num')
+    ).order_by('-place_review_num_real')
 
     # Paginate the results
     paginator = Paginator(places, 12)
@@ -87,6 +99,7 @@ def category(request, lang):
         'place_list': list(page_obj),
         'categories': list(CodeTb.objects.filter(parent_code='PC').exclude(code='PC03').values()),
         'category' : place_category_cd,
+        'place_thema_cd' : place_thema_cd,
         'current_page' : page,
         'total_pages' : paginator.num_pages,
         'lang' : lang,
@@ -94,9 +107,10 @@ def category(request, lang):
     return render(request, 'place/place.html', context)
 
 def get_spots_by_category(request):
-    SaveLog(request)
     district_name = request.GET.get('district_name')
     place_category_cd = request.GET.get('place_category_cd') 
+
+    SaveLog(request, {'district_name': district_name, 'place_category_cd': place_category_cd})
 
     data = DistrictTb.object.filter(district_name = district_name)
     PlaceTb.object.filter(place_category_cd = place_category_cd)

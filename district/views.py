@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # 구별 대시보드 렌더링
 @require_http_methods(["GET"]) # GET 메소드로만 호출될 수 있게 제한
 def district(request, lang):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang})
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         pass
@@ -25,7 +25,7 @@ def district(request, lang):
 # 카테고리 변경 시 해당 카테고리 데이터 조회
 @require_http_methods(["GET"]) # GET 메소드로만 호출될 수 있게 제한
 def get_places_by_category(request, lang, district_id, place_category_cd):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang, 'district_id': district_id, 'place_category_cd':place_category_cd})
     print('get_places_by_category')
     
     # 필수 파라미터가 없으면 에러 반환
@@ -75,7 +75,7 @@ def choose_district(district_id, place_category_cd, lang):
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
         .exclude(review_photo='')
-        .order_by('review_date')
+        .order_by('-review_date')
         .values('review_photo')[:1]
     )
 
@@ -89,14 +89,14 @@ def choose_district(district_id, place_category_cd, lang):
                     .annotate(review_photo=Subquery(photo_subquery),  # 리뷰 사진 가져오기
                                 place_tag_name =  Subquery(catagoty_tag_subquery)
                                 ) 
-                    .order_by('-place_review_num')[:4])  # place_review_num을 기준으로 정렬
+                    .order_by('-place_review_num_real')[:4])  # place_review_num을 기준으로 정렬
 
     for place in top_places:
             data.append({
                 "place_category_cd": place.place_category_cd,
                 "place_name": place.place_name,
                 "place_tag_cd": place.place_tag_cd,
-                "place_review_num": place.place_review_num,  
+                "place_review_num": place.place_review_num_real,  
                 "review_photo": place.review_photo if place.review_photo else "",
                 "place_id" : place.place_id,
                 'place_tag_name' : place.place_tag_name,

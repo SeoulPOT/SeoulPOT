@@ -18,10 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 def category_choice(request, lang):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang})
     # 1. CodeTb에서 parent_code가 'ph'로 시작하는 코드들 가져오기
     categories = CodeTb.objects.filter(parent_code='ph').values('code', 'kor_code_name', 'eng_code_name')
-    print(lang)
+
     # 2. HTML 템플릿에 전달할 context
     context = {
         'categories': list(categories),
@@ -34,7 +34,7 @@ def category_choice(request, lang):
 
 @require_http_methods(["GET"])
 def district_view(request, lang, place_thema_cd):
-    SaveLog(request)
+    SaveLog(request, {'lang':lang, 'place_thema_cd':place_thema_cd})
     print("district_view 함수가 호출되었습니다.")
     logger.info(f"Request received for lang: {lang}, place_tag_cd: {place_thema_cd}")
     
@@ -115,7 +115,7 @@ def district_view(request, lang, place_thema_cd):
 
 @require_http_methods(["GET"])
 def category_district(request, lang, district_id, place_category_cd, place_thema_cd):
-    SaveLog(request)
+    SaveLog(request, {'lang': lang, 'district_id' : district_id, 'place_category_cd' : place_category_cd, 'place_thema_cd' : place_thema_cd})
     
 
     try:
@@ -149,7 +149,7 @@ def choose_district(district_id, place_category_cd, lang, place_thema_cd):
     photo_subquery = (
         ReviewTb.objects
         .filter(place_id=OuterRef('place_id'))
-        .exclude(review_photo='')
+        .filter(has_photo=True)  # has_photo 필드를 사용
         .order_by('review_date')
         .values('review_photo')[:1]
     )
@@ -167,12 +167,15 @@ def choose_district(district_id, place_category_cd, lang, place_thema_cd):
 
     top_places = (
         PlaceTb.objects
-        .filter(district_id=district_id, place_thema_cd=place_thema_cd, place_category_cd=place_category_cd)
+        .filter(
+            district_id=district_id,
+            place_category_cd=place_category_cd,
+            place_thema_cd__contains=place_thema_cd)
         .annotate(
             review_photo=Subquery(photo_subquery),  # 리뷰 사진 가져오기
             place_tag_name=Subquery(category_tag_subquery)
         )
-        .order_by('-place_review_num')[:4]  # 리뷰 수를 기준으로 정렬
+        .order_by('-place_review_num_real')[:4]  # 리뷰 수를 기준으로 정렬
     )
 
     for place in top_places:
@@ -180,7 +183,7 @@ def choose_district(district_id, place_category_cd, lang, place_thema_cd):
             "place_category_cd": place.place_category_cd,
             "place_name": place.place_name,
             "place_tag_cd": place.place_tag_cd,
-            "place_review_num": place.place_review_num,
+            "place_review_num": place.place_review_num_real,
             "review_photo": place.review_photo if place.review_photo else "",
             "place_id": place.place_id,
             "place_tag_name": place.place_tag_name,
