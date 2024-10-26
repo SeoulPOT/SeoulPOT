@@ -97,14 +97,6 @@ function setSortOption(array) {
     movePage(1, array);
 }
 
-// //데이트 양식 변경 함수
-// function formatDate(inputDate) {
-//     const date = new Date(inputDate);  // "2024-04-19" 형식의 문자열을 Date 객체로 변환
-//     const options = { month: 'short', day: 'numeric', year: 'numeric' };
-//     return date.toLocaleDateString('en-US', options).replace(',', '').replace(/(\d{1,2}) /, '$1.');
-// }
-
-
 // 모달 열기
 function openModal(imageSrc) {
     const modal = document.getElementById('modalContainer');
@@ -143,4 +135,77 @@ document.addEventListener('DOMContentLoaded', function() {
             adModal.style.display = 'none';
         }
     }
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 모달 열기 버튼
+    const opensentModalBtn = document.getElementById('opensentModalBtn');
+    // 모달 요소
+    const sentModal = document.getElementById('sentModal');
+    // 모달 닫기 버튼
+    const closesentModalBtn = document.getElementById('closesentModalBtn');
+
+    // 모달 열기
+    opensentModalBtn.onclick = function() {
+        sentModal.style.display = 'block';
+    }
+
+    // 모달 닫기
+    closesentModalBtn.onclick = function() {
+        sentModal.style.display = 'none';
+    }
+
+    // 모달 영역 밖을 클릭하면 닫기
+    window.onclick = function(event) {
+        if (event.target == sentModal) {
+            sentModal.style.display = 'none';
+        }
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const aiReviewElement = document.getElementById('openaiModalBtn');
+    const originalText = aiReviewElement.textContent;
+    // 모달 열기 버튼
+    const openaiModalBtn = document.getElementById('openaiModalBtn');
+    // 모달 요소
+    const aiModal = document.getElementById('aiModal');
+    // 모달 상태 확인
+    let isModalOpen = false;
+
+    // 텍스트가 15자 이상일 때 자르고 ... 추가
+    if (originalText.length > 15) {
+        aiReviewElement.textContent = originalText.substring(0, 15) + '...';
+    }
+
+    // 모달 열기
+    openaiModalBtn.onclick = function() {
+        if (isModalOpen) {
+            // 모달이 이미 열려 있는 경우 닫기
+            aiModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // 모달 닫힐 때 스크롤 다시 활성화
+            isModalOpen = false;
+        } 
+        else {
+            // 모달이 닫혀 있는 경우 열기
+            aiModal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 모달 열릴 때 스크롤 방지
+            // openaiModalBtn 요소 바로 아래에 모달 위치 지정
+            const rect = openaiModalBtn.getBoundingClientRect();
+            aiModal.style.top = `${rect.bottom + window.scrollY + 35}px`;
+            aiModal.style.left = `${rect.left + window.scrollX + 95}px`;
+            isModalOpen = true;
+        }
+        }
+
+
+    // 모달 영역 밖을 클릭하면 닫기
+    window.onclick = function(event) {
+        if (event.target == aiModal) {
+            aiModal.style.display = 'none';
+        }
+    }
+    
 });

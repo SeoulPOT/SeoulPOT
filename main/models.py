@@ -184,7 +184,10 @@ class PlaceTb(models.Model):
     place_tag_cd = models.CharField(max_length=50, blank=True, null=True)
     place_lat = models.FloatField(blank=True, null=True)
     place_lon = models.FloatField(blank=True, null=True)
-    place_review_num_real = models.IntegerField(blank=True, null=True)
+    place_subway_station = models.CharField(max_length=100, blank=True, null=True)
+    place_distance = models.CharField(max_length=100, blank=True, null=True)
+    kor_ai_review_text = models.TextField(blank=True, null=True)
+    eng_ai_review_text = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
