@@ -1,4 +1,9 @@
 FROM python:3.12 AS python-build
+RUN pip install --upgrade pip
+RUN apt-get update && apt-get install -y python3-dev
+ENV MYSQLCLIENT_CFLAGS="-I/usr/include/mariadb"
+ENV MYSQLCLIENT_LDFLAGS="-L/usr/lib/x86_64-linux-gnu"
+
 RUN pip install mysqlclient
 
 FROM python:3.12-slim
