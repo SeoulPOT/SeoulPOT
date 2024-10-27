@@ -6,12 +6,13 @@ from django.http import JsonResponse
 import json
 from utils import SaveLog
 
+
 def content_reviews(request, lang):
     place_id = request.GET.get("place_id")
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
 
-    SaveLog(request, {'lang':lang, 'place_id':place_id, 'array':array, 'page':page})
+    SaveLog(request, {"lang": lang, "place_id": place_id, "array": array, "page": page})
 
     # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (
@@ -48,6 +49,9 @@ def content_reviews(request, lang):
             ).values("kor_code_name")[:1]
         ),
     )
+    # 영업시간 텍스트 처리
+    time = place.place_operating_hours
+    time = time.split("\n")[0]
 
     # 장소 태그 정보
     if lang == "kor":
@@ -93,14 +97,7 @@ def content_reviews(request, lang):
             if len(review["eng_review_text"]) > 45:
                 review["eng_review_text"] = review["eng_review_text"][:45] + "..."
 
-    # 키워드 가져오기
-
-    feature_dict, mapped_feature_dict, first_key, first_value = (
-        map_place_feature_to_language(place, lang)
-    )
-
-    # 긍정 비율 계산
-
+    # 리뷰 비율 분석
     pos = place.place_pos_review_num
     neg = place.place_neg_review_num
     total = place.place_review_num
@@ -113,7 +110,18 @@ def content_reviews(request, lang):
 
     real = place.place_review_num
     ad = place.place_ad_review_num
-    real_ratio = round(((real - ad) / total) * 100, 2)
+    try:
+        # 긍부정 비율 계산
+        pos_ratio = round((pos / total) * 100, 2)
+        neg_ratio = round((neg / total) * 100, 2)
+        neutral = round(100 - (pos_ratio + neg_ratio), 2)
+        # 광고성 비율 계산
+        real_ratio = round(((real - ad) / total) * 100, 2)
+    except:
+        pos_ratio = 0
+        neg_ratio = 0
+        neutral = 0
+        real_ratio = 0
 
     # 광고성 리뷰 가져오기
     reviews = ReviewTb.objects.filter(place_id=place_id)
@@ -131,14 +139,37 @@ def content_reviews(request, lang):
             for review in reviews
             if review.similar_review  # similar_review가 존재하는 경우만
         }
+    # 가까운 역 불러오기
 
+    subway = place.place_subway_station
+
+    ## 호선 리스트화 -> html 문서에서 반복문으로 하나씩 불러오기
+    try:
+        sub_line = subway.split("\t")[0]
+        sub_line = list(sub_line.split(", "))
+        sub_name = subway.split("\t")[1]
+        place_distance = place.place_distance
+        sub_name = CodeTb.objects.get(code=sub_name)
+
+        if lang == "kor":
+            sub_name = sub_name.kor_code_name
+        else:
+            sub_name = sub_name.eng_code_name
+
+    except:
+        sub_line = ""
+        sub_name = ""
+        place_distance = ""
+
+    if lang == "kor":
+        ai_review_text = place.kor_ai_review_text
+    else:
+        ai_review_text = place.eng_ai_review_text
     # -----------------------------------------------------
 
     context = {
         "place": place,
         "reviews": page_obj,
-        "feature_dict": feature_dict,
-        "mapped_feature_dict": mapped_feature_dict,
         "kor_place_tag": kor_place_tag,
         "eng_place_tag": eng_place_tag,
         "thema_name": thema_name,
@@ -156,10 +187,12 @@ def content_reviews(request, lang):
         "review_photos": review_photos,  # 리뷰 사진 추가
         "reviews": serialized_reviews,
         "lang": lang,
-        "first_key": first_key,
-        "first_value": first_value,
         "review_dict": review_dict,
-
+        "sub_line": sub_line,
+        "sub_name": sub_name,
+        "place_distance": place_distance,
+        "ai_review_text": ai_review_text,
+        "time": time,
     }
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -179,7 +212,7 @@ def reviews_more(request, lang):
     array = request.GET.get("array", "latest")  # 정렬 방식 가져오기 (기본값은 최신순)
     page = request.GET.get("page", 1)  # 페이지 기본 1page
 
-    SaveLog(request, {'lang':lang, 'place_id':place_id, 'array':array, 'page':page})
+    SaveLog(request, {"lang": lang, "place_id": place_id, "array": array, "page": page})
 
     # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (
@@ -223,6 +256,11 @@ def reviews_more(request, lang):
                 ).values("eng_code_name")[:1]
             ),
         )
+
+    # 영업시간 텍스트 처리
+    time = place.place_operating_hours
+    time = time.split("\n")[0]
+
     # 전체 리뷰 수
     # total = place.place_review_num
     total = place.place_review_num
@@ -259,10 +297,32 @@ def reviews_more(request, lang):
 
     serialized_reviews = list(page_obj.object_list.values(*review_field_names))
 
-    # 키워드 가져오기
-    feature_dict, mapped_feature_dict, first_key, first_value = (
-        map_place_feature_to_language(place, lang)
-    )
+    # 가까운 역 불러오기
+
+    subway = place.place_subway_station
+
+    ## 호선 리스트화 -> html 문서에서 반복문으로 하나씩 불러오기
+    try:
+        sub_line = subway.split("\t")[0]
+        sub_line = list(sub_line.split(", "))
+        sub_name = subway.split("\t")[1]
+        place_distance = place.place_distance
+        sub_name = CodeTb.objects.get(code=sub_name)
+
+        if lang == "kor":
+            sub_name = sub_name.kor_code_name
+        else:
+            sub_name = sub_name.eng_code_name
+
+    except:
+        sub_line = ""
+        sub_name = ""
+        place_distance = ""
+
+    if lang == "kor":
+        ai_review_text = place.kor_ai_review_text
+    else:
+        ai_review_text = place.eng_ai_review_text
 
     context = {
         "place": place,
@@ -274,12 +334,13 @@ def reviews_more(request, lang):
         "kor_place_tag": kor_place_tag,
         "eng_place_tag": eng_place_tag,
         "thema_name": thema_name,
-        "feature_dict": feature_dict,
-        "mapped_feature_dict": mapped_feature_dict,
-        "first_key": first_key,
-        "first_value": first_value,
         "total": total,
         "lang": lang,
+        "time": time,
+        "sub_line": sub_line,
+        "sub_name": sub_name,
+        "place_distance": place_distance,
+        "ai_review_text": ai_review_text,
     }
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -295,7 +356,6 @@ def reviews_more(request, lang):
 
 
 def get_code_name_for_thema_cd(thema_cd, lang):
-
 
     if not thema_cd:
         return []
@@ -354,96 +414,3 @@ def get_code_name_for_place_tag_cd(place_tag_cd):
         code_obj = CodeTb.objects.get(code=code)
         kor_code_names.append(code_obj.kor_code_name)
     return kor_code_names
-
-
-def map_place_feature_to_language(place, lang):
-    korean_english_mapping = {
-        "커피가 맛있어요": "The coffee is delicious",
-        "디저트가 맛있어요": "The dessert is delicious",
-        "음료가 맛있어요": "The drinks are delicious",
-        "특별한 메뉴가 있어요": "There's a special menu",
-        "가성비가 좋아요": "The value for money is good",
-        "건강한 맛이에요": "It tastes healthy",
-        "비싼 만큼 가치있어요": "It's worth the price",
-        "메뉴 구성이 알차요": "The menu composition is substantial",
-        "음식이 맛있어요": "The food is delicious",
-        "양이 많아요": "The portions are generous",
-        "재료가 신선해요": "The ingredients are fresh",
-        "빵이 맛있어요": "The bread is delicious",
-        "차가 맛있어요": "The tea is delicious",
-        "술이 다양해요": "There's a wide variety of alcohol",
-        "기본 안주가 좋아요": "The complimentary snacks are good",
-        "코스요리가 알차요": "The course meals are substantial",
-        "주문제작을 잘해줘요": "They are good at custom orders",
-        "종류가 다양해요": "There is a wide variety of choices",
-        "인테리어가 멋져요": "The interior is stylish",
-        "사진이 잘 나와요": "The place is great for taking photos",
-        "대화하기 좋아요": "It's a good place to have a conversation",
-        "집중하기 좋아요": "It's a good place to focus",
-        "뷰가 좋아요": "The view is nice",
-        "매장이 넓어요": "The store is spacious",
-        "아늑해요": "It's cozy",
-        "야외공간이 멋져요": "The outdoor space is great",
-        "음악이 좋아요": "The music is good",
-        "차분한 분위기에요": "The atmosphere is calm",
-        "컨셉이 독특해요": "The concept is unique",
-        "단체모임 하기 좋아요": "It's good for group gatherings",
-        "혼밥하기 좋아요": "It's good for dining alone",
-        "혼술하기 좋아요": "It's good for drinking alone",
-        "친절해요": "The staff is friendly",
-        "매장이 청결해요": "The store is clean",
-        "화장실이 깨끗해요": "The restroom is clean",
-        "주차하기 편해요": "Parking is convenient",
-        "좌석이 편해요": "The seats are comfortable",
-        "룸이 잘 되어있어요": "The rooms are well set up",
-        "반려동물과 가기 좋아요": "It's a good place to go with pets",
-        "아이와 가기 좋아요": "It's a good place to go with children",
-        "선물하기 좋아요": "It's a good place for gift shopping",
-        "오래 머무르기 좋아요": "It's a good place to stay for a long time",
-        "음식이 빨리 나와요": "The food comes out quickly",
-        "읽을만한 책이 많아요": "There are many books worth reading",
-        "특별한 날 가기 좋아요": "It's a great place for special occasions",
-        "포장이 깔끔해요": "The packaging is neat",
-        "파티하기 좋아요": "It's a good place for parties",
-        "고기 질이 좋아요": "Good quality meat",
-        "직접 잘 구워줘요": "They grill it for you",
-        "반찬이 잘 나와요": "They serve good side dishes",
-    }
-
-    try:
-        feature_dict = {}
-        mapped_feature_dict = {}
-        place_feature = place.place_feature
-
-        # 문자열을 ', '로 먼저 분리하고 각 요소에서 ' : '로 나눔
-        feature_list = [feature.split(" : ") for feature in place_feature.split(", ")]
-
-        # 공백 및 숫자가 아닌 문자를 제거하고 딕셔너리로 변환
-        feature_dict = {
-            key.replace("'", "").strip(): int(value.replace("'", "").strip())
-            for key, value in feature_list
-        }
-
-        # lang이 'kor'인 경우: 그대로 시행
-        if lang == "kor":
-            first_key = list(feature_dict.keys())[0]
-            first_value = list(feature_dict.values())[0]
-
-        # lang이 'kor'이 아닌 경우: 영어로 매핑된 값을 사용
-        else:
-            mapped_feature_dict = {
-                korean_english_mapping.get(
-                    key, key
-                ): value  # 매핑된 값이 있으면 사용, 없으면 그대로 사용
-                for key, value in feature_dict.items()
-            }
-            first_key = list(mapped_feature_dict.keys())[0]
-            first_value = list(mapped_feature_dict.values())[0]
-
-        return feature_dict, mapped_feature_dict, first_key, first_value
-
-    except:
-        place_feature = ""
-        first_key = []
-        first_value = []
-        return feature_dict, mapped_feature_dict, first_key, first_value
