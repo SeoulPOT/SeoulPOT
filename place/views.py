@@ -16,10 +16,12 @@ def category(request, lang):
     # Get parameters from request
     district_id = request.GET.get('district_id')
     place_category_cd = request.GET.get('place_category_cd') 
+    sortBy = request.GET.get('sortBy') 
     place_thema_cd = request.GET.get('place_thema_cd','')
     page = request.GET.get('page', 1)
+    search_text = request.GET.get('search_text', "")
 
-    SaveLog(request, {'lang' : lang, 'district_id':district_id, 'place_category_cd':place_category_cd,'place_thema_cd':place_thema_cd, 'page':page})
+    SaveLog(request, {'lang' : lang, 'district_id':district_id, 'place_category_cd':place_category_cd,'place_thema_cd':place_thema_cd, 'page':page, 'sortBy':sortBy, 'search_text':search_text})
     # Validate page number
     try:
         page = int(page)
@@ -29,6 +31,10 @@ def category(request, lang):
     # Set default values if parameters are not provided
     district_id = district_id if district_id else '8'
     place_category_cd = place_category_cd if place_category_cd else 'PC00'
+
+    print(f'sortBy : {sortBy}')
+    print(f'search_text : {search_text}')
+    # sortBy = sortBy if sortBy else '0'
     
     # Retrieve the district object
     try:
@@ -62,12 +68,27 @@ def category(request, lang):
         filters['place_thema_cd__contains'] = place_thema_cd
         print(f'테마있음: {place_thema_cd}')
 
+
+    order_field = '-place_review_num'  # 필요에 따라 정렬 기준 설정 (예: 이름 순)
+    # sortBy 값에 따라 정렬 기준 설정
+    if sortBy == '-1' or sortBy is None:
+        # sortBy가 -1일 때는 place_name에 search_text가 포함되는 데이터 조회
+        filters['place_name__contains'] = search_text  # place_name에서 search_text 검색
+        order_field = '-place_name'  # 필요에 따라 정렬 기준 설정 (예: 이름 순)
+    if sortBy == '0':
+        order_field = '-place_pos_review_num'  # place_sentiment 내림차순
+    elif sortBy == '1':
+        order_field = '-place_distance'          # distance 내림차순
+    elif sortBy == '2':
+        order_field = '-place_review_num' # place_review_num 내림차순
+    
+
     places = PlaceTb.objects.filter(
             **filters
     ).annotate(
         review_photo=Subquery(photo_subquery),
         place_tag_name =  Subquery(catagoty_tag_subquery)
-    ).order_by('-place_review_num_real')
+    ).order_by(order_field)
 
     # Paginate the results
     paginator = Paginator(places, 12)
@@ -90,6 +111,7 @@ def category(request, lang):
             'current_page' : page,
             'total_pages' : paginator.num_pages,
             'lang' : lang,
+            'sortBy' : sortBy,
         }
         return JsonResponse(data, safe=False)
 
@@ -99,6 +121,7 @@ def category(request, lang):
         'place_list': list(page_obj),
         'categories': list(CodeTb.objects.filter(parent_code='PC').exclude(code='PC03').values()),
         'category' : place_category_cd,
+        'sortBy' : sortBy,
         'place_thema_cd' : place_thema_cd,
         'current_page' : page,
         'total_pages' : paginator.num_pages,

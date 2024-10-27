@@ -103,7 +103,7 @@ def content_reviews(request, lang):
 
     pos = place.place_pos_review_num
     neg = place.place_neg_review_num
-    total = place.place_review_num_real
+    total = place.place_review_num
 
     pos_ratio = round((pos / total) * 100, 2)
     neg_ratio = round((neg / total) * 100, 2)
@@ -111,7 +111,7 @@ def content_reviews(request, lang):
 
     # 부정 비율 계산
 
-    real = place.place_review_num_real
+    real = place.place_review_num
     ad = place.place_ad_review_num
     real_ratio = round(((real - ad) / total) * 100, 2)
 
@@ -225,7 +225,7 @@ def reviews_more(request, lang):
         )
     # 전체 리뷰 수
     # total = place.place_review_num
-    total = place.place_review_num_real
+    total = place.place_review_num
 
     # 장소 태그 정보
     if lang == "kor":

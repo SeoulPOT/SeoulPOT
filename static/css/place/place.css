@@ -40,7 +40,7 @@ main {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     gap: 10px;
     width: 100%;
     max-width: 1200px;
@@ -89,7 +89,7 @@ main {
 .card-list {
     flex-grow: 1;
     overflow-y: auto;
-    height: 80%;
+    height: 75%;
     margin: 15px 0;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -354,4 +354,136 @@ button.card:hover {
     max-height: 150px;
     border-radius: 5px;
     object-fit: cover;
+}
+
+.sorting-div {
+    display: flex;
+    height: 25px;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: stretch;
+    align-content: center;
+    gap: 3px;
+
+}
+
+.sorting-btn {
+    max-width: 100px; /* 최대 너비 설정 */
+    padding: 5px 10px; /* 버튼 내부 여백 */
+    height: 100%;
+    font-size: 10px; /* 텍스트 크기 */
+    text-align: center;
+    border: none;
+    background-color: #fff;
+    color: #9077CB;
+    border-radius: 30px; /* 버튼 둥근 모서리 */
+    cursor: pointer;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    transition: background-color 0.4s ease; /* 배경색 전환 효과 */
+    overflow: hidden;
+    white-space: nowrap; /* 텍스트 한 줄 표시 */
+    text-overflow: ellipsis; /* 넘치는 텍스트 말줄임표 */
+    flex-shrink: 0; /* 버튼 크기 줄어들지 않도록 설정 */
+}
+
+.search-btn {
+    display: flex;
+    align-items: center; /* 이미지와 버튼의 텍스트 높이를 맞추기 위해 중앙 정렬 */
+    justify-content: center; /* 이미지를 중앙에 배치 */
+    padding: 0; /* 버튼 내부 여백 제거 */
+    border: none;
+    background-color: #fff;
+    border-radius: 30px;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 100%; /* 부모 높이에 맞춰 넓이를 조정할 경우 설정 */
+    height: 100%; /* 부모 높이에 맞추기 위해 100% 설정 */
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* 부모 높이에 맞춰 넓이를 조정할 경우 설정 */
+    height: 100%; /* 부모 높이에 맞추기 위해 100% 설정 *
+    padding: 0; /* 버튼 내부 여백 제거 */
+    border: none;
+    background-color: #fff;/* 배경색을 원하면 지정 가능 */
+    cursor: pointer;
+    border-radius: 30px;
+} 
+/* 이미지 크기 조정 */
+.toggle-btn img {
+    width: 20px; /* 아이콘 크기 */
+    height: 20px;
+    filter: grayscale(100%);
+    /* margin-top: -5px; */
+}
+
+.sorting-div button:hover {
+    background-color: rgba(144, 119, 203, 0.5);
+    color: #fff;
+}
+
+.sorting-div button.active {
+    background-color: #6a4d9a;
+    color: #fff;
+}
+
+#sorting-search-div{
+    display: none;
+}
+
+
+#sorting-search-div {
+    display: none; /* 기본적으로 숨김 */
+    align-items: center;
+    border-radius: 15px;
+    background-color: #ffffff;
+    padding: 5px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 0; /* 기본 너비를 0으로 설정 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
+    opacity: 0; /* 기본 투명도 0으로 설정 */
+    transition: max-width 0.5s ease, opacity 0.5s ease; /* 애니메이션 효과 */
+}
+
+#sorting-search-div.active {
+    display: flex; /* 활성화 시 flex로 설정 */
+    max-width: 250px; /* 나타날 때 최대 너비 설정 */
+    opacity: 1; /* 나타날 때 투명도 설정 */
+}
+
+#search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 15px;
+    background-color: transparent;
+    color: #6b5b95;
+}
+
+#search-input::placeholder {
+    color: #b2a1c6;
+}
+
+#sorting-search_btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; /* 아이콘 버튼 크기 */
+    height: 30px;
+    padding: 0;
+    margin-left: 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+#sorting-search_btn img {
+    width: 20px; /* 아이콘 크기 */
+    height: 20px;
+    filter: grayscale(100%);
 }
