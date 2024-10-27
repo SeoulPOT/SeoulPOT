@@ -1,5 +1,4 @@
 FROM python:3.12 AS python-build
-RUN apt-get update && apt-get install -y pkg-config libmariadb-dev
 RUN pip install mysqlclient
 
 FROM python:3.12-slim
