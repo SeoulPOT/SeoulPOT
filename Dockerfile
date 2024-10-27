@@ -1,4 +1,10 @@
 FROM python:3.12 AS python-build
+
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
+    pkg-config \
+    gcc
+    
 RUN pip install mysqlclient
 
 FROM python:3.12-slim
