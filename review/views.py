@@ -50,8 +50,11 @@ def content_reviews(request, lang):
         ),
     )
     # 영업시간 텍스트 처리
-    time = place.place_operating_hours
-    time = time.split("\n")[0]
+    try:
+        time = place.place_operating_hours
+        time = time.split("\n")[0]
+    except:
+        time = ""
 
     # 장소 태그 정보
     if lang == "kor":
@@ -250,9 +253,11 @@ def reviews_more(request, lang):
             ),
         )
 
-    # 영업시간 텍스트 처리
-    time = place.place_operating_hours
-    time = time.split("\n")[0]
+    try:
+        time = place.place_operating_hours
+        time = time.split("\n")[0]
+    except:
+        time = ""
 
     # 전체 리뷰 수
     # total = place.place_review_num
