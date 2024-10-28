@@ -73,11 +73,11 @@ def content_reviews(request, lang):
     if array == "latest":
         reviews = reviews.order_by("-review_date")[:5]  # 최신순으로 5개
     elif array == "positive":
-        reviews = reviews.filter(review_sentiment=1).order_by("review_date")[
+        reviews = reviews.filter(review_sentiment >= 0.9).order_by("review_date")[
             :5
         ]  # 긍정(1) 리뷰 5개
     elif array == "negative":
-        reviews = reviews.filter(review_sentiment=-1).order_by("review_date")[
+        reviews = reviews.filter(review_sentiment <= 0.1).order_by("review_date")[
             :5
         ]  # 부정(-1) 리뷰 5개
 
@@ -285,11 +285,11 @@ def reviews_more(request, lang):
     if array == "latest":
         reviews = reviews.order_by("-review_date")[:10]  # 최신순으로 10개
     elif array == "positive":
-        reviews = reviews.filter(review_sentiment=1).order_by("review_date")[
+        reviews = reviews.filter(review_sentiment >= 0.9).order_by("review_date")[
             :10
         ]  # 긍정(1) 리뷰 10개
     elif array == "negative":
-        reviews = reviews.filter(review_sentiment=-1).order_by("review_date")[
+        reviews = reviews.filter(review_sentiment <= 0.1).order_by("review_date")[
             :10
         ]  # 부정(-1) 리뷰 10개
 
