@@ -61,12 +61,11 @@ body {
     height : 100%;
 }
 
-.left-content img {
+#place_img {
     width: 300px;
     height: 190px;
     object-fit: cover; /* 이미지 비율 유지*/
     align-items: center;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px 10px 0 0;
 }
 
@@ -90,6 +89,7 @@ body {
 .address {
     background-color: #ffffff;
     padding: 10px;
+    padding-bottom: 0;
     margin-bottom: 0;
     border-radius: 0 0 10px 10px;
 }
@@ -101,6 +101,7 @@ body {
 
 .address p{
     margin-block: 0;
+    margin-bottom: 5px;  /* <p> 태그와 다음 요소 간의 간격을 5px로 설정 */
 }
 
 .profile {
@@ -280,6 +281,10 @@ body {
     display: inline-block;
 }
 
+.place-info {
+    display: flex;            /* 요소들을 가로로 나열 */
+    gap: 5px;                /* 이미지와 텍스트 사이의 간격 */
+}
 
 .review-image {
     position: relative; /* 아이콘이 이미지 위에 겹치게 하기 위해 */
@@ -368,25 +373,24 @@ body {
 .dropdown {
     justify-content: end;
     display: flex;
-    gap: 10px;
     align-items: center;
 }
 
-.dropdown select {
-    text-align: center;
-    width: 250px;
-    justify-content: end;
-    padding: 5px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-family: NeoDunggeunmo;
+.ai {
+    width: 100px;
 }
-
-.dropdown option {
-    width: 200px;
-    background-color: #fff; /* 호버 시 색상 유지 */
-    color: #000; /* 텍스트 색상 유지 */
+.openaiModalBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    height: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .stat-box { 
@@ -599,9 +603,17 @@ body {
     color: #8f8f8f;
 }
 
+.more-link-container {
+    display: flex;
+    justify-content: flex-end;  /* 오른쪽 끝으로 정렬 */
+    margin-top: 10px;           /* 위아래 간격 추가 (옵션) */
+}
+
 .more-link {
     text-align: right;
     text-decoration: none;
     color: #6aafe6;
     font-weight: bold;
+    max-width: 80px;
+    justify-content: flex-end
 }

@@ -171,20 +171,23 @@ class PlaceTb(models.Model):
     place_address = models.CharField(max_length=255, blank=True, null=True)
     place_phone = models.CharField(max_length=50, blank=True, null=True)
     place_operating_hours = models.CharField(max_length=255, blank=True, null=True)
-    place_entrance_fee = models.CharField(max_length=50, blank=True, null=True)
     place_desc = models.CharField(max_length=255, blank=True, null=True)
     place_url = models.CharField(max_length=255, blank=True, null=True)
     place_review_num = models.IntegerField(blank=True, null=True)
     place_pos_review_num = models.IntegerField(blank=True, null=True)
     place_neg_review_num = models.IntegerField(blank=True, null=True)
     place_ad_review_num = models.IntegerField(blank=True, null=True)
-    place_feature = models.TextField(blank=True, null=True)
     place_thema_cd = models.CharField(max_length=50, blank=True, null=True)
     place_category_cd = models.CharField(max_length=50, blank=True, null=True)
     place_tag_cd = models.CharField(max_length=50, blank=True, null=True)
     place_lat = models.FloatField(blank=True, null=True)
     place_lon = models.FloatField(blank=True, null=True)
-    place_review_num_real = models.IntegerField(blank=True, null=True)
+    place_subway_station = models.CharField(max_length=100, blank=True, null=True)
+    place_distance = models.CharField(max_length=100, blank=True, null=True)
+    kor_ai_review_text = models.TextField(blank=True, null=True)
+    eng_ai_review_text = models.TextField(blank=True, null=True)
+    # place_review_num = models.Intege
+    # rField(blank=True, null=True)
 
     class Meta:
         managed = False

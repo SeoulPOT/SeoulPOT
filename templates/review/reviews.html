@@ -3,6 +3,8 @@
 {% load static %}
 {% block content %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <div class="container">
     <div class="left-content">
         <div id="left-box">
@@ -19,6 +21,23 @@
             <div class = "address">
             <h2 id="place-name">{{ place.place_name }}</h2>   
             <p>🗺️{{ place.place_address }}</p>
+                {% if sub_line %}
+                    {% if lang == 'kor' %}
+                        <div class="place-info">
+                        {% for i in sub_line %}
+                        <img id="line_img" src="{% static 'img/line_' %}{{i}}.png" style="width: auto; height: 15px;">
+                        {% endfor %}
+                        <p>{{sub_name}}에서 {{place_distance}}m</p>
+                        </div>
+                    {% else %}
+                    <div class="place-info">
+                        {% for i in sub_line %}
+                        <img id="line_img" src="{% static 'img/line_' %}{{i}}.png" style="width: auto; height: 15px;">
+                        {% endfor %}
+                        <p>{{place_distance}}m from {{sub_name}}</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
             <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
             {% if total %}
@@ -37,7 +56,7 @@
                 {% if lang == 'kor' %}
                 <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
                 {% else %}
-                <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
+                <p class = "profile" style="white-space: pre-line;">⏰ {{ time }}</p>
                 {% endif %}
             {% endif %}
             {% if place.place_phone %}
@@ -55,7 +74,7 @@
     </div>
 
     <div class="right-content">
-        {% if thema_name or first_key %}
+        {% if thema_name or ai_review_text %}
         {% if lang == 'kor' %}
         <div class="theme-header" style="gap:100px">
         {% else %}
@@ -74,35 +93,27 @@
                 {% endif %}
             </div>
             <div class="dropdown">
-                {% if lang == 'kor' %}
-                    {% if first_key %}
-                    <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
-                    <span class="keyword">키워드</span>
-                    <!-- 나머지 항목은 <select> 안에 넣음 -->
-                    <select id="feature-select">
-                            <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
-                        {% for key, value in feature_dict.items %}
-                            {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
-                            <option disabled>{{ key }}: {{ value }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                    {% endif %}
-                {% else %}
-                    {% if first_key %}
-                    <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
-                    <span class="keyword" style="margin-right: 10px;">Keywords</span>
-                    <!-- 나머지 항목은 <select> 안에 넣음 -->
-                        <select id="feature-select" style="width: 370px; margin-right:10px">
-                            <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
-                        {% for key, value in mapped_feature_dict.items %}
-                            {% if not forloop.first %} <!-- 첫 번째 항목 제외 -->
-                            <option disabled>{{ key }}: {{ value }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                    {% endif %}
-                {% endif %}
+                    {% if lang == 'kor' %}
+                        <span class="ai">🤖AI 한줄평</span>
+                        <span class="openaiModalBtn" id="openaiModalBtn">{{ai_review_text}}</span>
+                        <!-- 모달 창 -->
+                        <div id="aiModal" class="ai_modal">
+                            <div class="ai_content">
+                                <span id="closeaiModalBtn" class="close-btn" style ="cursor: pointer;"></span>
+                                <p>{{ai_review_text}}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <span class="ai" style ="width : 105px">🤖AI Summary</span>
+                        <span class="openaiModalBtn" id="openaiModalBtn">{{ai_review_text}}</span>
+                        <!-- 모달 창 -->
+                        <div id="aiModal" class="ai_modal">
+                            <div class="ai_content">
+                                <span id="closeaiModalBtn" class="close-btn" style ="cursor: pointer;"></span>
+                                <p>{{ai_review_text}}</p>
+                            </div>
+                        </div>
+                    {% endif%}
             </div>
         </div>
         {% endif %}
@@ -128,11 +139,30 @@
                     <div class="progress-bar-inner negative-bar" style="width: {{ neg_ratio }}%;"></div>
                 </div>
                 <p>
+                    <!-- 클릭 가능한 돋보기 아이콘 -->
+                    <i id="opensentModalBtn" class="fa fa-question-circle-o" style="font-size:20px"></i>
                     {% if lang == 'kor' %}
-                    <span class="review-summary" style="margin-left: 30px;">{{total}}개의 리뷰 중 {{pos}}개의 긍정 리뷰를 가졌어요!</span>
+                    <span class="review-summary">{{total}}개의 리뷰 중 {{pos}}개의 긍정 리뷰를 가졌어요!</span>
                     {% else %}
-                    <span class="review-summary" style="margin-left: 30px;">Out of {{total}} reviews, {{pos}} are positive!</span>
+                    <span class="review-summary">Out of {{total}} reviews, {{pos}} are positive!</span>
                     {% endif %}
+                    <!-- 모달 창 -->
+                    <div id="sentModal" class="sent_modal">
+                        <div class="sent_content">
+                            <span id="closesentModalBtn" class="close-btn">&times;</span>
+                            {% if lang == 'kor' %}
+                            <p><실제 감정분석 리뷰 예시></p>
+                            <p>긍정리뷰: 너무맛있는 음식을먹고왔어요~
+                                담에는 친구들이랑 또가볼려구요^^
+                                맛있게 잘먹었습니다♡♡</p>
+                            <p>부정리뷰: 맛이나 내용물에 비해 좀 가격이 비싼편이네요</p>
+                            {% else %}
+                            <p>[Sentiment Analysis Review Examples]</p>
+                            <p>Positive Review: I had an incredibly delicious meal! I definitely want to visit again with my friends next time^^. I thoroughly enjoyed the food! ♡♡</p>
+                            <p>Negative Review: The price seems a bit high considering the taste and the ingredients.</p>
+                            {% endif %}
+                        </div>
+                    </div>
                 </p>
             </div>
         </div>
@@ -154,25 +184,27 @@
                 </div>
                 <p>
                     <!-- 클릭 가능한 돋보기 아이콘 -->
-                    <span id="openAdModalBtn">🔍</span>
+                    <i id="openAdModalBtn" class="fa fa-question-circle-o" style="font-size:20px"></i>
                     {% if lang == 'kor' %}
                     <span class="review-summary">{{total}}개의 리뷰 중 {{ ad }}개가 광고성으로 의심돼요. -.-</span>
                     {% else %}
                     <span class="review-summary">Out of {{total}} reviews, {{ ad }} are suspected to be promotinal -.-</span>
                     {% endif %}
                     <!-- 모달 창 -->
-                    {% if review_dict %}
                     <div id="adModal" class="ad_modal">
                         <div class="ad_content">
                             <span id="closeAdModalBtn" class="close-btn">&times;</span>
-                            <p><광고성 예시 text쌍></p>
-                            {% for keys, values in review_dict.items %}
-                            <p>{{ keys }}</p>
-                            <p>{{ values }}</p>
-                            {% endfor %}
+                            {% if lang == 'kor' %}
+                            <p>[실제 광고성 판단 리뷰 예시]</p>
+                            <p>리뷰1: 라멘집에서 고기라니!!! 데이트 왔다가 라멘 말고 고기먹었어요!! 여자친구가 특히 좋아해서 점수얻었습니다^^ 앞에서 고기를 직접 구워주셔서 깔끔하고 힘들지 않아서 특히 좋았습니다. 사람들이 데이트하러 많이 오는지 커플이 종종 보였습니다. 데이트 장소 굿입니다.</p>
+                            <p>리뷰2: 데이트 왔다가 라멘 말고 고기먹었어요!! 여자친구가 특히 좋아해서 점수얻었습니다^^ 앞에서 고기를 직접 구워주셔서 깔끔하고 힘들지 않아서 특히 좋았습니다. 사람들이 데이트하러 많이 오는지 커플이 종종 보였습니다. 데이트 장소 굿입니다.</p>
+                            {% else %}
+                            <p>[Ad-like Review Examples]</p>
+                            <p>Review 1: Meat at a ramen place?! Came here on a date and ended up eating meat instead of ramen! My girlfriend especially loved it, so I scored some points! They grilled the meat right in front of us, which was clean and hassle-free. I noticed quite a few couples visiting for dates. This place is great for a date spot.</p>
+                            <p>Review 2: Came here on a date and ended up eating meat instead of ramen! My girlfriend especially loved it, so I scored some points! They grilled the meat right in front of us, which was clean and hassle-free. I noticed quite a few couples visiting for dates. This place is great for a date spot.</p>
+                            {% endif %}
                         </div>
                     </div>
-                    {% endif %}
                 </p>
             </div>
         </div>
@@ -217,20 +249,18 @@
                     {% endfor %}
                 </ul>
                 <!-- 더보기 버튼 -->
-                <a href="{% url 'reviews_more' lang %}?place_id={{ place.place_id }}" class = "more-link">
-                    {% if lang == 'kor' %}
-                        더보기 >
-                    {% else %}
-                        more > 
-                    {% endif %}
-                </a>
+                <div class="more-link-container">
+                    <a href="{% url 'reviews_more' lang %}?place_id={{ place.place_id }}" class = "more-link">
+                        {% if lang == 'kor' %}
+                            더보기 >
+                        {% else %}
+                            more > 
+                        {% endif %}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-
-    
-
-
 {% endblock %}
 
 {% block extra_css %}
@@ -300,6 +330,52 @@
     border-radius: 10px;
 }
 
+.sent_modal {
+    display: none; /* 기본적으로 모달을 숨김 */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 */
+}
+
+.sent_content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    height: auto;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.ai_modal {
+    display: none; /* 기본적으로 모달을 숨김 */
+    position: absolute;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.ai_content {
+    flex: 0 0 1;
+    position: absolute;
+    width: 400px;
+    height: auto;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);;
+    border-radius: 10px;
+}
 /* 닫기 버튼 스타일 */
 .close-btn {
     position: absolute; /* 절대 위치 지정 */
@@ -312,6 +388,12 @@
 
 /* 클릭 가능한 아이콘 스타일 추가 */
 #openAdModalBtn {
+    cursor: pointer;
+}
+#opensentModalBtn {
+    cursor: pointer;
+}
+#openaiModalBtn {
     cursor: pointer;
 }
 

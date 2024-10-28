@@ -19,6 +19,23 @@
             <div class = "address">
             <h2 id="place-name">{{ place.place_name }}</h2>   
             <p>🗺️{{ place.place_address }}</p>
+                {% if sub_line %}
+                    {% if lang == 'kor' %}
+                        <div class="place-info">
+                        {% for i in sub_line %}
+                        <img id="line_img" src="{% static 'img/line_' %}{{i}}.png" style="width: auto; height: 15px;">
+                        {% endfor %}
+                        <p>{{sub_name}}에서 {{place_distance}}m</p>
+                        </div>
+                        {% else %}
+                        <div class="place-info">
+                        {% for i in sub_line %}
+                        <img id="line_img" src="{% static 'img/line_' %}{{i}}.png" style="width: auto; height: 15px;">
+                        {% endfor %}
+                        <p>{{place_distance}}m from {{sub_name}}</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
             <a href="{{ place.place_place_url }}">{{ place.place_place_url }}</a>
             {% if total %}
@@ -34,7 +51,11 @@
             {% endif %}
             {% endif %}
             {% if place.place_operating_hours %}
+                {% if lang == 'kor' %}
                 <p class = "profile" style="white-space: pre-line;">⏰ {{ place.place_operating_hours }}</p>
+                {% else %}
+                <p class = "profile" style="white-space: pre-line;">⏰ {{ time }}</p>
+                {% endif %}
             {% endif %}
             {% if place.place_phone %}
                 <p class = "profile">📞 {{ place.place_phone }}</p>
@@ -48,11 +69,11 @@
     
     <div class="right-content">
         <div id="right-box">
-            {% if thema_name or first_key %}
+            {% if thema_name or ai_review_text %}
             {% if lang == 'kor' %}
             <div class="theme-header">
             {% else %}
-            <div class="theme-header" style="gap:0px;">
+            <div class="theme-header" style="gap:5px;">
             {% endif %}
                 <div class="tag-box">
                     {% if thema_name %}
@@ -68,34 +89,26 @@
                 </div>
                 <div class="dropdown">
                     {% if lang == 'kor' %}
-                        {% if first_key %}
-                        <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
-                        <span class="keyword">키워드</span>
-                        <!-- 나머지 항목은 <select> 안에 넣음 -->
-                        <select id="feature-select">
-                                <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
-                            {% for key, value in feature_dict.items %}
-                                {% if not forloop.first %} <!-- 첫 번째 항목 제외 -->
-                                <option disabled>{{ key }}: {{ value }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                        {% endif %}
+                        <span class="ai">🤖AI 한줄평</span>
+                        <span class="openaiModalBtn" id="openaiModalBtn">{{ai_review_text}}</span>
+                        <!-- 모달 창 -->
+                        <div id="aiModal" class="ai_modal">
+                            <div class="ai_content">
+                                <span id="closeaiModalBtn" class="close-btn" style ="cursor: pointer;"></span>
+                                <p>{{ai_review_text}}</p>
+                            </div>
+                        </div>
                     {% else %}
-                        {% if first_key %}
-                        <!-- 첫 번째 항목을 선택된 것처럼 미리 표시 -->
-                        <span class="keyword" style="margin-left: 5px; margin-right: 10px;">Keywords</span>
-                        <!-- 나머지 항목은 <select> 안에 넣음 -->
-                            <select id="feature-select" style="width: 370px; margin-right:10px">
-                                <option disabled selected hidden>{{first_key}}: {{first_value}}</option>
-                            {% for key, value in mapped_feature_dict.items %}
-                                {% if not forloop.first %} <!-- 첫 번째 항목을 제외한 나머지 항목만 표시 -->
-                                <option disabled>{{ key }}: {{ value }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
+                        <span class="ai" style ="width : 105px">🤖AI Summary</span>
+                        <span class="openaiModalBtn" id="openaiModalBtn">{{ai_review_text}}</span>
+                        <!-- 모달 창 -->
+                        <div id="aiModal" class="ai_modal">
+                            <div class="ai_content">
+                                <span id="closeaiModalBtn" class="close-btn" style ="cursor: pointer;"></span>
+                                <p>{{ai_review_text}}</p>
+                            </div>
+                        </div>
                     {% endif %}
-                {% endif %}
                 </div>
             </div>
             {% endif %}
@@ -274,7 +287,35 @@
     #mapModalContainer.hidden {
         display: none;
     }
-    
+
+    #openaiModalBtn {
+    cursor: pointer;
+    }
+
+    .ai_modal {
+    display: none; /* 기본적으로 모달을 숨김 */
+    position: absolute;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    }
+
+    .ai_content {
+        flex: 0 0 1;
+        position: absolute;
+        width: 400px;
+        height: auto;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);;
+        border-radius: 10px;
+    }
+
     </style>
     <!-- 이 페이지에서만 사용하는 CSS -->
     <link rel="stylesheet" href="{% static 'css/review/style.css' %}">
