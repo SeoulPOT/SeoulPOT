@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.db.models import Subquery, OuterRef
 from django.db.models.functions import Coalesce
 from django.db.models import Count, Min, Case, When, Q, CharField, Value
+from django.db.models import F, FloatField, ExpressionWrapper
 from utils import SaveLog
 
 # Create your views here.
@@ -77,7 +78,7 @@ def category(request, lang):
         filters['place_name__contains'] = search_text  # place_name에서 search_text 검색
         order_field = '-place_name'  # 필요에 따라 정렬 기준 설정 (예: 이름 순)
     if sortBy == '0':
-        order_field = '-place_pos_review_num'  # place_sentiment 내림차순
+        order_field = '-pos_review_ratio'  # place_sentiment 내림차순
     elif sortBy == '1':
         order_field = '-place_distance'          # distance 내림차순
     elif sortBy == '2':
@@ -88,7 +89,10 @@ def category(request, lang):
             **filters
     ).annotate(
         review_photo=Subquery(photo_subquery),
-        place_tag_name =  Subquery(catagoty_tag_subquery)
+        place_tag_name =  Subquery(catagoty_tag_subquery),
+        pos_review_ratio=ExpressionWrapper(
+            F('place_pos_review_num') / F('place_review_num'),
+            output_field=FloatField())
     ).order_by(order_field)
 
     # Paginate the results
