@@ -31,6 +31,7 @@ def category(request, lang):
     # Set default values if parameters are not provided
     district_id = district_id if district_id else '8'
     place_category_cd = place_category_cd if place_category_cd else 'PC00'
+    sortBy = sortBy if sortBy else '0'
 
     print(f'sortBy : {sortBy}')
     print(f'search_text : {search_text}')

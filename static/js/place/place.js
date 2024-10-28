@@ -41,11 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
             else
                 btn.classList.remove('active');
         });
-    
+        
         category_container.forEach(button => {
             button.addEventListener('click', function() {
     
                 if(this.getAttribute('data-category') != 'bookmark'){
+                    document.querySelectorAll('.sorting-div')[0].style.visibility = 'visible'
                     page = 1;
                     category_container.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
@@ -54,9 +55,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
                     cardList.innerHTML = '';
                     clearMarkers(markers);
-                    loadMoreObjects();
+                    loadMoreObjects(page);
                 }
+                // 즐겨찾기
                 else{
+                    document.querySelectorAll('.sorting-div')[0].style.visibility  = 'hidden'
                     page = 1;
                     category_container.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
@@ -84,6 +87,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     
         const search_input = document.querySelector('#search-input');
+
+        // 키 입력 이벤트 리스너 추가
+        search_input.addEventListener("keydown", function(event) {
+            // "Enter" 키인지 확인
+            if (event.key === "Enter") {
+                event.preventDefault(); // 기본 동작 막기 (필요에 따라)
+                // 실행하고 싶은 동작
+                console.log("Enter key pressed!");
+                // 여기서 원하는 함수를 호출하거나 동작을 수행하세요
+                page = 1;
+                
+                current_sortBy = "-1"
+                serach_text = search_input.value;
+                console.log('current_sortBy:',current_sortBy);
+                
+                
+    
+                cardList.innerHTML = '';
+                clearMarkers(markers);
+                loadMoreObjects();
+            }
+        });
     
         sorting_container.forEach(button => {
             button.addEventListener('click', function() {
@@ -134,6 +159,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
                 //검색 텍스트 삭제
                 search_input.value = '';
+
+
+                if(current_sortBy != pre_sortBy)
+                {
+                    current_sortBy = pre_sortBy;
+                    cardList.innerHTML = '';
+                    clearMarkers(markers);
+                    loadMoreObjects();
+                }
             }
         });
     }
@@ -362,8 +396,8 @@ function toggleBookmark(placeId, marker, button, imgElement) {
 // 기존 버튼 찾기 함수
 function findExistingButton(placeId) {
     button = bookmark_buttons.find(button => button.dataset.placeId == placeId);
-    console.log('find button:', button);
-    console.log('bookmark_buttons:', bookmark_buttons);
+    // console.log('find button:', button);
+    // console.log('bookmark_buttons:', bookmark_buttons);
     return button;
 }
 
