@@ -188,6 +188,8 @@ class PlaceTb(models.Model):
     place_distance = models.CharField(max_length=100, blank=True, null=True)
     kor_ai_review_text = models.TextField(blank=True, null=True)
     eng_ai_review_text = models.TextField(blank=True, null=True)
+    # place_review_num = models.Intege
+    # rField(blank=True, null=True)
 
     class Meta:
         managed = False

@@ -31,6 +31,31 @@
                         <img src="{% static 'img/check.png' %}" width="25px" height="25px" alt="좋아요">
                     </button>
                 </div>
+                <div class="sorting-div">
+                    <div id="sorting-button-div">
+                        {% if lang == 'kor' %}
+                            <button class="sorting-btn" data-sortBy="0">감정순</button>
+                            <button class="sorting-btn" data-sortBy="1">거리순</button>
+                            <button class="sorting-btn" data-sortBy="2">리뷰순</button>
+                        {% else %}
+                            <button class="sorting-btn" data-sortBy="0">Sentiment</button>
+                            <button class="sorting-btn" data-sortBy="1">Distance</button>
+                            <button class="sorting-btn" data-sortBy="2">Reviews</button>
+                        {% endif %}          
+                    </div> 
+                    <div id="sorting-search-div">
+                        <input type="text" id="search-input" placeholder="검색어를 입력하세요" />       
+                        <button class="sorting-btn" id="sorting-search_btn" data-sortBy="-1">
+                            <img src="{% static 'img/search.png' %}" alt="검색" />
+                        </button>
+                    </div>
+                    <div id="sorting-toggle-div">
+                        <button class="toggle-btn" id="sorting-toggle_btn" data-sortBy="3">
+                            <img src="{% static 'img/search.png' %}" alt="검색" />
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="card-list" id="place-list-container">
                     {% for place in place_list %}
                     <button class="card" onclick="location.href='{% url 'reviews' lang %}?place_id={{place.place_id}}'">
@@ -92,8 +117,11 @@
         const bookmark_img = "{% static 'img/check.png' %}";
         const bookmark_not_check_img = "{% static 'img/notcheck.png' %}";
         const selected_category = '{{category}}';
+        const selected_sortBy = '{{sortBy}}';
         const lang = '{{lang}}';
         const place_thema_cd = '{{place_thema_cd}}'
+        const close_img = "{% static 'img/close.png' %}";
+        const search_img = "{% static 'img/search.png' %}";
     </script>
     <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=md0r6k664v"></script>
     <script type="text/javascript" src="https://d3js.org/d3.v6.min.js"></script>
