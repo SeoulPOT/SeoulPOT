@@ -73,13 +73,13 @@ def content_reviews(request, lang):
     if array == "latest":
         reviews = reviews.order_by("-review_date")[:5]  # 최신순으로 5개
     elif array == "positive":
-        reviews = reviews.filter(review_sentiment >= 0.9).order_by("review_date")[
-            :5
-        ]  # 긍정(1) 리뷰 5개
+        reviews = reviews.filter(review_sentiment__gt=0.9).order_by(
+            "-review_sentiment"
+        )[:5]
     elif array == "negative":
-        reviews = reviews.filter(review_sentiment <= 0.1).order_by("review_date")[
+        reviews = reviews.filter(review_sentiment__lt=0.1).order_by("review_sentiment")[
             :5
-        ]  # 부정(-1) 리뷰 5개
+        ]
 
     paginator = Paginator(reviews, 10)  # 리뷰를 10개씩 나누어서 페이지를 나눈다
     page_obj = paginator.get_page(page)
@@ -90,7 +90,7 @@ def content_reviews(request, lang):
 
     serialized_reviews = list(page_obj.object_list.values(*review_field_names))
 
-    # 텍스트가 너무 길면 자르기 (30자로 제한)
+    # 텍스트가 너무 길면 자르기
     if lang == "kor":
         for review in serialized_reviews:
             if len(review["kor_review_text"]) > 25:
@@ -129,19 +129,6 @@ def content_reviews(request, lang):
     # 광고성 리뷰 가져오기
     reviews = ReviewTb.objects.filter(place_id=place_id)
 
-    # kor_review_text와 similar_review를 딕셔너리 형태로 저장
-    if lang == "kor":
-        review_dict = {
-            review.kor_review_text: review.similar_review
-            for review in reviews
-            if review.similar_review  # similar_review가 존재하는 경우만
-        }
-    else:
-        review_dict = {
-            review.kor_review_text: review.similar_review
-            for review in reviews
-            if review.similar_review  # similar_review가 존재하는 경우만
-        }
     # 가까운 역 불러오기
 
     subway = place.place_subway_station
@@ -172,7 +159,6 @@ def content_reviews(request, lang):
 
     context = {
         "place": place,
-        "reviews": page_obj,
         "kor_place_tag": kor_place_tag,
         "eng_place_tag": eng_place_tag,
         "thema_name": thema_name,
@@ -190,7 +176,6 @@ def content_reviews(request, lang):
         "review_photos": review_photos,  # 리뷰 사진 추가
         "reviews": serialized_reviews,
         "lang": lang,
-        "review_dict": review_dict,
         "sub_line": sub_line,
         "sub_name": sub_name,
         "place_distance": place_distance,
@@ -285,11 +270,13 @@ def reviews_more(request, lang):
     if array == "latest":
         reviews = reviews.order_by("-review_date")[:10]  # 최신순으로 10개
     elif array == "positive":
-        reviews = reviews.filter(review_sentiment >= 0.9).order_by("review_date")[
+        reviews = reviews.filter(review_sentiment__gt=0.9).order_by(
+            "-review_sentiment"
+        )[
             :10
         ]  # 긍정(1) 리뷰 10개
     elif array == "negative":
-        reviews = reviews.filter(review_sentiment <= 0.1).order_by("review_date")[
+        reviews = reviews.filter(review_sentiment__lt=0.1).order_by("review_sentiment")[
             :10
         ]  # 부정(-1) 리뷰 10개
 
