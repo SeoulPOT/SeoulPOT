@@ -283,14 +283,15 @@
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 2000;
 }
 
 #mapModalContent {
     width: 80%;
     height: 80%;
     background-color: transparent; /* 배경 색상을 투명하게 처리하여 지도가 전체를 채우도록 설정 */
-    position: relative;
+    position: fixed;
+    z-index: 2000;
 }
 
 #largeMap {

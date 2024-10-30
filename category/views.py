@@ -41,14 +41,14 @@ def district_view(request, lang, place_thema_cd):
     try:
         # 이모지와 카테고리 이름을 코드에 따라 매핑
         category_map = {
-            'ph01': {'emoji': '👨‍👩‍👦'},
-            'ph02': {'emoji': '💖'},
+            'ph01': {'emoji': '👨‍👩‍👧‍👦'},
+            'ph02': {'emoji': '💕'},
             'ph03': {'emoji': '🕺'},
             'ph04': {'emoji': '🐕'},
             'ph05': {'emoji': '😎'},
-            'ph06': {'emoji': '🧘‍♀️'},
-            'ph07': {'emoji': '🚴‍♂️'},
-            'ph08': {'emoji': '🌳'},
+            'ph06': {'emoji': '🌳'},
+            'ph07': {'emoji': '🚲'},
+            'ph08': {'emoji': '🛋️'},
             'ph09': {'emoji': '💰'},
 
             # 필요한 카테고리 추가
@@ -69,8 +69,12 @@ def district_view(request, lang, place_thema_cd):
         
         # 전체 구별 정보 반환
         districts = DistrictTb.objects.annotate(
-            place_count=Count('placetb', filter=Q(placetb__place_thema_cd=place_thema_cd))
+            place_count=Count(
+                'placetb', 
+                filter=Q(placetb__place_thema_cd__iregex=rf'\b{place_thema_cd}\b')
+            )
         )
+
         response_data = {
             "districts": [
                 {
@@ -165,18 +169,24 @@ def choose_district(district_id, place_category_cd, lang, place_thema_cd):
             parent_code='pt',
         ).values('eng_code_name')[:1]
 
-    top_places = (
-        PlaceTb.objects
-        .filter(
-            district_id=district_id,
-            place_category_cd=place_category_cd,
-            place_thema_cd__contains=place_thema_cd)
-        .annotate(
-            review_photo=Subquery(photo_subquery),  # 리뷰 사진 가져오기
-            place_tag_name=Subquery(category_tag_subquery)
-        )
-        .order_by('-place_review_num')[:4]  # 리뷰 수를 기준으로 정렬
-    )
+
+    # 쉼표로 구분된 테마 코드들을 리스트로 분리
+    # 입력된 테마 코드 문자열을 정리 (쉼표와 공백 제거)
+    thema_codes = [code.strip() for code in place_thema_cd.split(',')]
+
+    # OR 조건으로 Q 객체 생성
+    query = Q()
+    for code in thema_codes:
+        query |= Q(place_thema_cd__iregex=rf'\b{code}\b')
+
+    # 상위 장소 쿼리 실행
+    top_places = PlaceTb.objects.filter(
+        district_id=district_id,
+        place_category_cd=place_category_cd
+    ).filter(query).annotate(
+        review_photo=Subquery(photo_subquery),
+        place_tag_name=Subquery(category_tag_subquery)
+    ).order_by('-place_review_num')[:4]
 
     for place in top_places:
         data.append({
