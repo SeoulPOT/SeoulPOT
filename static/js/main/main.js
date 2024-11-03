@@ -23,8 +23,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentTime = new Date(new Date().getTime() + timeOffset);
         const formattedTime = formatTime(currentTime);
         document.querySelector('.time').textContent = formattedTime;
+
+        // 배경 업데이트
+        updateBackground(currentTime);
     }
 
+
+    // 배경을 변경하는 함수
+    function updateBackground(date) {
+        const hour = date.getHours();
+        const body = document.body;
+
+        // 이전 클래스 제거
+        body.classList.remove('morning-bg', 'afternoon-bg', 'evening-bg');
+
+        // 시간대에 따른 클래스 추가
+        if (hour >= 6 && hour < 14) {
+            body.classList.add('morning-bg'); // 아침 배경
+        } else if (hour >= 14 && hour < 22) {
+            body.classList.add('afternoon-bg'); // 오후 배경
+        } else if (hour >= 22 && hour < 6) {
+            body.classList.add('evening-bg'); // 저녁 배경
+        } 
+    }
     // 1초마다 시간을 갱신
     setInterval(updateTime, 1000);
 

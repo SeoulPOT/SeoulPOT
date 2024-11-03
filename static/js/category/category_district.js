@@ -78,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         .classed('active', true)
                         .style('transform-origin', `${centroid[0]}px ${centroid[1]}px`);
 
-                    if (!selected_obj) {
-                        // document.getElementById('district-name').innerText = d.properties.name;
+                    if (selected_obj == undefined) {
+                        document.getElementById('district-name').innerText = d.properties.name;
                         // document.getElementById('none_select-info-container').style.display = 'flex';
                         // document.getElementById('district-container').style.display = 'none';
                         // document.getElementById('district-comming-soon').style.display = 'none';
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('district-container').style.display = 'none';
                         // document.getElementById('district-info-container').style.display = 'none'; // none
                         document.getElementById('district-comming-soon').style.display = 'none';
-                        document.getElementById('district-name').innerText = 'ㅤ';
+                        // document.getElementById('district-name').innerText = 'ㅤ';
                     }
 
                     var foundItem = districts_list.find(function(item) {
@@ -97,6 +97,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
 
                     if (foundItem) {
+
+                        if(selected_obj == undefined){
+                            if (selected_lang == 'kor'){
+                                document.getElementById('district-name').innerText = foundItem.district_name_kor;      
+                            }
+                            else{
+                                document.getElementById('district-name').innerText = foundItem.district_name;      
+                            }
+                        }
+
                         const img_path = `${staticPath}/${foundItem.district_name}.png`;
                         // document.getElementById('selected-district-img').src = img_path;
                         // document.getElementById('selected-district-img').onerror = function() {
@@ -124,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (selected_obj === this) {
                         selected_obj = undefined;
-                        document.getElementById('district-name').innerText = '';
+                        // document.getElementById('district-name').innerText = '';
                         document.getElementById('none_select-info-container').style.display = 'flex';
                         document.getElementById('district-container').style.display = 'none';           //가게 리스트 출력
                         // document.getElementById('district-info-container').style.display = 'flex';
@@ -133,6 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         selected_obj = this;
                         is_selected = true;
                         d3.select(this).classed('clicked', true);
+
+                        document.getElementById('district-name').innerText = d.properties.name;
 
                         is_selected = true;
                         if(['강남구', '마포구', '중구', '용산구', '종로구'].includes(d.properties.name)){

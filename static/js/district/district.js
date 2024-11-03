@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('district-container').style.display = 'none';
                         document.getElementById('district-info-container').style.display = 'none'; // none
                         document.getElementById('district-comming-soon').style.display = 'none';
-                        document.getElementById('district-name').innerText = 'ㅤ';
+                        document.getElementById('district-name').innerText = '';
                     }
 
 

@@ -17,10 +17,27 @@ body, html {
     display: flex;
     flex-direction: column;
     position: relative;
-    background: linear-gradient(rgb(255 149 149 / 50%), rgb(28 44 208 / 50%)), url(../../img/main.jpg);
+    background: linear-gradient(rgb(255 149 149 / 50%), rgb(28 44 208 / 50%)), url(../../img/main2.jpg);
     background-size: cover;
     background-position: center;
+    transition: background-image 0.5s ease-in-out;
 }
+
+/* 아침 이미지 */
+.morning-bg {
+    background-image: url(../../img/main1.png);
+}
+
+/* 오후 이미지 */
+.afternoon-bg {
+    background-image: url(../../img/main2.jpg);
+}
+
+/* 저녁 이미지 */
+.evening-bg {
+    background-image: url(../../img/main3.png);
+}
+
 
 .content {
     text-align: center;

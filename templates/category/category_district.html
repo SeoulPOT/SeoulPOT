@@ -4,6 +4,7 @@
 {% load static %}
 {% block content %}
 <main id="container">
+    <h2 id="place_thema_name" style="display: flex;" >{{ place_thema_name }}</h2> 
     <section id="map-container">
         <div id="map"></div>
 
@@ -17,9 +18,9 @@
     </section>
     <section id="triangle"></section>
     <section id="district-info">
+
         
-        <h2 id="place_thema_name" style="display: flex;" >{{ place_thema_name }}</h2> 
-        <h1 id="district-name" style="display: none;">
+        <h1 id="district-name" style="display: flex;">
             {% if lang == 'kor' %}
                 {{ district.kor_district_name }}
             {% elif lang == 'eng' %}
@@ -98,47 +99,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/category/category_district.css' %}">
 <style>
-    /* 지도 옆에 추가된 색상 그라데이션 바 */
-    #gradient-bar {
-        width: 20px;
-        height: 300px;
-        background: linear-gradient(to top, #d4cbf8, #6a4d9a); /* 진한색에서 연한색으로 */
-        position: absolute;
-        left: 20px; /* 지도 오른쪽에 배치 */
-        top: 50%;
-        transform: translateY(-50%);
-    }
 
-    /* 색상바에 레이블 추가 */
-    #gradient-bar-labels {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 200px;
-        position: absolute;
-        right: -40px; /* High와 Low 위치를 바꿉니다 */
-        top: 0;
-        color: #9077CB;
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    #gradient-bar-labels span {
-        font-size: 14px;
-    }
-
-    /* 아래 코드에서 High와 Low의 순서를 바꿔줍니다. */
-    #gradient-bar-labels {
-        display: flex;
-        flex-direction: flex; /* 아래쪽을 기준으로 컬럼을 반대로 변경 */
-        justify-content: space-between;
-        height: 200px;
-        position: absolute;
-        right: -40px;
-        color: #9077CB;
-        font-size: 12px;
-        font-weight: bold;
-    }
 
 </style>
 {% endblock %}

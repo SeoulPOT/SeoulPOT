@@ -549,3 +549,55 @@
     height: 30%;
     margin-top: 20%;
 }
+
+#place_thema_name {
+    position: absolute;
+    top: 80px; /* 페이지 상단에서의 위치 조정 */
+    left: 70px; /* 페이지 왼쪽에서의 위치 조정 */
+    display: flex;
+    align-items: center;
+    background-color: #E1DCFB;
+    border-radius: 15px;
+    padding: 10px 20px;
+    
+    
+}
+
+/* 지도 옆에 추가된 색상 그라데이션 바 */
+#gradient-bar {
+    width: 50px;
+    height: 360px;
+    background: linear-gradient(to top, #d4cbf8, #6a4d9a); /* 진한색에서 연한색으로 */
+    position: absolute;
+    left: 70px; /* 지도 오른쪽에 배치 */
+    top: 50%;
+    transform: translateY(-40%);
+}
+/* 색상바에 레이블 추가 */
+#gradient-bar-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+    position: absolute;
+    right: -40px; /* High와 Low 위치를 바꿉니다 */
+    top: 0;
+    color: #9077CB;
+    font-size: 12px;
+    font-weight: bold;
+}
+#gradient-bar-labels span {
+    font-size: 14px;
+}
+/* 아래 코드에서 High와 Low의 순서를 바꿔줍니다. */
+#gradient-bar-labels {
+    display: flex;
+    flex-direction: flex; /* 아래쪽을 기준으로 컬럼을 반대로 변경 */
+    justify-content: space-between;
+    height: 200px;
+    position: absolute;
+    right: -40px;
+    color: #9077CB;
+    font-size: 12px;
+    font-weight: bold;
+}
