@@ -162,7 +162,7 @@ function createInfoWindow(place_name, place_desc)
     var infoWindowElement = `
         <<div class="custom-infowindow">
                 <h3>${place_name}</h3>
-                <p>${place_desc}</p>
+                 ${place_desc ? `<p>${place_desc}</p>` : ''}
             </div>
         `;
 

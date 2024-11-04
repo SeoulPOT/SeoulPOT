@@ -80,7 +80,8 @@ def category(request, lang):
     if sortBy == '0':
         order_field = '-pos_review_ratio'  # place_sentiment 내림차순
     elif sortBy == '1':
-        order_field = '-place_distance'          # distance 내림차순
+        filters['place_distance__isnull'] = False  # place_distance가 null이 아닌 데이터만 필터링
+        order_field = 'place_distance'          # distance 내림차순
     elif sortBy == '2':
         order_field = '-place_review_num' # place_review_num 내림차순
     
