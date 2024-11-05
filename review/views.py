@@ -17,7 +17,7 @@ def content_reviews(request, lang):
     # 첫 번째 서브쿼리: 첫 번째 리뷰 이미지 가져오기
     photo_subquery = (
         ReviewTb.objects.filter(place_id=OuterRef("place_id"))
-        .exclude(review_photo="")
+        .filter(has_photo=True)  # has_photo 필드를 사용
         .order_by("-review_date")
         .values("review_photo")[:1]
     )
@@ -25,7 +25,7 @@ def content_reviews(request, lang):
     # 리뷰에서 최대 4개의 사진을 가져오되, 값이 'h'인 사진은 제외
     review_photos = (
         ReviewTb.objects.filter(place_id=place_id, review_photo__gt="")
-        .exclude(review_photo="h")
+        .filter(has_photo=True)  # has_photo 필드를 사용
         .values_list("review_photo", flat=True)[1:5]
     )
 
